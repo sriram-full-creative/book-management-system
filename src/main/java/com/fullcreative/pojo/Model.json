@@ -1,11 +1,15 @@
 [
   {
-    "author": ["Chinua Achebe"],
-    "publication":[""],
+    "author": [
+    	"Chinua Achebe"
+    	],
+    "publication":[
+    	"Penguin Publishing Group"
+    	],
     "title": "Things Fall Apart",
    	"language": "English",
    	"pages": 209,
-    "year": 1958,
+    "releaseYear": 1958,
     "country": "Nigeria",
     "coverImage": "images/things-fall-apart.jpg",
     "bookLink": "https://en.wikipedia.org/wiki/Things_Fall_Apart",

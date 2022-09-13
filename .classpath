@@ -19,5 +19,9 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="C:/Dependencies  for Java Projects/appengine-api.jar"/>
+	<classpathentry kind="lib" path="C:/Dependencies  for Java Projects/appengine-api-stubs.jar"/>
+	<classpathentry kind="lib" path="C:/Dependencies  for Java Projects/appengine-testing.jar"/>
+	<classpathentry kind="lib" path="C:/Dependencies  for Java Projects/appengine-tools-api.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
