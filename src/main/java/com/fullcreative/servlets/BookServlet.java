@@ -1,6 +1,8 @@
 package com.fullcreative.servlets;
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -10,8 +12,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 
-@WebServlet(name = "bookServlet", urlPatterns = { "/books" })
+import com.fullcreative.utilities.ServletUtilities;
+import com.google.gson.Gson;
+
+@WebServlet(name = "bookServlet", urlPatterns = { "/books", "/books/*" })
 public class BookServlet extends HttpServlet {
+
+	private static final long serialVersionUID = -8271652320356442502L;
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -29,6 +36,39 @@ public class BookServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		
+		try {
+			Map<String, Object> responseMap = new LinkedHashMap<>();
+			if (ServletUtilities.hasBookKey(request.getRequestURI()) == false
+					&& ServletUtilities.isValidEndPoint(request.getRequestURI())) {
+				String jsonRequestString = IOUtils.toString(request.getInputStream());
+				responseMap = ServletUtilities.createNewBook(jsonRequestString);
+				int statusCode = Integer.parseInt(responseMap.remove("STATUS_CODE").toString());
+				if (responseMap.containsKey("BOOK_ID")) {
+					String key = responseMap.remove("BOOK_ID").toString();
+				}
+				String responseAsJson = new Gson().toJson(responseMap);
+				response.setContentType("application/json");
+				response.getWriter().print(responseAsJson);
+				response.setStatus(statusCode);
+			} else {
+				responseMap = ServletUtilities.invalidRequestEndpoint(responseMap);
+				int code = Integer.parseInt(responseMap.remove("STATUS_CODE").toString());
+				String responseAsJson = new Gson().toJson(responseMap);
+				response.setContentType("application/json");
+				response.getWriter().print(responseAsJson);
+				response.setStatus(code);
+			}
+		}catch(Exception e) {
+			System.out.println("Caught in doPost servlet service method");
+			e.printStackTrace();
+			Map<String, String> internalServerErrorMap = new LinkedHashMap<String, String>();
+			response.setContentType("application/json");
+			internalServerErrorMap.put("500", "Something went wrong");
+			String internalServerError = new Gson().toJson(internalServerErrorMap);
+			response.getWriter().println(internalServerError);
+			response.setStatus(500);
+		}
 	}
 
 	@Override

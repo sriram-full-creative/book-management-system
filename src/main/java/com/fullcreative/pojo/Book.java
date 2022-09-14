@@ -2,23 +2,36 @@ package com.fullcreative.pojo;
 
 import java.util.LinkedList;
 
+import com.google.gson.annotations.Expose;
+
 public class Book {
-	private LinkedList<String> authors;
+	@Expose(serialize = true, deserialize = true)
+	private LinkedList<String> author;
+	@Expose(serialize = true, deserialize = true)
 	private LinkedList<String> publication;
+	@Expose(serialize = true, deserialize = true)
 	private String title;
+	@Expose(serialize = true, deserialize = true)
 	private String language;
+	@Expose(serialize = true, deserialize = true)
 	private Integer pages;
+	@Expose(serialize = true, deserialize = true)
 	private Integer releaseYear;
+	@Expose(serialize = true, deserialize = true)
 	private String country;
+	@Expose(serialize = true, deserialize = true)
 	private String coverImage;
+	@Expose(serialize = true, deserialize = true)
 	private String bookLink;
+	@Expose(serialize = true, deserialize = true)
 	private Integer rating;
 
-	public LinkedList<String> getAuthors() {
-		return authors;
+	public LinkedList<String> getAuthor() {
+		return author;
 	}
-	public void setAuthors(LinkedList<String> authors) {
-		this.authors = authors;
+
+	public void setAuthor(LinkedList<String> string) {
+		this.author = string;
 	}
 
 	public LinkedList<String> getPublication() {
@@ -85,5 +98,15 @@ public class Book {
 		this.rating = rating;
 	}
 
+	@Override
+	public String toString() {
+		return "Book [authors=" + author + ", publication=" + publication + ", title=" + title + ", language="
+				+ language + ", pages=" + pages + ", releaseYear=" + releaseYear + ", country=" + country
+				+ ", coverImage=" + coverImage + ", bookLink=" + bookLink + ", rating=" + rating + ", getAuthors()="
+				+ getAuthor() + ", getPublication()=" + getPublication() + ", getTitle()=" + getTitle()
+				+ ", getLanguage()=" + getLanguage() + ", getPages()=" + getPages() + ", getReleaseYear()="
+				+ getReleaseYear() + ", getCountry()=" + getCountry() + ", getCoverImage()=" + getCoverImage()
+				+ ", getBookLink()=" + getBookLink() + ", getRating()=" + getRating() + "]";
+	}
 
 }
