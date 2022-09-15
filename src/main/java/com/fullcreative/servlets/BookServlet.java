@@ -30,9 +30,9 @@ public class BookServlet extends HttpServlet {
 		} catch (Exception e) {
 			response.getWriter().print("No Response");
 		}
-
 	}
 
+	@SuppressWarnings("unused")
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -71,9 +71,44 @@ public class BookServlet extends HttpServlet {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	@Override
 	protected void doPut(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		try {
+			Map<String, Object> responseMap = new LinkedHashMap<>();
+			if (ServletUtilities.hasBookKey(request.getRequestURI()) == true
+					&& ServletUtilities.isValidEndPoint(request.getRequestURI())) {
+				String bookID = ServletUtilities.getBookKeyFromUri(request);
+				String jsonRequestString = IOUtils.toString(request.getInputStream());
+				responseMap = ServletUtilities.updateBook(jsonRequestString, bookID);
+				int statusCode = Integer.parseInt(responseMap.remove("STATUS_CODE").toString());
+				if (responseMap.containsKey("BOOK_ID")) {
+					String key = responseMap.remove("BOOK_ID").toString();
+				}
+				String responseAsJson = new Gson().toJson(responseMap);
+				response.setContentType("application/json");
+				response.getWriter().print(responseAsJson);
+				response.setStatus(statusCode);
+			} else {
+				responseMap = ServletUtilities.invalidRequestEndpoint(responseMap);
+				int code = Integer.parseInt(responseMap.remove("STATUS_CODE").toString());
+				String responseAsJson = new Gson().toJson(responseMap);
+				response.setContentType("application/json");
+				response.getWriter().print(responseAsJson);
+				response.setStatus(code);
+			}
+		} catch (Exception e) {
+			System.out.println("Caught in doPut servlet service method");
+			e.printStackTrace();
+			Map<String, String> internalServerErrorMap = new LinkedHashMap<String, String>();
+			response.setContentType("application/json");
+			internalServerErrorMap.put("500", "Something went wrong");
+			String internalServerError = new Gson().toJson(internalServerErrorMap);
+			response.getWriter().println(internalServerError);
+			response.setStatus(500);
+		}
+
 	}
 
 	@Override

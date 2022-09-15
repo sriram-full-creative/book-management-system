@@ -5,9 +5,7 @@ import static org.junit.Assert.*;
 import java.util.LinkedHashMap;
 
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.fullcreative.utilities.ServletUtilities;
@@ -31,6 +29,7 @@ public class DoPostServiceTest {
 	/**
 	 * Tests for POST Methods
 	 */
+	@SuppressWarnings("unused")
 	@Test
 	public void validBook_createNewBookTest() throws EntityNotFoundException {
 		System.out.println();

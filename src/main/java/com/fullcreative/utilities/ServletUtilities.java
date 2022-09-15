@@ -1,6 +1,5 @@
 package com.fullcreative.utilities;
 
-import java.lang.reflect.Type;
 import java.sql.Time;
 import java.time.Instant;
 import java.time.Year;
@@ -11,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.fullcreative.pojo.Book;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -19,7 +20,6 @@ import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 
 public class ServletUtilities {
 
@@ -27,6 +27,7 @@ public class ServletUtilities {
 	 * @param linkedHashMap
 	 * @return String
 	 */
+	@SuppressWarnings("unchecked")
 	public static String mapToJsonString(LinkedHashMap<String, Object> map) {
 		Gson gson = new Gson();
 		Book book = new Book();
@@ -71,7 +72,7 @@ public class ServletUtilities {
 			responseMap.put("BOOK_ID", keyObj.getName());
 			responseMap.put("STATUS_CODE", 200);
 		} catch (Exception e) {
-			System.out.println("Thrown from createBook Method");
+			System.out.println("Thrown from createNewBook Method");
 			responseMap.put("ERROR", "Book was not created");
 			responseMap.put("STATUS_CODE", 503);
 			e.printStackTrace();
@@ -79,6 +80,43 @@ public class ServletUtilities {
 			return responseMap;
 		}
 	}
+
+	/**
+	 * @param jsonInputString
+	 * @return JsonObject
+	 * @throws EntityNotFoundException
+	 */
+	public static LinkedHashMap<String, Object> updateBook(String jsonInputString, String bookID)
+			throws EntityNotFoundException {
+		Gson gson = new GsonBuilder().serializeNulls().excludeFieldsWithoutExposeAnnotation().create();
+		Book newBook = gson.fromJson(jsonInputString, Book.class);
+		System.out.println(newBook.toString());
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		LinkedHashMap<String, Object> responseMap = new LinkedHashMap<>();
+		Entity entity = entityFromBook(newBook, bookID);
+		try {
+			datastore.get(entity.getKey());
+			responseMap = requestBookValidator(newBook, responseMap);
+			if (responseMap.size() != 0) {
+				return responseMap;
+			} else {
+				Key keyObj = datastore.put(entity);
+				Entity responseEntity = datastore.get(keyObj);
+				Book responseBookData = new Book();
+				responseBookData = bookFromEntity(responseEntity);
+				responseMap = mapFromBook(responseBookData, responseMap);
+				responseMap.put("BOOK_ID", keyObj.getName());
+				responseMap.put("STATUS_CODE", 200);
+			}
+		} catch (Exception e) {
+			System.out.println("Thrown from updateBook Method");
+			responseMap.put("ERROR", "Book not Found. Invalid Key");
+			responseMap.put("STATUS_CODE", 404);
+			e.printStackTrace();
+		}
+		return responseMap;
+	}
+
 
 	private static LinkedHashMap<String, Object> mapFromBook(Book book, LinkedHashMap<String, Object> map) {
 		map.put("author", book.getAuthor());
@@ -205,7 +243,7 @@ public class ServletUtilities {
 			errorMap.put("COUNTRY_FIELD_EMPTY_ERROR", "Country should atleast have 3 characters");
 			flag = 1;
 		}
-		if (book.getCountry().replaceAll(" ", "").matches("[a-zA-Z]+") == false
+		if (book.getCountry().replaceAll(" ", "").matches("[a-zA-Z,.]+") == false
 				&& book.getCountry().replaceAll(" ", "").length() != 0) {
 			errorMap.put("COUNTRY_FIELD_FORMAT_ERROR", "Country field can contain only alphabets");
 			flag = 1;
@@ -243,6 +281,17 @@ public class ServletUtilities {
 		} else {
 			return false;
 		}
+	}
+
+	/**
+	 * @param request
+	 * @return String
+	 */
+	public static String getBookKeyFromUri(HttpServletRequest request) {
+		String requestUri = request.getRequestURI();
+		String[] requestsArray = requestUri.split("/");
+		String bookID = requestsArray[requestsArray.length - 1];
+		return bookID;
 	}
 
 	public static Map<String, Object> invalidRequestEndpoint(Map<String, Object> responseMap) {
