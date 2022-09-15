@@ -2,6 +2,7 @@ package com.fullcreative.servlets;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -24,12 +25,41 @@ public class BookServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		try {
-			response.setContentType("appliation/json");
-			String requestString = IOUtils.toString(request.getInputStream());
-			response.getWriter().println(requestString);
+			Map<String, Object> responseMap = new LinkedHashMap<>();
+			if (ServletUtilities.isValidEndPoint(request.getRequestURI())) {
+				if (ServletUtilities.hasBookKey(request.getRequestURI())) {
+					String bookID = ServletUtilities.getBookKeyFromUri(request);
+					responseMap = ServletUtilities.getOneBook(bookID);
+					int code = Integer.parseInt(responseMap.remove("STATUS_CODE").toString());
+					String responseAsJson = new Gson().toJson(responseMap);
+					response.setContentType("application/json");
+					response.getWriter().println(responseAsJson);
+					response.setStatus(code);
+				} else {
+					LinkedList<String> arrayOfBooks = ServletUtilities.getAllBooks();
+					response.setContentType("application/json");
+					response.getWriter().println(arrayOfBooks);
+					response.setStatus(200);
+				}
+			} else {
+				responseMap = ServletUtilities.invalidRequestEndpoint(responseMap);
+				int code = Integer.parseInt(responseMap.remove("STATUS_CODE").toString());
+				String responseAsJson = new Gson().toJson(responseMap);
+				response.setContentType("application/json");
+				response.getWriter().print(responseAsJson);
+				response.setStatus(code);
+			}
 		} catch (Exception e) {
-			response.getWriter().print("No Response");
+			System.out.println("Caught in doGet servlet service method");
+			e.printStackTrace();
+			Map<String, String> internalServerErrorMap = new LinkedHashMap<String, String>();
+			response.setContentType("application/json");
+			internalServerErrorMap.put("500", "Something went wrong");
+			String internalServerError = new Gson().toJson(internalServerErrorMap);
+			response.getWriter().println(internalServerError);
+			response.setStatus(500);
 		}
+
 	}
 
 	@SuppressWarnings("unused")

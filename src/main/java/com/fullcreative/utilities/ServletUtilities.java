@@ -3,6 +3,7 @@ package com.fullcreative.utilities;
 import java.sql.Time;
 import java.time.Instant;
 import java.time.Year;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -17,7 +18,11 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
+import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -113,6 +118,60 @@ public class ServletUtilities {
 			responseMap.put("ERROR", "Book not Found. Invalid Key");
 			responseMap.put("STATUS_CODE", 404);
 			e.printStackTrace();
+		}
+		return responseMap;
+	}
+
+	/**
+	 * @return List<LinkedHashMap<String, Object>>
+	 */
+	public static LinkedList<String> getAllBooks() {
+		LinkedHashMap<String, Object> bookAsMap = new LinkedHashMap<String, Object>();
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		Query query = new Query("Books").addSort("CreatedOrUpdated", SortDirection.DESCENDING);
+		List<Entity> bookEntities = datastore.prepare(query).asList(FetchOptions.Builder.withDefaults());
+		List<Book> booksFromEntities = ServletUtilities.booksFromEntities(bookEntities);
+		LinkedList<String> books = new LinkedList<>();
+		for (Book book : booksFromEntities) {
+			books.add(mapToJsonString(mapFromBook(book, bookAsMap)));
+		}
+		return books;
+	}
+
+	/**
+	 * @param entities
+	 * @return List<BookData>
+	 */
+	public static List<Book> booksFromEntities(List<Entity> entities) {
+		LinkedHashMap<String, Object> bookID = new LinkedHashMap<>();
+		List<Book> books = new ArrayList<>();
+		for (Entity entity : entities) {
+			books.add(bookFromEntity(entity));
+			bookID.put(entity.getKey().toString(), bookFromEntity(entity));
+		}
+
+		return books;
+	}
+
+	/**
+	 * @param bookID
+	 * @return String
+	 * @throws EntityNotFoundException
+	 */
+	public static LinkedHashMap<String, Object> getOneBook(String bookID) throws EntityNotFoundException {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		Key bookKey = KeyFactory.createKey("Books", bookID);
+		LinkedHashMap<String, Object> responseMap = new LinkedHashMap<>();
+		try {
+			Entity responseEntity = datastore.get(bookKey);
+			Book responseBookData = ServletUtilities.bookFromEntity(responseEntity);
+			responseMap = mapFromBook(responseBookData, responseMap);
+			responseMap.put("STATUS_CODE", 200);
+		} catch (Exception e) {
+			System.out.println("Caught in getOneBook method");
+			e.printStackTrace();
+			responseMap.put("ERROR", "Book not Found. Invalid Key");
+			responseMap.put("STATUS_CODE", 404);
 		}
 		return responseMap;
 	}

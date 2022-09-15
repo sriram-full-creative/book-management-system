@@ -13,7 +13,7 @@
     "country": "Nigeria",
     "coverImage": "images/things-fall-apart.jpg",
     "bookLink": "https://en.wikipedia.org/wiki/Things_Fall_Apart",
-    "rating" : 5
+    "rating" : 3
   },
    {
     "author": [
@@ -29,7 +29,7 @@
     "country": "Denmark",
     "coverImage": "images/fairy-tales.jpg",
     "bookLink": "https://en.wikipedia.org/wiki/Fairy_Tales_Told_for_Children._First_Collection.",
-    "rating" : 3
+    "rating" : 5
   },
    {
     "author": [
@@ -97,20 +97,20 @@
   },
   {
     "author": [
-    	"Giovanni Boccaccio"
-    	],
-    "publication":[
-    	" Penguin Classics"
-    	],
+        "Giovanni Boccaccio"
+    ],
+    "publication": [
+        " Penguin Classics"
+    ],
     "title": "The Decameron",
-   	"language": "Italian",
-   	"pages": 1024,
+    "language": "Italian",
+    "pages": 1024,
     "releaseYear": 1351,
     "country": "Italy",
     "coverImage": "images/the-decameron.jpg",
     "bookLink": "https://en.wikipedia.org/wiki/The_Decameron",
-    "rating" : 3
-  },
+    "rating": 3
+},
   {
     "author": [
     	"Jorge Luis Borges"
