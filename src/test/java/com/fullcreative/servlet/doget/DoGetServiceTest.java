@@ -58,9 +58,9 @@ public class DoGetServiceTest {
 		}
 
 		@Test
-		public void getAllBooksTest() throws EntityNotFoundException {
+		public void getAllBooks_Test() throws EntityNotFoundException {
 			System.out.println();
-			System.out.println("getAllBooksTest()");
+			System.out.println("getAllBooks_Test()");
 			LinkedHashMap<String, Object> validBook1Map = DoGetServiceTestCases.testCases.get("validBook1");
 			LinkedHashMap<String, Object> createdBook1 = createAndStrip(validBook1Map);
 			String createdBook1String = ServletUtilities.mapToJsonString(createdBook1);
@@ -81,9 +81,9 @@ public class DoGetServiceTest {
 		}
 
 		@Test
-		public void getOneBookPositiveTest() throws EntityNotFoundException {
+		public void getOneBook_positive_Test() throws EntityNotFoundException {
 			System.out.println();
-			System.out.println("getOneBookPositiveTest()");
+			System.out.println("getOneBook_positive_Test()");
 
 			LinkedHashMap<String, Object> validBookMap = DoGetServiceTestCases.testCases.get("validBook1");
 			// Creating a book using test utility method
@@ -101,9 +101,9 @@ public class DoGetServiceTest {
 		}
 
 		@Test
-		public void getOneBookNegativeTest() throws EntityNotFoundException {
+		public void getOneBook_negative_Test() throws EntityNotFoundException {
 			System.out.println();
-			System.out.println("getOneBookNegativeTest()");
+			System.out.println("getOneBook_negative_Test()");
 			// Calling getOneBook
 			LinkedHashMap<String, Object> actualBookMap = ServletUtilities
 					.getOneBook(DoGetServiceTestCases.bookID.get("INVALID_BOOK_ID"));

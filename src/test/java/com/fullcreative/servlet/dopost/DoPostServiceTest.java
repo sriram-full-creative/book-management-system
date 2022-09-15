@@ -31,9 +31,9 @@ public class DoPostServiceTest {
 	 */
 	@SuppressWarnings("unused")
 	@Test
-	public void validBook_createNewBookTest() throws EntityNotFoundException {
+	public void createNewBook_validBook_Test() throws EntityNotFoundException {
 		System.out.println();
-		System.out.println("validBook_createNewBookTest()");
+		System.out.println("createNewBook_validBook_Test()");
 		LinkedHashMap<String, Object> testCaseMap = DoPostTestCases.testCases.get("validBook");
 		String inputString = ServletUtilities.mapToJsonString(testCaseMap);
 		System.out.println(inputString);
@@ -47,9 +47,9 @@ public class DoPostServiceTest {
 	}
 
 	@Test
-	public void authorNameNull_createNewBookTest() throws EntityNotFoundException {
+	public void createNewBook_authorNameNull_Test() throws EntityNotFoundException {
 		System.out.println();
-		System.out.println("authorNameNull_createNewBookTest()");
+		System.out.println("createNewBook_authorNameNull_Test()");
 		LinkedHashMap<String, Object> testCaseMap = DoPostTestCases.testCases.get("authorNameNull");
 		LinkedHashMap<String, Object> errorMessage = DoPostTestCases.errorMessages.get("authorNameNull");
 		String inputString = ServletUtilities.mapToJsonString(testCaseMap);
@@ -61,9 +61,9 @@ public class DoPostServiceTest {
 	}
 
 	@Test
-	public void bookTitleNull_createNewBookTest() throws EntityNotFoundException {
+	public void createNewBook_bookTitleNull_Test() throws EntityNotFoundException {
 		System.out.println();
-		System.out.println("bookTitleNull_createNewBookTest()");
+		System.out.println("createNewBook_bookTitleNull_Test()");
 		LinkedHashMap<String, Object> testCaseMap = DoPostTestCases.testCases.get("bookTitleNull");
 		LinkedHashMap<String, Object> errorMessage = DoPostTestCases.errorMessages.get("bookTitleNull");
 		String inputString = ServletUtilities.mapToJsonString(testCaseMap);
@@ -75,9 +75,9 @@ public class DoPostServiceTest {
 	}
 
 	@Test
-	public void countryNull_createNewBookTest() throws EntityNotFoundException {
+	public void createNewBook_countryNull_Test() throws EntityNotFoundException {
 		System.out.println();
-		System.out.println("countryNull_createNewBookTest()");
+		System.out.println("createNewBook_countryNull_Test()");
 		LinkedHashMap<String, Object> testCaseMap = DoPostTestCases.testCases.get("countryNull");
 		LinkedHashMap<String, Object> errorMessage = DoPostTestCases.errorMessages.get("countryNull");
 		String inputString = ServletUtilities.mapToJsonString(testCaseMap);
@@ -89,9 +89,9 @@ public class DoPostServiceTest {
 	}
 
 	@Test
-	public void countryNameWithNumerics_createNewBookTest() throws EntityNotFoundException {
+	public void createNewBook_countryNameWithNumerics_Test() throws EntityNotFoundException {
 		System.out.println();
-		System.out.println("countryNameWithNumerics_createNewBookTest()");
+		System.out.println("createNewBook_countryNameWithNumerics_Test()");
 		LinkedHashMap<String, Object> testCaseMap = DoPostTestCases.testCases.get("countryNameWithNumerics");
 		LinkedHashMap<String, Object> errorMessage = DoPostTestCases.errorMessages.get("countryNameWithNumerics");
 		String inputString = ServletUtilities.mapToJsonString(testCaseMap);
@@ -103,9 +103,9 @@ public class DoPostServiceTest {
 	}
 
 	@Test
-	public void languageNull_createNewBookTest() throws EntityNotFoundException {
+	public void createNewBook_languageNull_Test() throws EntityNotFoundException {
 		System.out.println();
-		System.out.println("languageNull_createNewBookTest()");
+		System.out.println("createNewBook_languageNull_Test()");
 		LinkedHashMap<String, Object> testCaseMap = DoPostTestCases.testCases.get("languageNull");
 		LinkedHashMap<String, Object> errorMessage = DoPostTestCases.errorMessages.get("languageNull");
 		String inputString = ServletUtilities.mapToJsonString(testCaseMap);
@@ -117,9 +117,9 @@ public class DoPostServiceTest {
 	}
 
 	@Test
-	public void languageNameWithNumerics_createNewBookTest() throws EntityNotFoundException {
+	public void createNewBook_languageNameWithNumerics_Test() throws EntityNotFoundException {
 		System.out.println();
-		System.out.println("languageNameWithNumerics_createNewBookTest()");
+		System.out.println("createNewBook_languageNameWithNumerics_Test()");
 		LinkedHashMap<String, Object> testCaseMap = DoPostTestCases.testCases.get("languageNameWithNumerics");
 		LinkedHashMap<String, Object> errorMessage = DoPostTestCases.errorMessages.get("languageNameWithNumerics");
 		String inputString = ServletUtilities.mapToJsonString(testCaseMap);
@@ -131,9 +131,9 @@ public class DoPostServiceTest {
 	}
 
 	@Test
-	public void negativePages_createNewBookTest() throws EntityNotFoundException {
+	public void createNewBook_negativePages_Test() throws EntityNotFoundException {
 		System.out.println();
-		System.out.println("negativePages_createNewBookTest()");
+		System.out.println("createNewBook_negativePages_Test()");
 		LinkedHashMap<String, Object> testCaseMap = DoPostTestCases.testCases.get("negativePages");
 		LinkedHashMap<String, Object> errorMessage = DoPostTestCases.errorMessages.get("negativePages");
 		String inputString = ServletUtilities.mapToJsonString(testCaseMap);
@@ -145,9 +145,9 @@ public class DoPostServiceTest {
 	}
 
 	@Test
-	public void minPageCount_createNewBookTest() throws EntityNotFoundException {
+	public void createNewBook_minPageCount_Test() throws EntityNotFoundException {
 		System.out.println();
-		System.out.println("minPageCount_createNewBookTest()");
+		System.out.println("createNewBook_minPageCount_Test()");
 		LinkedHashMap<String, Object> testCaseMap = DoPostTestCases.testCases.get("minPageCount");
 		LinkedHashMap<String, Object> errorMessage = DoPostTestCases.errorMessages.get("minPageCount");
 		String inputString = ServletUtilities.mapToJsonString(testCaseMap);
@@ -159,9 +159,9 @@ public class DoPostServiceTest {
 	}
 
 	@Test
-	public void negativeYear_createNewBookTest() throws EntityNotFoundException {
+	public void createNewBook_negativeYear_Test() throws EntityNotFoundException {
 		System.out.println();
-		System.out.println("negativeYear_createNewBookTest()");
+		System.out.println("createNewBook_negativeYear_Test()");
 		LinkedHashMap<String, Object> testCaseMap = DoPostTestCases.testCases.get("negativeYear");
 		LinkedHashMap<String, Object> errorMessage = DoPostTestCases.errorMessages.get("negativeYear");
 		String inputString = ServletUtilities.mapToJsonString(testCaseMap);
@@ -173,9 +173,9 @@ public class DoPostServiceTest {
 	}
 
 	@Test
-	public void futureYearValue_createNewBookTest() throws EntityNotFoundException {
+	public void createNewBook_futureYearValue_Test() throws EntityNotFoundException {
 		System.out.println();
-		System.out.println("futureYearValue_createNewBookTest()");
+		System.out.println("createNewBook_futureYearValue_Test()");
 		LinkedHashMap<String, Object> testCaseMap = DoPostTestCases.testCases.get("futureYearValue");
 		LinkedHashMap<String, Object> errorMessage = DoPostTestCases.errorMessages.get("futureYearValue");
 		String inputString = ServletUtilities.mapToJsonString(testCaseMap);
@@ -187,9 +187,9 @@ public class DoPostServiceTest {
 	}
 
 	@Test
-	public void ratingsOutOfRange_createNewBookTest() throws EntityNotFoundException {
+	public void createNewBook_ratingsOutOfRange_Test() throws EntityNotFoundException {
 		System.out.println();
-		System.out.println("ratingsOutOfRange_createNewBookTest()");
+		System.out.println("createNewBook_ratingsOutOfRange_Test()");
 		LinkedHashMap<String, Object> testCaseMap = DoPostTestCases.testCases.get("ratingsOutOfRange");
 		LinkedHashMap<String, Object> errorMessage = DoPostTestCases.errorMessages.get("ratingsOutOfRange");
 		String inputString = ServletUtilities.mapToJsonString(testCaseMap);

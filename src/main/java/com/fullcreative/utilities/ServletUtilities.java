@@ -98,10 +98,11 @@ public class ServletUtilities {
 		System.out.println(newBook.toString());
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		LinkedHashMap<String, Object> responseMap = new LinkedHashMap<>();
-		Entity entity = entityFromBook(newBook, bookID);
 		try {
-			datastore.get(entity.getKey());
-			responseMap = requestBookValidator(newBook, responseMap);
+			Entity entity = UpdatedEntityFromBookForUpdate(newBook, bookID);
+			System.out.println(entity);
+			responseMap = requestBookValidatorForUpdation(newBook, responseMap);
+			System.out.println(responseMap);
 			if (responseMap.size() != 0) {
 				return responseMap;
 			} else {
@@ -109,6 +110,7 @@ public class ServletUtilities {
 				Entity responseEntity = datastore.get(keyObj);
 				Book responseBookData = new Book();
 				responseBookData = bookFromEntity(responseEntity);
+				System.out.println(responseBookData);
 				responseMap = mapFromBook(responseBookData, responseMap);
 				responseMap.put("BOOK_ID", keyObj.getName());
 				responseMap.put("STATUS_CODE", 200);
@@ -121,6 +123,7 @@ public class ServletUtilities {
 		}
 		return responseMap;
 	}
+
 
 	/**
 	 * @return List<LinkedHashMap<String, Object>>
@@ -320,6 +323,177 @@ public class ServletUtilities {
 		System.out.println(errorMap.toString());
 		return errorMap;
 
+	}
+
+	private static LinkedHashMap<String, Object> requestBookValidatorForUpdation(Book book,
+			LinkedHashMap<String, Object> errorMap) {
+		int flag = 0;
+		LinkedList<String> authors = book.getAuthor();
+		if (authors != null) {
+			if (authors.size() == 0) {
+				errorMap.put("AUTHOR_NAME_EMPTY_ERROR", "Author Name should contain atleast 1 character");
+				flag = 1;
+			} else {
+				for (String author : authors) {
+					if (author.replaceAll(" ", "").length() == 0 || author.length() <= 0) {
+						errorMap.put("AUTHOR_NAME_EMPTY_ERROR", "Author Name should contain atleast 1 character");
+						flag = 1;
+					} else if (author.replaceAll(" ", "").matches("[a-zA-Z.]+") == false
+							&& author.replaceAll(" ", "").length() != 0) {
+						errorMap.put("AUTHOR_NAME_FORMAT_ERROR", "Author Name should contain only alphabets");
+						flag = 1;
+					}
+				}
+			}
+		}
+
+		LinkedList<String> publications = book.getPublication();
+		if (publications != null) {
+			if (publications.size() == 0) {
+				errorMap.put("PUBLICATION_NAME_EMPTY_ERROR", "Author Name should contain atleast 1 character");
+				flag = 1;
+			} else {
+				for (String publication : publications) {
+					if (publication.replaceAll(" ", "").length() == 0 || publication.length() <= 0) {
+						errorMap.put("PUBLICATION_NAME_EMPTY_ERROR",
+								"Publication Name should contain atleast 1 character");
+						flag = 1;
+					}
+				}
+			}
+		}
+
+		if (book.getTitle() != null) {
+			if (book.getTitle().replaceAll(" ", "").length() == 0 || book.getTitle().length() <= 0) {
+				errorMap.put("TITLE_NAME_ERROR", "Title Name should contain atleast 1 character");
+				flag = 1;
+			}
+		}
+
+		if (book.getLanguage() != null) {
+			if (book.getLanguage().replaceAll(" ", "").length() == 0 || book.getLanguage().length() <= 0) {
+				errorMap.put("LANGUAGE_EMPTY_ERROR", "Language field can't be empty");
+				flag = 1;
+			}
+			if (book.getLanguage().replaceAll(" ", "").matches("[a-zA-Z]+") == false
+					&& book.getLanguage().replaceAll(" ", "").length() != 0) {
+				errorMap.put("LANGUAGE_FORMAT_ERROR", "Language field can contain only alphabets");
+				flag = 1;
+			}
+		}
+
+		if (book.getPages() != null) {
+
+			if (book.getPages() < 20) {
+				if (book.getPages() < 0) {
+					errorMap.put("PAGES_ERROR", "Page Count should be Positive");
+					flag = 1;
+				} else {
+					errorMap.put("PAGES_ERROR", "Book should have atleast 20 pages");
+					flag = 1;
+				}
+			}
+		}
+
+		if (book.getReleaseYear() != null) {
+			if (book.getReleaseYear() <= 0) {
+				errorMap.put("YEAR_NEGATIVE_VALUE_ERROR", "Year should be positive");
+				flag = 1;
+			}
+			if (book.getReleaseYear() > Year.now().getValue()) {
+				errorMap.put("YEAR_FUTURE_VALUE_ERROR",
+						"Year should be less than or equal to the current year -> '" + Year.now().getValue() + "'");
+				flag = 1;
+			}
+		}
+
+		if (book.getCountry() != null) {
+			if (book.getCountry().replaceAll(" ", "").length() < 3) {
+				errorMap.put("COUNTRY_FIELD_EMPTY_ERROR", "Country should atleast have 3 characters");
+				flag = 1;
+			}
+			if (book.getCountry().replaceAll(" ", "").matches("[a-zA-Z,.]+") == false
+					&& book.getCountry().replaceAll(" ", "").length() != 0) {
+				errorMap.put("COUNTRY_FIELD_FORMAT_ERROR", "Country field can contain only alphabets");
+				flag = 1;
+			}
+		}
+
+		if (book.getRating() != null) {
+			if (book.getRating() < 0 || book.getRating() > 5) {
+				errorMap.put("RATING_RANGE_ERROR", "Rating should be in the range of 0 to 5");
+				flag = 1;
+			}
+		}
+
+		if (flag == 1) {
+			errorMap.put("STATUS_CODE", 400);
+		}
+		System.out.println(errorMap.toString());
+		return errorMap;
+
+	}
+
+	private static Entity UpdatedEntityFromBookForUpdate(Book book, String bookID) throws EntityNotFoundException {
+		Entity entity = new Entity("Books", bookID);
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		Entity newEntity = datastore.get(entity.getKey());
+		System.out.println(newEntity);
+
+		if (book.getAuthor() != null) {
+			entity.setProperty("Author",
+					book.getAuthor().toString().replaceAll("(^\\[|\\]$)", "").replaceAll(", ", ","));
+		} else {
+			entity.setProperty("Author", newEntity.getProperty("Author"));
+		}
+		if (book.getPublication() != null) {
+			entity.setProperty("Publication",
+					book.getPublication().toString().replaceAll("(^\\[|\\]$)", "").replaceAll(", ", ","));
+		} else {
+			entity.setProperty("Publication", newEntity.getProperty("Publication"));
+		}
+		if (book.getTitle() != null) {
+			entity.setProperty("Title", book.getTitle());
+		} else {
+			entity.setProperty("Title", newEntity.getProperty("Title"));
+		}
+		if (book.getLanguage() != null) {
+			entity.setProperty("Language", book.getLanguage());
+		} else {
+			entity.setProperty("Language", newEntity.getProperty("Language"));
+		}
+		if (book.getPages() != null) {
+			entity.setProperty("Pages", book.getPages());
+		} else {
+			entity.setProperty("Pages", newEntity.getProperty("Pages"));
+		}
+		if (book.getReleaseYear() != null) {
+			entity.setProperty("ReleaseYear", book.getReleaseYear());
+		} else {
+			entity.setProperty("ReleaseYear", newEntity.getProperty("ReleaseYear"));
+		}
+		if (book.getCountry() != null) {
+			entity.setProperty("Country", book.getCountry());
+		} else {
+			entity.setProperty("Country", newEntity.getProperty("Country"));
+		}
+		if (book.getCoverImage() != null) {
+			entity.setProperty("CoverImage", book.getCoverImage());
+		} else {
+			entity.setProperty("CoverImage", newEntity.getProperty("CoverImage"));
+		}
+		if (book.getBookLink() != null) {
+			entity.setProperty("BookLink", book.getBookLink());
+		} else {
+			entity.setProperty("BookLink", newEntity.getProperty("BookLink"));
+		}
+		if (book.getRating() != null) {
+			entity.setProperty("Rating", book.getRating());
+		} else {
+			entity.setProperty("Rating", newEntity.getProperty("Rating"));
+		}
+		entity.setProperty("CreatedOrUpdated", Time.from(Instant.now()));
+		return entity;
 	}
 
 	public static boolean hasBookKey(String requestURI) {
