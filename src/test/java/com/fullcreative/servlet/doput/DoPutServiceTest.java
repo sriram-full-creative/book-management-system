@@ -27,8 +27,9 @@ public class DoPutServiceTest {
 	}
 
 	/**
+	 * Tests for PUT Methods
 	 * Updating everything at once
-	 **/
+	 */
 
 	@Test
 	public void updateBook_validBook_Test() throws EntityNotFoundException {

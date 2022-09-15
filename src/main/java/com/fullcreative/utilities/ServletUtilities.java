@@ -142,21 +142,6 @@ public class ServletUtilities {
 	}
 
 	/**
-	 * @param entities
-	 * @return List<BookData>
-	 */
-	public static List<Book> booksFromEntities(List<Entity> entities) {
-		LinkedHashMap<String, Object> bookID = new LinkedHashMap<>();
-		List<Book> books = new ArrayList<>();
-		for (Entity entity : entities) {
-			books.add(bookFromEntity(entity));
-			bookID.put(entity.getKey().toString(), bookFromEntity(entity));
-		}
-
-		return books;
-	}
-
-	/**
 	 * @param bookID
 	 * @return String
 	 * @throws EntityNotFoundException
@@ -179,7 +164,48 @@ public class ServletUtilities {
 		return responseMap;
 	}
 
+	/**
+	 * @param bookID
+	 * @throws EntityNotFoundException
+	 */
+	public static LinkedHashMap<String, Object> deleteBook(String bookID) throws EntityNotFoundException {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		Key entityKey = KeyFactory.createKey("Books", bookID);
+		LinkedHashMap<String, Object> responseMap = new LinkedHashMap<>();
+		try {
+			datastore.get(entityKey);
+			datastore.delete(entityKey);
+			responseMap.put("SUCCESS", "Book was deleted");
+			responseMap.put("STATUS_CODE", 200);
+		} catch (Exception e) {
+			System.out.println("Caught in deleteBook Method");
+			e.printStackTrace();
+			responseMap.put("ERROR", "Book not Found. Invalid Key");
+			responseMap.put("STATUS_CODE", 404);
+		}
+		return responseMap;
+	}
 
+	/**
+	 * @param entities
+	 * @return List<BookData>
+	 */
+	public static List<Book> booksFromEntities(List<Entity> entities) {
+		LinkedHashMap<String, Object> bookID = new LinkedHashMap<>();
+		List<Book> books = new ArrayList<>();
+		for (Entity entity : entities) {
+			books.add(bookFromEntity(entity));
+			bookID.put(entity.getKey().toString(), bookFromEntity(entity));
+		}
+
+		return books;
+	}
+
+	/**
+	 * @param book
+	 * @param map
+	 * @return LinkedHashMap
+	 */
 	private static LinkedHashMap<String, Object> mapFromBook(Book book, LinkedHashMap<String, Object> map) {
 		map.put("author", book.getAuthor());
 		map.put("publication", book.getPublication());
@@ -194,6 +220,10 @@ public class ServletUtilities {
 		return map;
 	}
 
+	/**
+	 * @param entity
+	 * @return Book
+	 */
 	private static Book bookFromEntity(Entity entity) {
 		Book book = new Book();
 		book.setAuthor(new LinkedList<String>(Arrays.asList(entity.getProperty("Author").toString().split(","))));
@@ -211,6 +241,11 @@ public class ServletUtilities {
 		return book;
 	}
 
+	/**
+	 * @param book
+	 * @param bookID
+	 * @return Entity
+	 */
 	private static Entity entityFromBook(Book book, String bookID) {
 		Entity entity = new Entity("Books", bookID);
 		entity.setProperty("Author", book.getAuthor().toString().replaceAll("(^\\[|\\]$)", "").replaceAll(", ", ","));
@@ -228,6 +263,11 @@ public class ServletUtilities {
 		return entity;
 	}
 
+	/**
+	 * @param book
+	 * @param errorMap
+	 * @return LinkedHashMap
+	 */
 	private static LinkedHashMap<String, Object> requestBookValidator(Book book,
 			LinkedHashMap<String, Object> errorMap) {
 
@@ -325,6 +365,11 @@ public class ServletUtilities {
 
 	}
 
+	/**
+	 * @param book
+	 * @param errorMap
+	 * @return LinkedHashMap
+	 */
 	private static LinkedHashMap<String, Object> requestBookValidatorForUpdation(Book book,
 			LinkedHashMap<String, Object> errorMap) {
 		int flag = 0;
@@ -434,6 +479,12 @@ public class ServletUtilities {
 
 	}
 
+	/**
+	 * @param book
+	 * @param bookID
+	 * @return Entity
+	 * @throws EntityNotFoundException
+	 */
 	private static Entity UpdatedEntityFromBookForUpdate(Book book, String bookID) throws EntityNotFoundException {
 		Entity entity = new Entity("Books", bookID);
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -496,6 +547,10 @@ public class ServletUtilities {
 		return entity;
 	}
 
+	/**
+	 * @param requestURI
+	 * @return boolean
+	 */
 	public static boolean hasBookKey(String requestURI) {
 		List<String> requestsArray = Arrays.asList(requestURI.split("/"));
 		Integer count = requestsArray.size();
@@ -506,6 +561,10 @@ public class ServletUtilities {
 		}
 	}
 
+	/**
+	 * @param requestURI
+	 * @return boolean
+	 */
 	public static boolean isValidEndPoint(String requestURI) {
 		List<String> requestsArray = Arrays.asList(requestURI.split("/"));
 		Integer count = requestsArray.size();
@@ -527,6 +586,10 @@ public class ServletUtilities {
 		return bookID;
 	}
 
+	/**
+	 * @param responseMap
+	 * @return Map
+	 */
 	public static Map<String, Object> invalidRequestEndpoint(Map<String, Object> responseMap) {
 		/**
 		 * Status Code 422 means Unprocessable Entity The 422 (Unprocessable Entity)

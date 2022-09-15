@@ -144,6 +144,35 @@ public class BookServlet extends HttpServlet {
 	@Override
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		try {
+			Map<String, Object> responseMap = new LinkedHashMap<>();
+			if (ServletUtilities.hasBookKey(request.getRequestURI()) == true
+					&& ServletUtilities.isValidEndPoint(request.getRequestURI())) {
+				String bookID = ServletUtilities.getBookKeyFromUri(request);
+				responseMap = ServletUtilities.deleteBook(bookID);
+				int code = Integer.parseInt(responseMap.remove("STATUS_CODE").toString());
+				String responseAsJson = new Gson().toJson(responseMap);
+				response.setContentType("application/json");
+				response.getWriter().print(responseAsJson);
+				response.setStatus(code);
+			} else {
+				responseMap = ServletUtilities.invalidRequestEndpoint(responseMap);
+				int code = Integer.parseInt(responseMap.remove("STATUS_CODE").toString());
+				String responseAsJson = new Gson().toJson(responseMap);
+				response.setContentType("application/json");
+				response.getWriter().print(responseAsJson);
+				response.setStatus(code);
+			}
+		} catch (Exception e) {
+			System.out.println("Caught in doDelete servlet service method");
+			e.printStackTrace();
+			Map<String, String> internalServerErrorMap = new LinkedHashMap<String, String>();
+			response.setContentType("application/json");
+			internalServerErrorMap.put("500", "Something went wrong");
+			String internalServerError = new Gson().toJson(internalServerErrorMap);
+			response.getWriter().println(internalServerError);
+			response.setStatus(500);
+		}
 	}
-
 }
+

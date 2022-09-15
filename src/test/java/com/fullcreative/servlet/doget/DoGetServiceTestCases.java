@@ -10,8 +10,11 @@ public class DoGetServiceTestCases {
 	public static Map<String, String> bookID = new LinkedHashMap<>();
 	static {
 
+		/**
+		 * Valid Book Data
+		 */
 		testCases.put("validBook1", new LinkedHashMap<String, Object>() {
-
+			private static final long serialVersionUID = -1309288685350267130L;
 			{
 				put("author", new LinkedList<String>(Arrays.asList("Hans Christian Andersen")));
 				put("publication", new LinkedList<String>(Arrays.asList("Penguin Publishing Group")));
@@ -27,7 +30,7 @@ public class DoGetServiceTestCases {
 		});
 
 		testCases.put("validBook2", new LinkedHashMap<String, Object>() {
-
+			private static final long serialVersionUID = 59050706136019371L;
 			{
 				put("author", new LinkedList<String>(Arrays.asList("Jorge Luis Borges")));
 				put("publication", new LinkedList<String>(Arrays.asList("Grove Press")));
@@ -43,7 +46,7 @@ public class DoGetServiceTestCases {
 		});
 
 		testCases.put("validBook3", new LinkedHashMap<String, Object>() {
-
+			private static final long serialVersionUID = 8760762188995028866L;
 			{
 				put("author", new LinkedList<String>(Arrays.asList("Chinua Achebe")));
 				put("publication", new LinkedList<String>(Arrays.asList("Penguin Publishing Group")));
@@ -58,13 +61,17 @@ public class DoGetServiceTestCases {
 			}
 		});
 
+//		Response
 		testCases.put("noBookResponse", new LinkedHashMap<String, Object>() {
+			private static final long serialVersionUID = 9207485526400493380L;
 			{
 				put("ERROR", "Book not Found. Invalid Key");
 				put("STATUS_CODE", 404);
 			}
 		});
-
+		/**
+		 * Invalid BookID
+		 */
 		bookID.put("INVALID_BOOK_ID", "08f38688-9de2-4682-b05b-38f40d42c4e8");
 
 	}

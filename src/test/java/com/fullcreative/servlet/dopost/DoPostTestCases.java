@@ -14,6 +14,10 @@ public class DoPostTestCases {
 	public static Map<String, LinkedHashMap<String, Object>> testCases = new LinkedHashMap<>();
 	static {
 
+		/**
+		 * Creating a entity - validBook
+		 */
+
 		testCases.put("validBook", new LinkedHashMap<String, Object>() {
 			private static final long serialVersionUID = -5252322234633096329L;
 			{
@@ -30,6 +34,9 @@ public class DoPostTestCases {
 			}
 		});
 
+		/**
+		 * Creating a entity - authorNameNull
+		 */
 
 		testCases.put("authorNameNull", new LinkedHashMap<String, Object>() {
 			private static final long serialVersionUID = 2015954993899946652L;
@@ -46,6 +53,8 @@ public class DoPostTestCases {
 				put("rating", 5);
 			}
 		});
+
+//	    Response
 		errorMessages.put("authorNameNull", new LinkedHashMap<String, Object>() {
 			private static final long serialVersionUID = 827522402094573728L;
 
@@ -54,6 +63,9 @@ public class DoPostTestCases {
 			}
 		});
 
+		/**
+		 * Creating a entity - authorNameWithNumerics
+		 */
 
 		testCases.put("authorNameWithNumerics", new LinkedHashMap<String, Object>() {
 			private static final long serialVersionUID = 2015954993899946652L;
@@ -70,6 +82,7 @@ public class DoPostTestCases {
 				put("rating", 5);
 			}
 		});
+//		Response
 		errorMessages.put("authorNameWithNumerics", new LinkedHashMap<String, Object>() {
 			private static final long serialVersionUID = 827522402094573728L;
 
@@ -78,6 +91,9 @@ public class DoPostTestCases {
 			}
 		});
 
+		/**
+		 * Creating a entity - publicationNameNull
+		 */
 
 		testCases.put("publicationNameNull", new LinkedHashMap<String, Object>() {
 			private static final long serialVersionUID = 2015954993899946652L;
@@ -94,6 +110,7 @@ public class DoPostTestCases {
 				put("rating", 5);
 			}
 		});
+//		Response
 		errorMessages.put("publicationNameNull", new LinkedHashMap<String, Object>() {
 			private static final long serialVersionUID = 827522402094573728L;
 
@@ -102,6 +119,9 @@ public class DoPostTestCases {
 			}
 		});
 
+		/**
+		 * Creating a entity - bookTitleNull
+		 */
 
 		testCases.put("bookTitleNull", new LinkedHashMap<String, Object>() {
 			private static final long serialVersionUID = -708603894994379974L;
@@ -118,6 +138,7 @@ public class DoPostTestCases {
 				put("rating", 5);
 			}
 		});
+//		Response
 		errorMessages.put("bookTitleNull", new LinkedHashMap<String, Object>() {
 			private static final long serialVersionUID = -9083862031904971689L;
 			{
@@ -126,6 +147,10 @@ public class DoPostTestCases {
 		});
 		
 		
+		/**
+		 * Creating a entity - languageNull
+		 */
+
 		testCases.put("languageNull", new LinkedHashMap<String, Object>() {
 			private static final long serialVersionUID = 5565937547046482270L;
 			{
@@ -141,12 +166,17 @@ public class DoPostTestCases {
 				put("rating", 5);
 			}
 		});
+//		Response
 		errorMessages.put("languageNull", new LinkedHashMap<String, Object>() {
 			private static final long serialVersionUID = -1444642404690769773L;
 			{
 				put("LANGUAGE_EMPTY_ERROR", "Language field can't be empty");
 			}
 		});
+
+		/**
+		 * Creating a entity - languageNameWithNumerics
+		 */
 
 		testCases.put("languageNameWithNumerics", new LinkedHashMap<String, Object>() {
 			private static final long serialVersionUID = 4037851097674763232L;
@@ -163,6 +193,7 @@ public class DoPostTestCases {
 				put("rating", 5);
 			}
 		});
+//		Response
 		errorMessages.put("languageNameWithNumerics", new LinkedHashMap<String, Object>() {
 			private static final long serialVersionUID = -1444642404690769773L;
 			{
@@ -171,6 +202,10 @@ public class DoPostTestCases {
 		});
 
 		
+		/**
+		 * Creating a entity - negativePages
+		 */
+
 		testCases.put("negativePages", new LinkedHashMap<String, Object>() {
 			private static final long serialVersionUID = -6579816598766219199L;
 			{
@@ -186,6 +221,7 @@ public class DoPostTestCases {
 				put("rating", 5);
 			}
 		});
+//		Response
 		errorMessages.put("negativePages", new LinkedHashMap<String, Object>() {
 			private static final long serialVersionUID = 2010750117218732102L;
 			{
@@ -193,6 +229,9 @@ public class DoPostTestCases {
 			}
 		});
 
+		/**
+		 * Creating a entity - minPageCount
+		 */
 
 		testCases.put("minPageCount", new LinkedHashMap<String, Object>() {
 			private static final long serialVersionUID = -4069751294272476521L;
@@ -209,6 +248,7 @@ public class DoPostTestCases {
 				put("rating", 5);
 			}
 		});
+//		Response
 		errorMessages.put("minPageCount", new LinkedHashMap<String, Object>() {
 			private static final long serialVersionUID = 3442616792115603121L;
 			{
@@ -216,7 +256,9 @@ public class DoPostTestCases {
 			}
 		});
 		
-		
+		/**
+		 * Creating a entity - negativeYear
+		 */
 
 		testCases.put("negativeYear", new LinkedHashMap<String, Object>() {
 			private static final long serialVersionUID = -7798148528131996642L;
@@ -233,6 +275,7 @@ public class DoPostTestCases {
 				put("rating", 5);
 			}
 		});
+//		Response
 		errorMessages.put("negativeYear", new LinkedHashMap<String, Object>() {
 			private static final long serialVersionUID = 5977467271497379180L;
 			{
@@ -240,6 +283,9 @@ public class DoPostTestCases {
 			}
 		});
 
+		/**
+		 * Creating a entity - futureYearValue
+		 */
 
 		testCases.put("futureYearValue", new LinkedHashMap<String, Object>() {
 			private static final long serialVersionUID = 4037851097674763232L;
@@ -256,6 +302,7 @@ public class DoPostTestCases {
 				put("rating", 5);
 			}
 		});
+//		Response
 		errorMessages.put("futureYearValue", new LinkedHashMap<String, Object>() {
 			private static final long serialVersionUID = -2044372333818686741L;
 			{
@@ -263,6 +310,9 @@ public class DoPostTestCases {
 			}
 		});
 
+		/**
+		 * Creating a entity - countryNull
+		 */
 
 		testCases.put("countryNull", new LinkedHashMap<String, Object>() {
 			private static final long serialVersionUID = -6403459380201848196L;
@@ -279,6 +329,7 @@ public class DoPostTestCases {
 				put("rating", 5);
 			}
 		});
+//		Response
 		errorMessages.put("countryNull", new LinkedHashMap<String, Object>() {
 			private static final long serialVersionUID = 4817806869724154658L;
 
@@ -286,6 +337,10 @@ public class DoPostTestCases {
 				put("COUNTRY_FIELD_EMPTY_ERROR", "Country should atleast have 3 characters");
 			}
 		});
+
+		/**
+		 * Creating a entity - countryNameWithNumerics
+		 */
 
 		testCases.put("countryNameWithNumerics", new LinkedHashMap<String, Object>() {
 			private static final long serialVersionUID = 5565937547046482270L;
@@ -302,6 +357,7 @@ public class DoPostTestCases {
 				put("rating", 5);
 			}
 		});
+//		Response
 		errorMessages.put("countryNameWithNumerics", new LinkedHashMap<String, Object>() {
 			private static final long serialVersionUID = 3442616792115603121L;
 			{
@@ -309,6 +365,10 @@ public class DoPostTestCases {
 			}
 		});
 		
+		/**
+		 * Creating a entity - ratingsOutOfRange
+		 */
+
 		testCases.put("ratingsOutOfRange", new LinkedHashMap<String, Object>() {
 			private static final long serialVersionUID = 7718676402864922676L;
 			{
@@ -324,6 +384,7 @@ public class DoPostTestCases {
 				put("rating", 6);
 			}
 		});
+//		Response
 		errorMessages.put("ratingsOutOfRange", new LinkedHashMap<String, Object>() {
 			private static final long serialVersionUID = -4851103486239685402L;
 			{
