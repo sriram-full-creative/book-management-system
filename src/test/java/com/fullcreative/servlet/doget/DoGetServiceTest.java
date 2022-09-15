@@ -57,6 +57,9 @@ public class DoGetServiceTest {
 			return createdBook;
 		}
 
+		/**
+		 * Getting all books at a time
+		 */
 		@Test
 		public void getAllBooks_Test() throws EntityNotFoundException {
 			System.out.println();
@@ -80,6 +83,9 @@ public class DoGetServiceTest {
 			assertEquals(expectedArrayOfBooks, actualArrayOfBooks);
 		}
 
+		/**
+		 * Getting one book at a time with Valid BookID
+		 */
 		@Test
 		public void getOneBook_positive_Test() throws EntityNotFoundException {
 			System.out.println();
@@ -99,6 +105,10 @@ public class DoGetServiceTest {
 			assertEquals(200, StatusCode);
 			assertEquals(createdBookString, actualBookString);
 		}
+
+		/**
+		 * Getting one book at a time with Invalid BookID
+		 */
 
 		@Test
 		public void getOneBook_negative_Test() throws EntityNotFoundException {

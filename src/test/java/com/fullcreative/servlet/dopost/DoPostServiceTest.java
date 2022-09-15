@@ -27,7 +27,7 @@ public class DoPostServiceTest {
 	}
 
 	/**
-	 * Tests for POST Methods
+	 * Tests for POST Methods Creating a entity - validBook
 	 */
 	@SuppressWarnings("unused")
 	@Test
@@ -46,6 +46,10 @@ public class DoPostServiceTest {
 		assertEquals(testCaseMap.toString(), actualBookValue.toString());
 	}
 
+	/**
+	 * Creating a entity - authorNameNull
+	 */
+
 	@Test
 	public void createNewBook_authorNameNull_Test() throws EntityNotFoundException {
 		System.out.println();
@@ -59,6 +63,10 @@ public class DoPostServiceTest {
 		assertEquals(400, code);
 		assertEquals(errorMessage.toString(), actualBookValue.toString());
 	}
+
+	/**
+	 * Creating a entity - bookTitleNull
+	 */
 
 	@Test
 	public void createNewBook_bookTitleNull_Test() throws EntityNotFoundException {
@@ -74,6 +82,10 @@ public class DoPostServiceTest {
 		assertEquals(errorMessage.toString(), actualBookValue.toString());
 	}
 
+	/**
+	 * Creating a entity - countryNull
+	 */
+
 	@Test
 	public void createNewBook_countryNull_Test() throws EntityNotFoundException {
 		System.out.println();
@@ -87,6 +99,10 @@ public class DoPostServiceTest {
 		assertEquals(400, code);
 		assertEquals(errorMessage.toString(), actualBookValue.toString());
 	}
+
+	/**
+	 * Creating a entity - countryNameWithNumerics
+	 */
 
 	@Test
 	public void createNewBook_countryNameWithNumerics_Test() throws EntityNotFoundException {
@@ -102,6 +118,10 @@ public class DoPostServiceTest {
 		assertEquals(errorMessage.toString(), actualBookValue.toString());
 	}
 
+	/**
+	 * Creating a entity - languageNull
+	 */
+
 	@Test
 	public void createNewBook_languageNull_Test() throws EntityNotFoundException {
 		System.out.println();
@@ -115,6 +135,10 @@ public class DoPostServiceTest {
 		assertEquals(400, code);
 		assertEquals(errorMessage.toString(), actualBookValue.toString());
 	}
+
+	/**
+	 * Creating a entity - languageNameWithNumerics
+	 */
 
 	@Test
 	public void createNewBook_languageNameWithNumerics_Test() throws EntityNotFoundException {
@@ -130,6 +154,10 @@ public class DoPostServiceTest {
 		assertEquals(errorMessage.toString(), actualBookValue.toString());
 	}
 
+	/**
+	 * Creating a entity - negativePages
+	 */
+
 	@Test
 	public void createNewBook_negativePages_Test() throws EntityNotFoundException {
 		System.out.println();
@@ -143,6 +171,10 @@ public class DoPostServiceTest {
 		assertEquals(400, code);
 		assertEquals(errorMessage.toString(), actualBookValue.toString());
 	}
+
+	/**
+	 * Creating a entity - minPageCount
+	 */
 
 	@Test
 	public void createNewBook_minPageCount_Test() throws EntityNotFoundException {
@@ -158,6 +190,10 @@ public class DoPostServiceTest {
 		assertEquals(errorMessage.toString(), actualBookValue.toString());
 	}
 
+	/**
+	 * Creating a entity - negativeYear
+	 */
+
 	@Test
 	public void createNewBook_negativeYear_Test() throws EntityNotFoundException {
 		System.out.println();
@@ -172,6 +208,10 @@ public class DoPostServiceTest {
 		assertEquals(errorMessage.toString(), actualBookValue.toString());
 	}
 
+	/**
+	 * Creating a entity - futureYearValue
+	 */
+
 	@Test
 	public void createNewBook_futureYearValue_Test() throws EntityNotFoundException {
 		System.out.println();
@@ -185,6 +225,10 @@ public class DoPostServiceTest {
 		assertEquals(400, code);
 		assertEquals(errorMessage.toString(), actualBookValue.toString());
 	}
+
+	/**
+	 * Creating a entity - ratingsOutOfRange
+	 */
 
 	@Test
 	public void createNewBook_ratingsOutOfRange_Test() throws EntityNotFoundException {
