@@ -26,10 +26,11 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+
 public class ServletUtilities {
 
 	/**
-	 * @param linkedHashMap
+	 * @param map
 	 * @return String
 	 */
 	@SuppressWarnings("unchecked")
@@ -52,7 +53,7 @@ public class ServletUtilities {
 
 	/**
 	 * @param jsonInputString
-	 * @return JsonObject
+	 * @return LinkedHashMap<String, Object>
 	 * @throws EntityNotFoundException
 	 */
 	public static LinkedHashMap<String, Object> createNewBook(String jsonInputString) throws EntityNotFoundException {
@@ -86,9 +87,11 @@ public class ServletUtilities {
 		}
 	}
 
+
 	/**
 	 * @param jsonInputString
-	 * @return JsonObject
+	 * @param bookID
+	 * @return LinkedHashMap<String, Object>
 	 * @throws EntityNotFoundException
 	 */
 	public static LinkedHashMap<String, Object> updateBook(String jsonInputString, String bookID)
@@ -126,7 +129,31 @@ public class ServletUtilities {
 
 
 	/**
-	 * @return List<LinkedHashMap<String, Object>>
+	 * @param queryParameters
+	 * @return LinkedList<String>
+	 */
+	public static LinkedList<String> getAllBooks(Map<String, String> queryParameters) {
+		LinkedHashMap<String, Object> bookAsMap = new LinkedHashMap<String, Object>();
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		String property = queryParameters.get("sortOnProperty");
+		System.out.println("sortOnProperty " + property);
+		String direction = queryParameters.get("sortDirection");
+		System.out.println("sortDirection " + direction);
+		Query query = new Query("Books").addSort(property, SortDirection.DESCENDING);
+		if (direction.equalsIgnoreCase("ascending")) {
+			query = new Query("Books").addSort(property, SortDirection.ASCENDING);
+		}
+		List<Entity> bookEntities = datastore.prepare(query).asList(FetchOptions.Builder.withDefaults());
+		List<Book> booksFromEntities = ServletUtilities.booksFromEntities(bookEntities);
+		LinkedList<String> books = new LinkedList<>();
+		for (Book book : booksFromEntities) {
+			books.add(mapToJsonString(mapFromBook(book, bookAsMap)));
+		}
+		return books;
+	}
+
+	/**
+	 * @return LinkedList<String>
 	 */
 	public static LinkedList<String> getAllBooks() {
 		LinkedHashMap<String, Object> bookAsMap = new LinkedHashMap<String, Object>();
@@ -143,7 +170,7 @@ public class ServletUtilities {
 
 	/**
 	 * @param bookID
-	 * @return String
+	 * @return LinkedHashMap<String, Object>
 	 * @throws EntityNotFoundException
 	 */
 	public static LinkedHashMap<String, Object> getOneBook(String bookID) throws EntityNotFoundException {
@@ -164,8 +191,10 @@ public class ServletUtilities {
 		return responseMap;
 	}
 
+
 	/**
 	 * @param bookID
+	 * @return LinkedHashMap<String, Object>
 	 * @throws EntityNotFoundException
 	 */
 	public static LinkedHashMap<String, Object> deleteBook(String bookID) throws EntityNotFoundException {
@@ -188,7 +217,7 @@ public class ServletUtilities {
 
 	/**
 	 * @param entities
-	 * @return List<BookData>
+	 * @return List<Book>
 	 */
 	public static List<Book> booksFromEntities(List<Entity> entities) {
 		LinkedHashMap<String, Object> bookID = new LinkedHashMap<>();
@@ -204,7 +233,7 @@ public class ServletUtilities {
 	/**
 	 * @param book
 	 * @param map
-	 * @return LinkedHashMap
+	 * @return LinkedHashMap<String, Object>
 	 */
 	private static LinkedHashMap<String, Object> mapFromBook(Book book, LinkedHashMap<String, Object> map) {
 		map.put("author", book.getAuthor());
@@ -266,7 +295,7 @@ public class ServletUtilities {
 	/**
 	 * @param book
 	 * @param errorMap
-	 * @return LinkedHashMap
+	 * @return LinkedHashMap<String, Object>
 	 */
 	private static LinkedHashMap<String, Object> requestBookValidator(Book book,
 			LinkedHashMap<String, Object> errorMap) {
@@ -368,7 +397,7 @@ public class ServletUtilities {
 	/**
 	 * @param book
 	 * @param errorMap
-	 * @return LinkedHashMap
+	 * @return LinkedHashMap<String, Object>
 	 */
 	private static LinkedHashMap<String, Object> requestBookValidatorForUpdation(Book book,
 			LinkedHashMap<String, Object> errorMap) {
@@ -588,7 +617,7 @@ public class ServletUtilities {
 
 	/**
 	 * @param responseMap
-	 * @return Map
+	 * @return Map<String, Object>
 	 */
 	public static Map<String, Object> invalidRequestEndpoint(Map<String, Object> responseMap) {
 		/**
@@ -604,6 +633,48 @@ public class ServletUtilities {
 		responseMap.put("ERROR", "Invalid End Point");
 		responseMap.put("STATUS_CODE", 422);
 		return responseMap;
+	}
+
+	/**
+	 * @param incomingParameters
+	 * @return Map<String, String>
+	 */
+	public static Map<String, String> processQueryParameters(Map<String, String[]> incomingParameters) {
+		Map<String, String> queryParameters = new LinkedHashMap<>();
+		String property;
+		String direction;
+		if (incomingParameters.containsKey("sortOnProperty")) {
+			property = incomingParameters.get("sortOnProperty")[0];
+			if (property.equalsIgnoreCase("author")) {
+				queryParameters.put("sortOnProperty", "Author");
+			} else if (property.equalsIgnoreCase("publication")) {
+				queryParameters.put("sortOnProperty", "Publication");
+			} else if (property.equalsIgnoreCase("title")) {
+				queryParameters.put("sortOnProperty", "Title");
+			} else if (property.equalsIgnoreCase("pages")) {
+				queryParameters.put("sortOnProperty", "Pages");
+			} else if (property.equalsIgnoreCase("releaseYear")) {
+				queryParameters.put("sortOnProperty", "ReleaseYear");
+			} else if (property.equalsIgnoreCase("rating")) {
+				queryParameters.put("sortOnProperty", "Rating");
+			} else {
+				queryParameters.put("sortOnProperty", "CreatedOrUpdated");
+			}
+		} else {
+			queryParameters.put("sortOnProperty", "CreatedOrUpdated");
+		}
+
+		if (incomingParameters.containsKey("sortDirection")) {
+			direction = incomingParameters.get("sortDirection")[0];
+			if (direction.equalsIgnoreCase("ascending")) {
+				queryParameters.put("sortDirection", "ascending");
+			} else {
+				queryParameters.put("sortDirection", "descending");
+			}
+		} else {
+			queryParameters.put("sortDirection", "descending");
+		}
+		return queryParameters;
 	}
 
 }

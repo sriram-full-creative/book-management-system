@@ -58,12 +58,12 @@ public class DoGetServiceTest {
 		}
 
 		/**
-		 * Getting all books at a time
+		 * Getting all books at a time withoutQueryParameters
 		 */
 		@Test
-		public void getAllBooks_Test() throws EntityNotFoundException {
+		public void getAllBooks_withoutQueryParameters_Test() throws EntityNotFoundException {
 			System.out.println();
-			System.out.println("getAllBooks_Test()");
+			System.out.println("getAllBooks_withoutQueryParameters_Test()");
 			LinkedHashMap<String, Object> validBook1Map = DoGetServiceTestCases.testCases.get("validBook1");
 			LinkedHashMap<String, Object> createdBook1 = createAndStrip(validBook1Map);
 			String createdBook1String = ServletUtilities.mapToJsonString(createdBook1);
@@ -78,8 +78,413 @@ public class DoGetServiceTest {
 			expectedArrayOfBooks.add(createdBook3String);
 			expectedArrayOfBooks.add(createdBook2String);
 			expectedArrayOfBooks.add(createdBook1String);
-			// Calling getAllBooks
 			LinkedList<String> actualArrayOfBooks = ServletUtilities.getAllBooks();
+			assertEquals(expectedArrayOfBooks, actualArrayOfBooks);
+		}
+
+		/**
+		 * Getting all books at a time with defaultQueryParameters
+		 */
+		@Test
+		public void getAllBooks_defaultQueryParameters_Test() throws EntityNotFoundException {
+			System.out.println();
+			System.out.println("getAllBooks_defaultQueryParameters_Test()");
+			LinkedHashMap<String, Object> validBook1Map = DoGetServiceTestCases.testCases.get("validBook1");
+			LinkedHashMap<String, Object> createdBook1 = createAndStrip(validBook1Map);
+			String createdBook1String = ServletUtilities.mapToJsonString(createdBook1);
+			LinkedHashMap<String, Object> validBook2Map = DoGetServiceTestCases.testCases.get("validBook2");
+			LinkedHashMap<String, Object> createdBook2 = createAndStrip(validBook2Map);
+			String createdBook2String = ServletUtilities.mapToJsonString(createdBook2);
+			LinkedHashMap<String, Object> validBook3Map = DoGetServiceTestCases.testCases.get("validBook3");
+			LinkedHashMap<String, Object> createdBook3 = createAndStrip(validBook3Map);
+			String createdBook3String = ServletUtilities.mapToJsonString(createdBook3);
+			// Construction the expected array
+			LinkedList<String> expectedArrayOfBooks = new LinkedList<>();
+			expectedArrayOfBooks.add(createdBook3String);
+			expectedArrayOfBooks.add(createdBook2String);
+			expectedArrayOfBooks.add(createdBook1String);
+
+			LinkedHashMap<String, String> queryParameters = DoGetServiceTestCases.queryParametersTestCases
+					.get("defaultQueryParameters");
+			System.out.println(queryParameters);
+			LinkedList<String> actualArrayOfBooks = ServletUtilities.getAllBooks(queryParameters);
+			assertEquals(expectedArrayOfBooks, actualArrayOfBooks);
+		}
+
+		/**
+		 * Getting all books at a time with defaultParameters
+		 */
+		@Test
+		public void getAllBooks_CreatedOrUpdatedAscending_Test() throws EntityNotFoundException {
+			System.out.println();
+			System.out.println("getAllBooks_CreatedOrUpdatedAscending_Test()");
+			LinkedHashMap<String, Object> validBook1Map = DoGetServiceTestCases.testCases.get("validBook1");
+			LinkedHashMap<String, Object> createdBook1 = createAndStrip(validBook1Map);
+			String createdBook1String = ServletUtilities.mapToJsonString(createdBook1);
+			LinkedHashMap<String, Object> validBook2Map = DoGetServiceTestCases.testCases.get("validBook2");
+			LinkedHashMap<String, Object> createdBook2 = createAndStrip(validBook2Map);
+			String createdBook2String = ServletUtilities.mapToJsonString(createdBook2);
+			LinkedHashMap<String, Object> validBook3Map = DoGetServiceTestCases.testCases.get("validBook3");
+			LinkedHashMap<String, Object> createdBook3 = createAndStrip(validBook3Map);
+			String createdBook3String = ServletUtilities.mapToJsonString(createdBook3);
+			// Construction the expected array
+			LinkedList<String> expectedArrayOfBooks = new LinkedList<>();
+			expectedArrayOfBooks.add(createdBook1String);
+			expectedArrayOfBooks.add(createdBook2String);
+			expectedArrayOfBooks.add(createdBook3String);
+
+			LinkedHashMap<String, String> queryParameters = DoGetServiceTestCases.queryParametersTestCases
+					.get("CreatedOrUpdatedAscending");
+			System.out.println(queryParameters);
+			LinkedList<String> actualArrayOfBooks = ServletUtilities.getAllBooks(queryParameters);
+			assertEquals(expectedArrayOfBooks, actualArrayOfBooks);
+		}
+
+		/**
+		 * Getting all books at a time with authorDescending
+		 */
+		@Test
+		public void getAllBooks_authorDescending_Test() throws EntityNotFoundException {
+			System.out.println();
+			System.out.println("getAllBooks_authorDescending_Test()");
+			LinkedHashMap<String, Object> validBook1Map = DoGetServiceTestCases.testCases.get("validBook1");
+			LinkedHashMap<String, Object> createdBook1 = createAndStrip(validBook1Map);
+			String createdBook1String = ServletUtilities.mapToJsonString(createdBook1);
+			LinkedHashMap<String, Object> validBook2Map = DoGetServiceTestCases.testCases.get("validBook2");
+			LinkedHashMap<String, Object> createdBook2 = createAndStrip(validBook2Map);
+			String createdBook2String = ServletUtilities.mapToJsonString(createdBook2);
+			LinkedHashMap<String, Object> validBook3Map = DoGetServiceTestCases.testCases.get("validBook3");
+			LinkedHashMap<String, Object> createdBook3 = createAndStrip(validBook3Map);
+			String createdBook3String = ServletUtilities.mapToJsonString(createdBook3);
+			// Construction the expected array
+			LinkedList<String> expectedArrayOfBooks = new LinkedList<>();
+			expectedArrayOfBooks.add(createdBook2String);
+			expectedArrayOfBooks.add(createdBook1String);
+			expectedArrayOfBooks.add(createdBook3String);
+
+			LinkedHashMap<String, String> queryParameters = DoGetServiceTestCases.queryParametersTestCases
+					.get("authorDescending");
+			System.out.println(queryParameters);
+			LinkedList<String> actualArrayOfBooks = ServletUtilities.getAllBooks(queryParameters);
+			assertEquals(expectedArrayOfBooks, actualArrayOfBooks);
+		}
+
+		/**
+		 * Getting all books at a time with authorAscending
+		 */
+		@Test
+		public void getAllBooks_authorAscending_Test() throws EntityNotFoundException {
+			System.out.println();
+			System.out.println("getAllBooks_authorAscending_Test()");
+			LinkedHashMap<String, Object> validBook1Map = DoGetServiceTestCases.testCases.get("validBook1");
+			LinkedHashMap<String, Object> createdBook1 = createAndStrip(validBook1Map);
+			String createdBook1String = ServletUtilities.mapToJsonString(createdBook1);
+			LinkedHashMap<String, Object> validBook2Map = DoGetServiceTestCases.testCases.get("validBook2");
+			LinkedHashMap<String, Object> createdBook2 = createAndStrip(validBook2Map);
+			String createdBook2String = ServletUtilities.mapToJsonString(createdBook2);
+			LinkedHashMap<String, Object> validBook3Map = DoGetServiceTestCases.testCases.get("validBook3");
+			LinkedHashMap<String, Object> createdBook3 = createAndStrip(validBook3Map);
+			String createdBook3String = ServletUtilities.mapToJsonString(createdBook3);
+			// Construction the expected array
+			LinkedList<String> expectedArrayOfBooks = new LinkedList<>();
+			expectedArrayOfBooks.add(createdBook3String);
+			expectedArrayOfBooks.add(createdBook1String);
+			expectedArrayOfBooks.add(createdBook2String);
+
+			LinkedHashMap<String, String> queryParameters = DoGetServiceTestCases.queryParametersTestCases
+					.get("authorAscending");
+			System.out.println(queryParameters);
+			LinkedList<String> actualArrayOfBooks = ServletUtilities.getAllBooks(queryParameters);
+			assertEquals(expectedArrayOfBooks, actualArrayOfBooks);
+		}
+
+		/**
+		 * Getting all books at a time with publicationDescending
+		 */
+		@Test
+		public void getAllBooks_publicationDescending_Test() throws EntityNotFoundException {
+			System.out.println();
+			System.out.println("getAllBooks_publicationDescending_Test()");
+			LinkedHashMap<String, Object> validBook1Map = DoGetServiceTestCases.testCases.get("validBook1");
+			LinkedHashMap<String, Object> createdBook1 = createAndStrip(validBook1Map);
+			String createdBook1String = ServletUtilities.mapToJsonString(createdBook1);
+			LinkedHashMap<String, Object> validBook2Map = DoGetServiceTestCases.testCases.get("validBook2");
+			LinkedHashMap<String, Object> createdBook2 = createAndStrip(validBook2Map);
+			String createdBook2String = ServletUtilities.mapToJsonString(createdBook2);
+			LinkedHashMap<String, Object> validBook3Map = DoGetServiceTestCases.testCases.get("validBook3");
+			LinkedHashMap<String, Object> createdBook3 = createAndStrip(validBook3Map);
+			String createdBook3String = ServletUtilities.mapToJsonString(createdBook3);
+			// Construction the expected array
+			LinkedList<String> expectedArrayOfBooks = new LinkedList<>();
+			expectedArrayOfBooks.add(createdBook3String);
+			expectedArrayOfBooks.add(createdBook2String);
+			expectedArrayOfBooks.add(createdBook1String);
+
+			LinkedHashMap<String, String> queryParameters = DoGetServiceTestCases.queryParametersTestCases
+					.get("publicationDescending");
+			System.out.println(queryParameters);
+			LinkedList<String> actualArrayOfBooks = ServletUtilities.getAllBooks(queryParameters);
+			assertEquals(expectedArrayOfBooks, actualArrayOfBooks);
+		}
+
+		/**
+		 * Getting all books at a time with publicationAscending
+		 */
+		@Test
+		public void getAllBooks_publicationAscending_Test() throws EntityNotFoundException {
+			System.out.println();
+			System.out.println("getAllBooks_publicationAscending_Test()");
+			LinkedHashMap<String, Object> validBook1Map = DoGetServiceTestCases.testCases.get("validBook1");
+			LinkedHashMap<String, Object> createdBook1 = createAndStrip(validBook1Map);
+			String createdBook1String = ServletUtilities.mapToJsonString(createdBook1);
+			LinkedHashMap<String, Object> validBook2Map = DoGetServiceTestCases.testCases.get("validBook2");
+			LinkedHashMap<String, Object> createdBook2 = createAndStrip(validBook2Map);
+			String createdBook2String = ServletUtilities.mapToJsonString(createdBook2);
+			LinkedHashMap<String, Object> validBook3Map = DoGetServiceTestCases.testCases.get("validBook3");
+			LinkedHashMap<String, Object> createdBook3 = createAndStrip(validBook3Map);
+			String createdBook3String = ServletUtilities.mapToJsonString(createdBook3);
+			// Construction the expected array
+			LinkedList<String> expectedArrayOfBooks = new LinkedList<>();
+			expectedArrayOfBooks.add(createdBook1String);
+			expectedArrayOfBooks.add(createdBook2String);
+			expectedArrayOfBooks.add(createdBook3String);
+
+			LinkedHashMap<String, String> queryParameters = DoGetServiceTestCases.queryParametersTestCases
+					.get("publicationAscending");
+			System.out.println(queryParameters);
+			LinkedList<String> actualArrayOfBooks = ServletUtilities.getAllBooks(queryParameters);
+			assertEquals(expectedArrayOfBooks, actualArrayOfBooks);
+		}
+
+		/**
+		 * Getting all books at a time with titleDescending
+		 */
+		@Test
+		public void getAllBooks_titleDescending_Test() throws EntityNotFoundException {
+			System.out.println();
+			System.out.println("getAllBooks_titleDescending_Test()");
+			LinkedHashMap<String, Object> validBook1Map = DoGetServiceTestCases.testCases.get("validBook1");
+			LinkedHashMap<String, Object> createdBook1 = createAndStrip(validBook1Map);
+			String createdBook1String = ServletUtilities.mapToJsonString(createdBook1);
+			LinkedHashMap<String, Object> validBook2Map = DoGetServiceTestCases.testCases.get("validBook2");
+			LinkedHashMap<String, Object> createdBook2 = createAndStrip(validBook2Map);
+			String createdBook2String = ServletUtilities.mapToJsonString(createdBook2);
+			LinkedHashMap<String, Object> validBook3Map = DoGetServiceTestCases.testCases.get("validBook3");
+			LinkedHashMap<String, Object> createdBook3 = createAndStrip(validBook3Map);
+			String createdBook3String = ServletUtilities.mapToJsonString(createdBook3);
+			// Construction the expected array
+			LinkedList<String> expectedArrayOfBooks = new LinkedList<>();
+			expectedArrayOfBooks.add(createdBook3String);
+			expectedArrayOfBooks.add(createdBook2String);
+			expectedArrayOfBooks.add(createdBook1String);
+
+			LinkedHashMap<String, String> queryParameters = DoGetServiceTestCases.queryParametersTestCases
+					.get("titleDescending");
+			System.out.println(queryParameters);
+			LinkedList<String> actualArrayOfBooks = ServletUtilities.getAllBooks(queryParameters);
+			assertEquals(expectedArrayOfBooks, actualArrayOfBooks);
+		}
+
+		/**
+		 * Getting all books at a time with titleAscending
+		 */
+		@Test
+		public void getAllBooks_titleAscending_Test() throws EntityNotFoundException {
+			System.out.println();
+			System.out.println("getAllBooks_titleAscending_Test()");
+			LinkedHashMap<String, Object> validBook1Map = DoGetServiceTestCases.testCases.get("validBook1");
+			LinkedHashMap<String, Object> createdBook1 = createAndStrip(validBook1Map);
+			String createdBook1String = ServletUtilities.mapToJsonString(createdBook1);
+			LinkedHashMap<String, Object> validBook2Map = DoGetServiceTestCases.testCases.get("validBook2");
+			LinkedHashMap<String, Object> createdBook2 = createAndStrip(validBook2Map);
+			String createdBook2String = ServletUtilities.mapToJsonString(createdBook2);
+			LinkedHashMap<String, Object> validBook3Map = DoGetServiceTestCases.testCases.get("validBook3");
+			LinkedHashMap<String, Object> createdBook3 = createAndStrip(validBook3Map);
+			String createdBook3String = ServletUtilities.mapToJsonString(createdBook3);
+			// Construction the expected array
+			LinkedList<String> expectedArrayOfBooks = new LinkedList<>();
+			expectedArrayOfBooks.add(createdBook1String);
+			expectedArrayOfBooks.add(createdBook2String);
+			expectedArrayOfBooks.add(createdBook3String);
+
+			LinkedHashMap<String, String> queryParameters = DoGetServiceTestCases.queryParametersTestCases
+					.get("titleAscending");
+			System.out.println(queryParameters);
+			LinkedList<String> actualArrayOfBooks = ServletUtilities.getAllBooks(queryParameters);
+			assertEquals(expectedArrayOfBooks, actualArrayOfBooks);
+		}
+
+		/**
+		 * Getting all books at a time with pagesDescending
+		 */
+		@Test
+		public void getAllBooks_pagesDescending_Test() throws EntityNotFoundException {
+			System.out.println();
+			System.out.println("getAllBooks_pagesDescending_Test()");
+			LinkedHashMap<String, Object> validBook1Map = DoGetServiceTestCases.testCases.get("validBook1");
+			LinkedHashMap<String, Object> createdBook1 = createAndStrip(validBook1Map);
+			String createdBook1String = ServletUtilities.mapToJsonString(createdBook1);
+			LinkedHashMap<String, Object> validBook2Map = DoGetServiceTestCases.testCases.get("validBook2");
+			LinkedHashMap<String, Object> createdBook2 = createAndStrip(validBook2Map);
+			String createdBook2String = ServletUtilities.mapToJsonString(createdBook2);
+			LinkedHashMap<String, Object> validBook3Map = DoGetServiceTestCases.testCases.get("validBook3");
+			LinkedHashMap<String, Object> createdBook3 = createAndStrip(validBook3Map);
+			String createdBook3String = ServletUtilities.mapToJsonString(createdBook3);
+			// Construction the expected array
+			LinkedList<String> expectedArrayOfBooks = new LinkedList<>();
+			expectedArrayOfBooks.add(createdBook1String);
+			expectedArrayOfBooks.add(createdBook2String);
+			expectedArrayOfBooks.add(createdBook3String);
+
+			LinkedHashMap<String, String> queryParameters = DoGetServiceTestCases.queryParametersTestCases
+					.get("pagesDescending");
+			System.out.println(queryParameters);
+			LinkedList<String> actualArrayOfBooks = ServletUtilities.getAllBooks(queryParameters);
+			assertEquals(expectedArrayOfBooks, actualArrayOfBooks);
+		}
+
+		/**
+		 * Getting all books at a time with pagesAscending
+		 */
+		@Test
+		public void getAllBooks_pagesAscending_Test() throws EntityNotFoundException {
+			System.out.println();
+			System.out.println("getAllBooks_pagesAscending_Test()");
+			LinkedHashMap<String, Object> validBook1Map = DoGetServiceTestCases.testCases.get("validBook1");
+			LinkedHashMap<String, Object> createdBook1 = createAndStrip(validBook1Map);
+			String createdBook1String = ServletUtilities.mapToJsonString(createdBook1);
+			LinkedHashMap<String, Object> validBook2Map = DoGetServiceTestCases.testCases.get("validBook2");
+			LinkedHashMap<String, Object> createdBook2 = createAndStrip(validBook2Map);
+			String createdBook2String = ServletUtilities.mapToJsonString(createdBook2);
+			LinkedHashMap<String, Object> validBook3Map = DoGetServiceTestCases.testCases.get("validBook3");
+			LinkedHashMap<String, Object> createdBook3 = createAndStrip(validBook3Map);
+			String createdBook3String = ServletUtilities.mapToJsonString(createdBook3);
+			// Construction the expected array
+			LinkedList<String> expectedArrayOfBooks = new LinkedList<>();
+			expectedArrayOfBooks.add(createdBook3String);
+			expectedArrayOfBooks.add(createdBook2String);
+			expectedArrayOfBooks.add(createdBook1String);
+
+			LinkedHashMap<String, String> queryParameters = DoGetServiceTestCases.queryParametersTestCases
+					.get("pagesAscending");
+			System.out.println(queryParameters);
+			LinkedList<String> actualArrayOfBooks = ServletUtilities.getAllBooks(queryParameters);
+			assertEquals(expectedArrayOfBooks, actualArrayOfBooks);
+		}
+
+		/**
+		 * Getting all books at a time with releaseYearDescending
+		 */
+		@Test
+		public void getAllBooks_releaseYearDescending_Test() throws EntityNotFoundException {
+			System.out.println();
+			System.out.println("getAllBooks_releaseYearDescending_Test()");
+			LinkedHashMap<String, Object> validBook1Map = DoGetServiceTestCases.testCases.get("validBook1");
+			LinkedHashMap<String, Object> createdBook1 = createAndStrip(validBook1Map);
+			String createdBook1String = ServletUtilities.mapToJsonString(createdBook1);
+			LinkedHashMap<String, Object> validBook2Map = DoGetServiceTestCases.testCases.get("validBook2");
+			LinkedHashMap<String, Object> createdBook2 = createAndStrip(validBook2Map);
+			String createdBook2String = ServletUtilities.mapToJsonString(createdBook2);
+			LinkedHashMap<String, Object> validBook3Map = DoGetServiceTestCases.testCases.get("validBook3");
+			LinkedHashMap<String, Object> createdBook3 = createAndStrip(validBook3Map);
+			String createdBook3String = ServletUtilities.mapToJsonString(createdBook3);
+			// Construction the expected array
+			LinkedList<String> expectedArrayOfBooks = new LinkedList<>();
+			expectedArrayOfBooks.add(createdBook2String);
+			expectedArrayOfBooks.add(createdBook3String);
+			expectedArrayOfBooks.add(createdBook1String);
+
+			LinkedHashMap<String, String> queryParameters = DoGetServiceTestCases.queryParametersTestCases
+					.get("releaseYearDescending");
+			System.out.println(queryParameters);
+			LinkedList<String> actualArrayOfBooks = ServletUtilities.getAllBooks(queryParameters);
+			assertEquals(expectedArrayOfBooks, actualArrayOfBooks);
+		}
+
+		/**
+		 * Getting all books at a time with releaseYearAscending
+		 */
+		@Test
+		public void getAllBooks_releaseYearAscending_Test() throws EntityNotFoundException {
+			System.out.println();
+			System.out.println("getAllBooks_releaseYearAscending_Test()");
+			LinkedHashMap<String, Object> validBook1Map = DoGetServiceTestCases.testCases.get("validBook1");
+			LinkedHashMap<String, Object> createdBook1 = createAndStrip(validBook1Map);
+			String createdBook1String = ServletUtilities.mapToJsonString(createdBook1);
+			LinkedHashMap<String, Object> validBook2Map = DoGetServiceTestCases.testCases.get("validBook2");
+			LinkedHashMap<String, Object> createdBook2 = createAndStrip(validBook2Map);
+			String createdBook2String = ServletUtilities.mapToJsonString(createdBook2);
+			LinkedHashMap<String, Object> validBook3Map = DoGetServiceTestCases.testCases.get("validBook3");
+			LinkedHashMap<String, Object> createdBook3 = createAndStrip(validBook3Map);
+			String createdBook3String = ServletUtilities.mapToJsonString(createdBook3);
+			// Construction the expected array
+			LinkedList<String> expectedArrayOfBooks = new LinkedList<>();
+			expectedArrayOfBooks.add(createdBook1String);
+			expectedArrayOfBooks.add(createdBook3String);
+			expectedArrayOfBooks.add(createdBook2String);
+
+			LinkedHashMap<String, String> queryParameters = DoGetServiceTestCases.queryParametersTestCases
+					.get("releaseYearAscending");
+			System.out.println(queryParameters);
+			LinkedList<String> actualArrayOfBooks = ServletUtilities.getAllBooks(queryParameters);
+			assertEquals(expectedArrayOfBooks, actualArrayOfBooks);
+		}
+
+		/**
+		 * Getting all books at a time with ratingDescending
+		 */
+		@Test
+		public void getAllBooks_ratingDescending_Test() throws EntityNotFoundException {
+			System.out.println();
+			System.out.println("getAllBooks_ratingDescending_Test()");
+			LinkedHashMap<String, Object> validBook1Map = DoGetServiceTestCases.testCases.get("validBook1");
+			LinkedHashMap<String, Object> createdBook1 = createAndStrip(validBook1Map);
+			String createdBook1String = ServletUtilities.mapToJsonString(createdBook1);
+			LinkedHashMap<String, Object> validBook2Map = DoGetServiceTestCases.testCases.get("validBook2");
+			LinkedHashMap<String, Object> createdBook2 = createAndStrip(validBook2Map);
+			String createdBook2String = ServletUtilities.mapToJsonString(createdBook2);
+			LinkedHashMap<String, Object> validBook3Map = DoGetServiceTestCases.testCases.get("validBook3");
+			LinkedHashMap<String, Object> createdBook3 = createAndStrip(validBook3Map);
+			String createdBook3String = ServletUtilities.mapToJsonString(createdBook3);
+			// Construction the expected array
+			LinkedList<String> expectedArrayOfBooks = new LinkedList<>();
+			expectedArrayOfBooks.add(createdBook1String);
+			expectedArrayOfBooks.add(createdBook2String);
+			expectedArrayOfBooks.add(createdBook3String);
+
+			LinkedHashMap<String, String> queryParameters = DoGetServiceTestCases.queryParametersTestCases
+					.get("ratingDescending");
+			System.out.println(queryParameters);
+			LinkedList<String> actualArrayOfBooks = ServletUtilities.getAllBooks(queryParameters);
+			assertEquals(expectedArrayOfBooks, actualArrayOfBooks);
+		}
+
+		/**
+		 * Getting all books at a time with ratingAscending
+		 */
+		@Test
+		public void getAllBooks_ratingAscending_Test() throws EntityNotFoundException {
+			System.out.println();
+			System.out.println("getAllBooks_ratingAscending_Test()");
+			LinkedHashMap<String, Object> validBook1Map = DoGetServiceTestCases.testCases.get("validBook1");
+			LinkedHashMap<String, Object> createdBook1 = createAndStrip(validBook1Map);
+			String createdBook1String = ServletUtilities.mapToJsonString(createdBook1);
+			LinkedHashMap<String, Object> validBook2Map = DoGetServiceTestCases.testCases.get("validBook2");
+			LinkedHashMap<String, Object> createdBook2 = createAndStrip(validBook2Map);
+			String createdBook2String = ServletUtilities.mapToJsonString(createdBook2);
+			LinkedHashMap<String, Object> validBook3Map = DoGetServiceTestCases.testCases.get("validBook3");
+			LinkedHashMap<String, Object> createdBook3 = createAndStrip(validBook3Map);
+			String createdBook3String = ServletUtilities.mapToJsonString(createdBook3);
+			// Construction the expected array
+			LinkedList<String> expectedArrayOfBooks = new LinkedList<>();
+			expectedArrayOfBooks.add(createdBook3String);
+			expectedArrayOfBooks.add(createdBook2String);
+			expectedArrayOfBooks.add(createdBook1String);
+
+			LinkedHashMap<String, String> queryParameters = DoGetServiceTestCases.queryParametersTestCases
+					.get("ratingAscending");
+			System.out.println(queryParameters);
+			LinkedList<String> actualArrayOfBooks = ServletUtilities.getAllBooks(queryParameters);
 			assertEquals(expectedArrayOfBooks, actualArrayOfBooks);
 		}
 
