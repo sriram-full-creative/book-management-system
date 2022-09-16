@@ -26,6 +26,10 @@ public class BookServlet extends HttpServlet {
 			throws ServletException, IOException {
 		try {
 			Map<String, Object> responseMap = new LinkedHashMap<>();
+			Map<String, String> queryParameters = null;
+			if (request.getParameterMap() != null) {
+				queryParameters = ServletUtilities.processQueryParameters(request.getParameterMap());
+			}
 			if (ServletUtilities.isValidEndPoint(request.getRequestURI())) {
 				if (ServletUtilities.hasBookKey(request.getRequestURI())) {
 					String bookID = ServletUtilities.getBookKeyFromUri(request);
@@ -36,7 +40,12 @@ public class BookServlet extends HttpServlet {
 					response.getWriter().println(responseAsJson);
 					response.setStatus(code);
 				} else {
-					LinkedList<String> arrayOfBooks = ServletUtilities.getAllBooks();
+					LinkedList<String> arrayOfBooks = null;
+					if (queryParameters != null) {
+						arrayOfBooks = ServletUtilities.getAllBooks(queryParameters);
+					} else {
+						arrayOfBooks = ServletUtilities.getAllBooks();
+					}
 					response.setContentType("application/json");
 					response.getWriter().println(arrayOfBooks);
 					response.setStatus(200);
