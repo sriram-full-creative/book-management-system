@@ -1,5 +1,6 @@
 package com.fullcreative.utilities;
 
+import java.io.InputStream;
 import java.sql.Time;
 import java.time.Instant;
 import java.time.Year;
@@ -23,6 +24,11 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.BlobId;
+import com.google.cloud.storage.BlobInfo;
+import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageOptions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -87,6 +93,38 @@ public class ServletUtilities {
 		}
 	}
 
+	public static Map<String, Object> createNewBook(String jsonInputString, InputStream fileInputStream) {
+		Gson gson = new GsonBuilder().serializeNulls().excludeFieldsWithoutExposeAnnotation().create();
+		Book newBook = gson.fromJson(jsonInputString, Book.class);
+		String fileName = newBook.getTitle() + "-by-" + newBook.getAuthor();
+		// Upload the file and get its URL
+		String uploadedFileUrl = ServletUtilities.uploadToCloudStorage(fileName, fileInputStream);
+		newBook.setCoverImage(uploadedFileUrl);
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		LinkedHashMap<String, Object> responseMap = new LinkedHashMap<>();
+		responseMap = requestBookValidator(newBook, responseMap);
+		if (responseMap.size() != 0) {
+			return responseMap;
+		} else {
+			String bookID = UUID.randomUUID().toString();
+			Entity entity = entityFromBook(newBook, bookID);
+			Key keyObj = datastore.put(entity);
+			try {
+				Entity responseEntity = datastore.get(keyObj);
+				Book responseBookData = new Book();
+				responseBookData = bookFromEntity(responseEntity);
+				responseMap = mapFromBook(responseBookData, responseMap);
+				responseMap.put("BOOK_ID", keyObj.getName());
+				responseMap.put("STATUS_CODE", 200);
+			} catch (Exception e) {
+				System.out.println("Thrown from createNewBook Method");
+				responseMap.put("ERROR", "Book was not created");
+				responseMap.put("STATUS_CODE", 503);
+				e.printStackTrace();
+			}
+			return responseMap;
+		}
+	}
 
 	/**
 	 * @param jsonInputString
@@ -675,6 +713,24 @@ public class ServletUtilities {
 			queryParameters.put("sortDirection", "descending");
 		}
 		return queryParameters;
+	}
+
+	/**
+	 * @param fileName
+	 * @param fileInputStream
+	 * @return String
+	 * 
+	 *         Uploads a file to Cloud Storage and returns the uploaded file's URL.
+	 */
+	public static String uploadToCloudStorage(String fileName, InputStream fileInputStream) {
+		String projectId = "book-management-system-362310";
+		String bucketName = "book-management-system-362310.appspot.com";
+		Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+		BlobId blobId = BlobId.of(bucketName, fileName);
+		BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
+		@SuppressWarnings("deprecation")
+		Blob blob = storage.create(blobInfo, fileInputStream);
+		return blob.getMediaLink();
 	}
 
 }

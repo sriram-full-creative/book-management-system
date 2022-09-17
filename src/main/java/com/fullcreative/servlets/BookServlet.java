@@ -1,15 +1,18 @@
 package com.fullcreative.servlets;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
 
 import org.apache.commons.io.IOUtils;
 
@@ -17,6 +20,7 @@ import com.fullcreative.utilities.ServletUtilities;
 import com.google.gson.Gson;
 
 @WebServlet(name = "bookServlet", urlPatterns = { "/books", "/books/*" })
+@MultipartConfig
 public class BookServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -8271652320356442502L;
@@ -75,13 +79,16 @@ public class BookServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		
 		try {
 			Map<String, Object> responseMap = new LinkedHashMap<>();
 			if (ServletUtilities.hasBookKey(request.getRequestURI()) == false
 					&& ServletUtilities.isValidEndPoint(request.getRequestURI())) {
-				String jsonRequestString = IOUtils.toString(request.getInputStream());
-				responseMap = ServletUtilities.createNewBook(jsonRequestString);
+				// Getting json request body
+				String jsonRequestString = request.getParameter("message");
+				// Get the file chosen by the user
+				Part filePart = request.getPart("image");
+				InputStream fileInputStream = filePart.getInputStream();
+				responseMap = ServletUtilities.createNewBook(jsonRequestString, fileInputStream);
 				int statusCode = Integer.parseInt(responseMap.remove("STATUS_CODE").toString());
 				if (responseMap.containsKey("BOOK_ID")) {
 					String key = responseMap.remove("BOOK_ID").toString();
@@ -98,7 +105,7 @@ public class BookServlet extends HttpServlet {
 				response.getWriter().print(responseAsJson);
 				response.setStatus(code);
 			}
-		}catch(Exception e) {
+		} catch (Exception e) {
 			System.out.println("Caught in doPost servlet service method");
 			e.printStackTrace();
 			Map<String, String> internalServerErrorMap = new LinkedHashMap<String, String>();
@@ -184,4 +191,3 @@ public class BookServlet extends HttpServlet {
 		}
 	}
 }
-
