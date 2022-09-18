@@ -1,5 +1,7 @@
 package com.fullcreative.utilities;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Time;
@@ -12,9 +14,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
 import javax.imageio.ImageIO;
 
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.io.IOUtils;
 
 import com.fullcreative.pojo.Book;
 import com.google.appengine.api.datastore.DatastoreService;
@@ -35,6 +40,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 
+/**
+ * @author sriram
+ *
+ */
 public class ServletUtilities {
 
 	/**
@@ -112,7 +121,11 @@ public class ServletUtilities {
 			responseMap.put("STATUS_CODE", 400);
 		}
 		try {
-			responseMap = imageValidator(fileInputStream, imageFormat, responseMap);
+//			Cloning a the inputStream to validate
+			ByteArrayOutputStream baos = cloneInputStream(fileInputStream);
+			fileInputStream = new ByteArrayInputStream(baos.toByteArray());
+			responseMap = imageValidator(new ByteArrayInputStream(baos.toByteArray()), imageFormat, responseMap);
+
 		} catch (Exception e) {
 			responseMap.put("IMAGE_ERROR", "Invalid Image file or format");
 			responseMap.put("STATUS_CODE", 400);
@@ -152,7 +165,6 @@ public class ServletUtilities {
 				throw new Exception();
 			}
 			ImageIO.read(fileInputStream).toString();
-
 		} catch (NullPointerException e) {
 			responseMap.put("IMAGE_ERROR", "Invalid Image file or format");
 			responseMap.put("STATUS_CODE", 400);
@@ -161,6 +173,26 @@ public class ServletUtilities {
 			responseMap.put("STATUS_CODE", 400);
 		}
 		return responseMap;
+	}
+
+	/**
+	 * @param inputStream
+	 * @return ByteArrayOutputStream
+	 * @throws IOException
+	 * 
+	 *                     Creates ByteArrayOutputStream to create clones of the
+	 *                     InputStream
+	 */
+	private static ByteArrayOutputStream cloneInputStream(InputStream inputStream) throws IOException {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		byte[] buffer = new byte[1024];
+		int len;
+		while ((len = inputStream.read(buffer)) > -1) {
+			baos.write(buffer, 0, len);
+		}
+		baos.flush();
+
+		return baos;
 	}
 
 	/**
