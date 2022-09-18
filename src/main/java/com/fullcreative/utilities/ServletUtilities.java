@@ -1,5 +1,6 @@
 package com.fullcreative.utilities;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Time;
 import java.time.Instant;
@@ -11,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import javax.imageio.ImageIO;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -66,10 +68,14 @@ public class ServletUtilities {
 		Gson gson = new GsonBuilder().serializeNulls().excludeFieldsWithoutExposeAnnotation()
 				.create();
 		Book newBook = gson.fromJson(jsonInputString, Book.class);
-		System.out.println(newBook.toString());
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		LinkedHashMap<String, Object> responseMap = new LinkedHashMap<>();
-		responseMap = requestBookValidator(newBook, responseMap);
+		try {
+			responseMap = requestBookValidator(newBook, responseMap);
+		} catch (Exception e) {
+			responseMap.put("REQUEST_BODY_ERROR", "The request body should contain a json body");
+			responseMap.put("STATUS_CODE", 400);
+		}
 		if (responseMap.size() != 0) {
 			return responseMap;
 		} else {
@@ -93,20 +99,32 @@ public class ServletUtilities {
 		}
 	}
 
-	public static Map<String, Object> createNewBook(String jsonInputString, InputStream fileInputStream) {
+	public static Map<String, Object> createNewBook(String jsonInputString, InputStream fileInputStream,
+			String imageFormat) throws IOException {
 		Gson gson = new GsonBuilder().serializeNulls().excludeFieldsWithoutExposeAnnotation().create();
 		Book newBook = gson.fromJson(jsonInputString, Book.class);
-		String fileName = newBook.getTitle() + "-by-" + newBook.getAuthor();
-		// Upload the file and get its URL
-		String uploadedFileUrl = ServletUtilities.uploadToCloudStorage(fileName, fileInputStream);
-		newBook.setCoverImage(uploadedFileUrl);
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		LinkedHashMap<String, Object> responseMap = new LinkedHashMap<>();
-		responseMap = requestBookValidator(newBook, responseMap);
+		try {
+			responseMap = requestBookValidator(newBook, responseMap);
+		} catch (Exception e) {
+			responseMap.put("REQUEST_BODY_ERROR", "The request body should contain a json body");
+			responseMap.put("STATUS_CODE", 400);
+		}
+		try {
+			responseMap = imageValidator(fileInputStream, imageFormat, responseMap);
+		} catch (Exception e) {
+			responseMap.put("IMAGE_ERROR", "Invalid Image file or format");
+			responseMap.put("STATUS_CODE", 400);
+		}
 		if (responseMap.size() != 0) {
 			return responseMap;
 		} else {
 			String bookID = UUID.randomUUID().toString();
+			String fileName = bookID + "." + imageFormat;
+			// Upload the file and get its URL
+			String uploadedFileUrl = ServletUtilities.uploadToCloudStorage(fileName, fileInputStream);
+			newBook.setCoverImage(uploadedFileUrl);
 			Entity entity = entityFromBook(newBook, bookID);
 			Key keyObj = datastore.put(entity);
 			try {
@@ -126,6 +144,25 @@ public class ServletUtilities {
 		}
 	}
 
+	private static LinkedHashMap<String, Object> imageValidator(InputStream fileInputStream,
+			String imageFormat, LinkedHashMap<String, Object> responseMap) throws IOException {
+		try {
+			if (imageFormat.equalsIgnoreCase("jpeg") == false && imageFormat.equalsIgnoreCase("jpg") == false
+					&& imageFormat.equalsIgnoreCase("png") == false) {
+				throw new Exception();
+			}
+			ImageIO.read(fileInputStream).toString();
+
+		} catch (NullPointerException e) {
+			responseMap.put("IMAGE_ERROR", "Invalid Image file or format");
+			responseMap.put("STATUS_CODE", 400);
+		} catch (Exception e) {
+			responseMap.put("IMAGE_ERROR", "Invalid Image file or format");
+			responseMap.put("STATUS_CODE", 400);
+		}
+		return responseMap;
+	}
+
 	/**
 	 * @param jsonInputString
 	 * @param bookID
@@ -136,14 +173,11 @@ public class ServletUtilities {
 			throws EntityNotFoundException {
 		Gson gson = new GsonBuilder().serializeNulls().excludeFieldsWithoutExposeAnnotation().create();
 		Book newBook = gson.fromJson(jsonInputString, Book.class);
-		System.out.println(newBook.toString());
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		LinkedHashMap<String, Object> responseMap = new LinkedHashMap<>();
 		try {
 			Entity entity = UpdatedEntityFromBookForUpdate(newBook, bookID);
-			System.out.println(entity);
 			responseMap = requestBookValidatorForUpdation(newBook, responseMap);
-			System.out.println(responseMap);
 			if (responseMap.size() != 0) {
 				return responseMap;
 			} else {
@@ -151,7 +185,6 @@ public class ServletUtilities {
 				Entity responseEntity = datastore.get(keyObj);
 				Book responseBookData = new Book();
 				responseBookData = bookFromEntity(responseEntity);
-				System.out.println(responseBookData);
 				responseMap = mapFromBook(responseBookData, responseMap);
 				responseMap.put("BOOK_ID", keyObj.getName());
 				responseMap.put("STATUS_CODE", 200);
@@ -174,9 +207,7 @@ public class ServletUtilities {
 		LinkedHashMap<String, Object> bookAsMap = new LinkedHashMap<String, Object>();
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		String property = queryParameters.get("sortOnProperty");
-		System.out.println("sortOnProperty " + property);
 		String direction = queryParameters.get("sortDirection");
-		System.out.println("sortDirection " + direction);
 		Query query = new Query("Books").addSort(property, SortDirection.DESCENDING);
 		if (direction.equalsIgnoreCase("ascending")) {
 			query = new Query("Books").addSort(property, SortDirection.ASCENDING);
@@ -427,7 +458,6 @@ public class ServletUtilities {
 		if (flag == 1) {
 			errorMap.put("STATUS_CODE", 400);
 		}
-		System.out.println(errorMap.toString());
 		return errorMap;
 
 	}
@@ -541,7 +571,6 @@ public class ServletUtilities {
 		if (flag == 1) {
 			errorMap.put("STATUS_CODE", 400);
 		}
-		System.out.println(errorMap.toString());
 		return errorMap;
 
 	}
@@ -556,7 +585,6 @@ public class ServletUtilities {
 		Entity entity = new Entity("Books", bookID);
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		Entity newEntity = datastore.get(entity.getKey());
-		System.out.println(newEntity);
 
 		if (book.getAuthor() != null) {
 			entity.setProperty("Author",

@@ -20,7 +20,7 @@ import com.fullcreative.utilities.ServletUtilities;
 import com.google.gson.Gson;
 
 @WebServlet(name = "bookServlet", urlPatterns = { "/books", "/books/*" })
-@MultipartConfig
+@MultipartConfig(maxFileSize = 1024 * 1024 * 2 /* 2 MB */)
 public class BookServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -8271652320356442502L;
@@ -84,11 +84,18 @@ public class BookServlet extends HttpServlet {
 			if (ServletUtilities.hasBookKey(request.getRequestURI()) == false
 					&& ServletUtilities.isValidEndPoint(request.getRequestURI())) {
 				// Getting json request body
-				String jsonRequestString = request.getParameter("message");
-				// Get the file chosen by the user
-				Part filePart = request.getPart("image");
-				InputStream fileInputStream = filePart.getInputStream();
-				responseMap = ServletUtilities.createNewBook(jsonRequestString, fileInputStream);
+				String jsonRequestString = request.getParameter("jsonBody");
+				if (jsonRequestString == null && request.getPart("coverImage") == null) {
+					throw new NullPointerException();
+				} else if (request.getPart("coverImage") != null) {
+					// Get the file chosen by the user
+					Part filePart = request.getPart("coverImage");
+					String imageFormat = filePart.getContentType().replace("image/", "").trim();
+					InputStream fileInputStream = filePart.getInputStream();
+					responseMap = ServletUtilities.createNewBook(jsonRequestString, fileInputStream, imageFormat);
+				} else {
+					responseMap = ServletUtilities.createNewBook(jsonRequestString);
+				}
 				int statusCode = Integer.parseInt(responseMap.remove("STATUS_CODE").toString());
 				if (responseMap.containsKey("BOOK_ID")) {
 					String key = responseMap.remove("BOOK_ID").toString();
@@ -105,7 +112,24 @@ public class BookServlet extends HttpServlet {
 				response.getWriter().print(responseAsJson);
 				response.setStatus(code);
 			}
-		} catch (Exception e) {
+		} catch (NullPointerException e) {
+			e.printStackTrace();
+			Map<String, String> requestErrorMap = new LinkedHashMap<String, String>();
+			response.setContentType("application/json");
+			requestErrorMap.put("REQUEST_EMPTY_ERROR", "Request should contain a image or json body");
+			String requestError = new Gson().toJson(requestErrorMap);
+			response.getWriter().println(requestError);
+			response.setStatus(400);
+		} catch (ServletException e) {
+			e.printStackTrace();
+			Map<String, String> requestErrorMap = new LinkedHashMap<String, String>();
+			response.setContentType("application/json");
+			requestErrorMap.put("EMPTY_REQUEST_ERROR", "Request should contain a image or json body");
+			String requestError = new Gson().toJson(requestErrorMap);
+			response.getWriter().println(requestError);
+			response.setStatus(400);
+		}
+		catch (Exception e) {
 			System.out.println("Caught in doPost servlet service method");
 			e.printStackTrace();
 			Map<String, String> internalServerErrorMap = new LinkedHashMap<String, String>();
