@@ -43,7 +43,116 @@ import com.google.gson.GsonBuilder;
  * @author Sriram
  *
  */
+/**
+ * @author sriram
+ *
+ */
 public class ServletUtilities {
+
+	/** Utility Methods for HttpServletRequest Processing and Validation **/
+
+	/**
+	 * @param requestURI
+	 * @return boolean
+	 */
+	public static boolean hasBookKey(String requestURI) {
+		List<String> requestsArray = Arrays.asList(requestURI.split("/"));
+		Integer count = requestsArray.size();
+		if (count == 3) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * @param requestURI
+	 * @return boolean
+	 */
+	public static boolean isValidEndPoint(String requestURI) {
+		List<String> requestsArray = Arrays.asList(requestURI.split("/"));
+		Integer count = requestsArray.size();
+		if (count == 3 || count == 2) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * @param request
+	 * @return String
+	 */
+	public static String getBookKeyFromUri(HttpServletRequest request) {
+		String requestUri = request.getRequestURI();
+		String[] requestsArray = requestUri.split("/");
+		String bookID = requestsArray[requestsArray.length - 1];
+		return bookID;
+	}
+
+	/**
+	 * @param responseMap
+	 * @return Map<String, Object>
+	 */
+	public static Map<String, Object> invalidRequestEndpoint(Map<String, Object> responseMap) {
+		/**
+		 * Status Code 422 means Unprocessable Entity The 422 (Unprocessable Entity)
+		 * status code means the server understands the content type of the request
+		 * entity (hence a 415 (Unsupported Media Type) status code is inappropriate),
+		 * and the syntax of the request entity is correct (thus a 400 (Bad Request)
+		 * status code is inappropriate) but was unable to process the contained
+		 * instructions. For example, this error condition may occur if an XML request
+		 * body contains well-formed (i.e., syntactically correct), but semantically
+		 * erroneous, XML instructions.
+		 */
+		responseMap.put("ERROR", "Invalid End Point");
+		responseMap.put("STATUS_CODE", 422);
+		return responseMap;
+	}
+
+	/**
+	 * @param incomingParameters
+	 * @return Map<String, String>
+	 */
+	public static Map<String, String> processQueryParameters(Map<String, String[]> incomingParameters) {
+		Map<String, String> queryParameters = new LinkedHashMap<>();
+		String property;
+		String direction;
+		if (incomingParameters.containsKey("sortOnProperty")) {
+			property = incomingParameters.get("sortOnProperty")[0];
+			if (property.equalsIgnoreCase("author")) {
+				queryParameters.put("sortOnProperty", "Author");
+			} else if (property.equalsIgnoreCase("publication")) {
+				queryParameters.put("sortOnProperty", "Publication");
+			} else if (property.equalsIgnoreCase("title")) {
+				queryParameters.put("sortOnProperty", "Title");
+			} else if (property.equalsIgnoreCase("pages")) {
+				queryParameters.put("sortOnProperty", "Pages");
+			} else if (property.equalsIgnoreCase("releaseYear")) {
+				queryParameters.put("sortOnProperty", "ReleaseYear");
+			} else if (property.equalsIgnoreCase("rating")) {
+				queryParameters.put("sortOnProperty", "Rating");
+			} else {
+				queryParameters.put("sortOnProperty", "CreatedOrUpdated");
+			}
+		} else {
+			queryParameters.put("sortOnProperty", "CreatedOrUpdated");
+		}
+
+		if (incomingParameters.containsKey("sortDirection")) {
+			direction = incomingParameters.get("sortDirection")[0];
+			if (direction.equalsIgnoreCase("ascending")) {
+				queryParameters.put("sortDirection", "ascending");
+			} else {
+				queryParameters.put("sortDirection", "descending");
+			}
+		} else {
+			queryParameters.put("sortDirection", "descending");
+		}
+		return queryParameters;
+	}
+
+	/** Utility Methods to Manipulate Data Structures and Data Types **/
 
 	/**
 	 * @param map
@@ -67,112 +176,6 @@ public class ServletUtilities {
 		return jsonString;
 	}
 
-	/**
-	 * @param jsonInputString
-	 * @return LinkedHashMap<String, Object>
-	 * @throws EntityNotFoundException
-	 */
-	public static LinkedHashMap<String, Object> createNewBook(String jsonInputString) throws EntityNotFoundException {
-		Gson gson = new GsonBuilder().serializeNulls().excludeFieldsWithoutExposeAnnotation()
-				.create();
-		Book newBook = gson.fromJson(jsonInputString, Book.class);
-		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-		LinkedHashMap<String, Object> responseMap = new LinkedHashMap<>();
-		try {
-			responseMap = requestBookValidator(newBook, responseMap);
-		} catch (Exception e) {
-			responseMap.put("REQUEST_BODY_ERROR", "The request body should contain a json body");
-			responseMap.put("STATUS_CODE", 400);
-		}
-		if (responseMap.size() != 0) {
-			return responseMap;
-		} else {
-			String bookID = UUID.randomUUID().toString();
-			Entity entity = entityFromBook(newBook, bookID);
-			Key keyObj = datastore.put(entity);
-			try {
-			Entity responseEntity = datastore.get(keyObj);
-			Book responseBookData = new Book();
-			responseBookData = bookFromEntity(responseEntity);
-			responseMap = mapFromBook(responseBookData, responseMap);
-			responseMap.put("BOOK_ID", keyObj.getName());
-			responseMap.put("STATUS_CODE", 200);
-		} catch (Exception e) {
-			System.out.println("Thrown from createNewBook Method");
-			responseMap.put("ERROR", "Book was not created");
-			responseMap.put("STATUS_CODE", 503);
-			e.printStackTrace();
-		}
-			return responseMap;
-		}
-	}
-
-	public static Map<String, Object> createNewBook(String jsonInputString, InputStream fileInputStream,
-			String imageFormat) throws IOException {
-		Gson gson = new GsonBuilder().serializeNulls().excludeFieldsWithoutExposeAnnotation().create();
-		Book newBook = gson.fromJson(jsonInputString, Book.class);
-		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-		LinkedHashMap<String, Object> responseMap = new LinkedHashMap<>();
-		try {
-			responseMap = requestBookValidator(newBook, responseMap);
-		} catch (Exception e) {
-			responseMap.put("REQUEST_BODY_ERROR", "The request body should contain a json body");
-			responseMap.put("STATUS_CODE", 400);
-		}
-		try {
-//			Cloning a the inputStream to validate
-			ByteArrayOutputStream baos = cloneInputStream(fileInputStream);
-			fileInputStream = new ByteArrayInputStream(baos.toByteArray());
-			responseMap = imageValidator(new ByteArrayInputStream(baos.toByteArray()), imageFormat, responseMap);
-
-		} catch (Exception e) {
-			responseMap.put("IMAGE_ERROR", "Invalid Image file or format");
-			responseMap.put("STATUS_CODE", 400);
-		}
-		if (responseMap.size() != 0) {
-			return responseMap;
-		} else {
-			String bookID = UUID.randomUUID().toString();
-//			String fileName = bookID + "." + imageFormat;
-			// Upload the file and get its URL
-			String uploadedFileUrl = ServletUtilities.uploadToCloudStorage(bookID, imageFormat, fileInputStream);
-			newBook.setCoverImage(uploadedFileUrl);
-			Entity entity = entityFromBook(newBook, bookID);
-			Key keyObj = datastore.put(entity);
-			try {
-				Entity responseEntity = datastore.get(keyObj);
-				Book responseBookData = new Book();
-				responseBookData = bookFromEntity(responseEntity);
-				responseMap = mapFromBook(responseBookData, responseMap);
-				responseMap.put("BOOK_ID", keyObj.getName());
-				responseMap.put("STATUS_CODE", 200);
-			} catch (Exception e) {
-				System.out.println("Thrown from createNewBook Method");
-				responseMap.put("ERROR", "Book was not created");
-				responseMap.put("STATUS_CODE", 503);
-				e.printStackTrace();
-			}
-			return responseMap;
-		}
-	}
-
-	private static LinkedHashMap<String, Object> imageValidator(InputStream fileInputStream,
-			String imageFormat, LinkedHashMap<String, Object> responseMap) throws IOException {
-		try {
-			if (imageFormat.equalsIgnoreCase("jpeg") == false && imageFormat.equalsIgnoreCase("jpg") == false
-					&& imageFormat.equalsIgnoreCase("png") == false) {
-				throw new Exception();
-			}
-			ImageIO.read(fileInputStream).toString();
-		} catch (NullPointerException e) {
-			responseMap.put("IMAGE_ERROR", "Invalid Image file or format");
-			responseMap.put("STATUS_CODE", 400);
-		} catch (Exception e) {
-			responseMap.put("IMAGE_ERROR", "Invalid Image file or format");
-			responseMap.put("STATUS_CODE", 400);
-		}
-		return responseMap;
-	}
 
 	/**
 	 * @param inputStream
@@ -192,216 +195,6 @@ public class ServletUtilities {
 		baos.flush();
 
 		return baos;
-	}
-	
-	/**
-	 * @param jsonInputString
-	 * @param bookID
-	 * @return LinkedHashMap<String, Object>
-	 * @throws EntityNotFoundException
-	 */
-	public static LinkedHashMap<String, Object> updateBook(String jsonInputString, String bookID)
-			throws EntityNotFoundException {
-		Gson gson = new GsonBuilder().serializeNulls().excludeFieldsWithoutExposeAnnotation().create();
-		Book newBook = gson.fromJson(jsonInputString, Book.class);
-		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-		LinkedHashMap<String, Object> responseMap = new LinkedHashMap<>();
-		try {
-			responseMap = requestBookValidatorForUpdation(newBook, responseMap);
-			if (responseMap.size() != 0) {
-				return responseMap;
-			} else {
-				Entity entity = UpdatedEntityFromBookForUpdate(newBook, bookID);
-				Key keyObj = datastore.put(entity);
-				Entity responseEntity = datastore.get(keyObj);
-				Book responseBookData = new Book();
-				responseBookData = bookFromEntity(responseEntity);
-				responseMap = mapFromBook(responseBookData, responseMap);
-				responseMap.put("BOOK_ID", keyObj.getName());
-				responseMap.put("STATUS_CODE", 200);
-			}
-		} catch (Exception e) {
-			System.out.println("Thrown from updateBook Method");
-			responseMap.put("ERROR", "Book not Found. Invalid Key");
-			responseMap.put("STATUS_CODE", 404);
-			e.printStackTrace();
-		}
-		return responseMap;
-	}
-
-	/**
-	 * @param jsonInputString
-	 * @param fileInputStream
-	 * @param bookID
-	 * @return LinkedHashMap<String, Object>
-	 * @throws EntityNotFoundException
-	 */
-	public static LinkedHashMap<String, Object> updateBook(String jsonInputString, InputStream fileInputStream,
-			String imageFormat,
-			String bookID) throws EntityNotFoundException {
-		Gson gson = new GsonBuilder().serializeNulls().excludeFieldsWithoutExposeAnnotation().create();
-		Book newBook = gson.fromJson(jsonInputString, Book.class);
-		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-		LinkedHashMap<String, Object> responseMap = new LinkedHashMap<>();
-		try {
-			responseMap = requestBookValidatorForUpdation(newBook, responseMap);
-
-			// Creating a clone of InputStream to Validate
-			ByteArrayOutputStream baos = cloneInputStream(fileInputStream);
-			fileInputStream = new ByteArrayInputStream(baos.toByteArray());
-
-			responseMap = imageValidator(new ByteArrayInputStream(baos.toByteArray()), imageFormat, responseMap);
-			if (responseMap.size() != 0) {
-				return responseMap;
-			} else {
-				// Updating the image in the GCS
-				String uploadedFileUrl = ServletUtilities.uploadToCloudStorage(bookID, imageFormat, fileInputStream);
-				// Creating a entity from the updated POJO to update in Datastore.
-				Entity entity = UpdatedEntityFromBookForUpdate(newBook, bookID, uploadedFileUrl);
-				Key keyObj = datastore.put(entity);
-				Entity responseEntity = datastore.get(keyObj);
-				Book responseBookData = new Book();
-				responseBookData = bookFromEntity(responseEntity);
-				responseMap = mapFromBook(responseBookData, responseMap);
-				responseMap.put("BOOK_ID", keyObj.getName());
-				responseMap.put("STATUS_CODE", 200);
-			}
-		} catch (Exception e) {
-			System.out.println("Thrown from updateBook Method");
-			responseMap.put("ERROR", "Book not Found. Invalid Key");
-			responseMap.put("STATUS_CODE", 404);
-			e.printStackTrace();
-		}
-		return responseMap;
-	}
-
-	/**
-	 * @param jsonInputString
-	 * @param fileInputStream
-	 * @param bookID
-	 * @return LinkedHashMap<String, Object>
-	 * @throws EntityNotFoundException
-	 */
-	public static LinkedHashMap<String, Object> updateBook(InputStream fileInputStream, String imageFormat,
-			String bookID) throws EntityNotFoundException {
-		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-		LinkedHashMap<String, Object> responseMap = new LinkedHashMap<>();
-		try {
-			Book newBook = new Book();
-			// Cloning a the inputStream to validate
-			ByteArrayOutputStream baos = cloneInputStream(fileInputStream);
-			fileInputStream = new ByteArrayInputStream(baos.toByteArray());
-			responseMap = imageValidator(new ByteArrayInputStream(baos.toByteArray()), imageFormat, responseMap);
-			if (responseMap.size() != 0) {
-				return responseMap;
-			} else {
-				// Updating the image in the GCS
-				String uploadedFileUrl = ServletUtilities.uploadToCloudStorage(bookID, imageFormat, fileInputStream);
-				// Creating a entity from the updated POJO to update in Datastore.
-				Entity entity = UpdatedEntityFromBookForUpdate(newBook, bookID, uploadedFileUrl);
-				Key keyObj = datastore.put(entity);
-				Entity responseEntity = datastore.get(keyObj);
-				Book responseBookData = new Book();
-				responseBookData = bookFromEntity(responseEntity);
-				responseMap = mapFromBook(responseBookData, responseMap);
-				responseMap.put("BOOK_ID", keyObj.getName());
-				responseMap.put("STATUS_CODE", 200);
-			}
-		} catch (Exception e) {
-			System.out.println("Thrown from updateBook Method");
-			responseMap.put("ERROR", "Book not Found. Invalid Key");
-			responseMap.put("STATUS_CODE", 404);
-			e.printStackTrace();
-		}
-		return responseMap;
-	}
-
-
-	/**
-	 * @param queryParameters
-	 * @return LinkedList<String>
-	 */
-	public static LinkedList<String> getAllBooks(Map<String, String> queryParameters) {
-		LinkedHashMap<String, Object> bookAsMap = new LinkedHashMap<String, Object>();
-		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-		String property = queryParameters.get("sortOnProperty");
-		String direction = queryParameters.get("sortDirection");
-		Query query = new Query("Books").addSort(property, SortDirection.DESCENDING);
-		if (direction.equalsIgnoreCase("ascending")) {
-			query = new Query("Books").addSort(property, SortDirection.ASCENDING);
-		}
-		List<Entity> bookEntities = datastore.prepare(query).asList(FetchOptions.Builder.withDefaults());
-		List<Book> booksFromEntities = ServletUtilities.booksFromEntities(bookEntities);
-		LinkedList<String> books = new LinkedList<>();
-		for (Book book : booksFromEntities) {
-			books.add(mapToJsonString(mapFromBook(book, bookAsMap)));
-		}
-		return books;
-	}
-
-	/**
-	 * @return LinkedList<String>
-	 */
-	public static LinkedList<String> getAllBooks() {
-		LinkedHashMap<String, Object> bookAsMap = new LinkedHashMap<String, Object>();
-		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-		Query query = new Query("Books").addSort("CreatedOrUpdated", SortDirection.DESCENDING);
-		List<Entity> bookEntities = datastore.prepare(query).asList(FetchOptions.Builder.withDefaults());
-		List<Book> booksFromEntities = ServletUtilities.booksFromEntities(bookEntities);
-		LinkedList<String> books = new LinkedList<>();
-		for (Book book : booksFromEntities) {
-			books.add(mapToJsonString(mapFromBook(book, bookAsMap)));
-		}
-		return books;
-	}
-
-	/**
-	 * @param bookID
-	 * @return LinkedHashMap<String, Object>
-	 * @throws EntityNotFoundException
-	 */
-	public static LinkedHashMap<String, Object> getOneBook(String bookID) throws EntityNotFoundException {
-		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-		Key bookKey = KeyFactory.createKey("Books", bookID);
-		LinkedHashMap<String, Object> responseMap = new LinkedHashMap<>();
-		try {
-			Entity responseEntity = datastore.get(bookKey);
-			Book responseBookData = ServletUtilities.bookFromEntity(responseEntity);
-			responseMap = mapFromBook(responseBookData, responseMap);
-			responseMap.put("STATUS_CODE", 200);
-		} catch (Exception e) {
-			System.out.println("Caught in getOneBook method");
-			e.printStackTrace();
-			responseMap.put("ERROR", "Book not Found. Invalid Key");
-			responseMap.put("STATUS_CODE", 404);
-		}
-		return responseMap;
-	}
-
-
-	/**
-	 * @param bookID
-	 * @return LinkedHashMap<String, Object>
-	 * @throws EntityNotFoundException
-	 */
-	@SuppressWarnings("unused")
-	public static LinkedHashMap<String, Object> deleteBook(String bookID) throws EntityNotFoundException {
-		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-		Key entityKey = KeyFactory.createKey("Books", bookID);
-		LinkedHashMap<String, Object> responseMap = new LinkedHashMap<>();
-		try {
-			datastore.get(entityKey);
-			datastore.delete(entityKey);
-			boolean deleted = deleteImageInCloudStorage(bookID);
-			responseMap.put("SUCCESS", "Book was deleted");
-			responseMap.put("STATUS_CODE", 200);
-		} catch (Exception e) {
-			System.out.println("Caught in deleteBook Method");
-			e.printStackTrace();
-			responseMap.put("ERROR", "Book not Found. Invalid Key");
-			responseMap.put("STATUS_CODE", 404);
-		}
-		return responseMap;
 	}
 
 	/**
@@ -482,6 +275,194 @@ public class ServletUtilities {
 	}
 
 	/**
+	 * @param book
+	 * @param bookID
+	 * @return Entity
+	 * @throws EntityNotFoundException
+	 */
+	private static Entity entityFromBookForUpdate(Book book, String bookID) throws EntityNotFoundException {
+		Entity entity = new Entity("Books", bookID);
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		Entity datastoreEntity = datastore.get(entity.getKey());
+
+		if (book.getAuthor() != null) {
+			entity.setProperty("Author",
+					book.getAuthor().toString().replaceAll("(^\\[|\\]$)", "").replaceAll(", ", ","));
+		} else {
+			entity.setProperty("Author", datastoreEntity.getProperty("Author"));
+		}
+		if (book.getPublication() != null) {
+			entity.setProperty("Publication",
+					book.getPublication().toString().replaceAll("(^\\[|\\]$)", "").replaceAll(", ", ","));
+		} else {
+			entity.setProperty("Publication", datastoreEntity.getProperty("Publication"));
+		}
+		if (book.getTitle() != null) {
+			entity.setProperty("Title", book.getTitle());
+		} else {
+			entity.setProperty("Title", datastoreEntity.getProperty("Title"));
+		}
+		if (book.getLanguage() != null) {
+			entity.setProperty("Language", book.getLanguage());
+		} else {
+			entity.setProperty("Language", datastoreEntity.getProperty("Language"));
+		}
+		if (book.getPages() != null) {
+			entity.setProperty("Pages", book.getPages());
+		} else {
+			entity.setProperty("Pages", datastoreEntity.getProperty("Pages"));
+		}
+		if (book.getReleaseYear() != null) {
+			entity.setProperty("ReleaseYear", book.getReleaseYear());
+		} else {
+			entity.setProperty("ReleaseYear", datastoreEntity.getProperty("ReleaseYear"));
+		}
+		if (book.getCountry() != null) {
+			entity.setProperty("Country", book.getCountry());
+		} else {
+			entity.setProperty("Country", datastoreEntity.getProperty("Country"));
+		}
+
+		entity.setProperty("CoverImage", datastoreEntity.getProperty("CoverImage"));
+
+		if (book.getBookLink() != null) {
+			entity.setProperty("BookLink", book.getBookLink());
+		} else {
+			entity.setProperty("BookLink", datastoreEntity.getProperty("BookLink"));
+		}
+		if (book.getRating() != null) {
+			entity.setProperty("Rating", book.getRating());
+		} else {
+			entity.setProperty("Rating", datastoreEntity.getProperty("Rating"));
+		}
+		entity.setProperty("CreatedOrUpdated", Time.from(Instant.now()));
+		return entity;
+	}
+
+	/**
+	 * @param book
+	 * @param bookID
+	 * @return Entity
+	 * @throws EntityNotFoundException
+	 */
+	private static Entity entityFromBookForUpdate(Entity datastoreEntity, Book book, String bookID,
+			String updatedFileUrl) throws EntityNotFoundException {
+		Entity entity = new Entity("Books", bookID);
+		if (book.getAuthor() != null) {
+			entity.setProperty("Author",
+					book.getAuthor().toString().replaceAll("(^\\[|\\]$)", "").replaceAll(", ", ","));
+		} else {
+			entity.setProperty("Author", datastoreEntity.getProperty("Author"));
+		}
+		if (book.getPublication() != null) {
+			entity.setProperty("Publication",
+					book.getPublication().toString().replaceAll("(^\\[|\\]$)", "").replaceAll(", ", ","));
+		} else {
+			entity.setProperty("Publication", datastoreEntity.getProperty("Publication"));
+		}
+		if (book.getTitle() != null) {
+			entity.setProperty("Title", book.getTitle());
+		} else {
+			entity.setProperty("Title", datastoreEntity.getProperty("Title"));
+		}
+		if (book.getLanguage() != null) {
+			entity.setProperty("Language", book.getLanguage());
+		} else {
+			entity.setProperty("Language", datastoreEntity.getProperty("Language"));
+		}
+		if (book.getPages() != null) {
+			entity.setProperty("Pages", book.getPages());
+		} else {
+			entity.setProperty("Pages", datastoreEntity.getProperty("Pages"));
+		}
+		if (book.getReleaseYear() != null) {
+			entity.setProperty("ReleaseYear", book.getReleaseYear());
+		} else {
+			entity.setProperty("ReleaseYear", datastoreEntity.getProperty("ReleaseYear"));
+		}
+		if (book.getCountry() != null) {
+			entity.setProperty("Country", book.getCountry());
+		} else {
+			entity.setProperty("Country", datastoreEntity.getProperty("Country"));
+		}
+		// Updating the Cover Image with the Latest URL
+		entity.setProperty("CoverImage", updatedFileUrl);
+
+		if (book.getBookLink() != null) {
+			entity.setProperty("BookLink", book.getBookLink());
+		} else {
+			entity.setProperty("BookLink", datastoreEntity.getProperty("BookLink"));
+		}
+		if (book.getRating() != null) {
+			entity.setProperty("Rating", book.getRating());
+		} else {
+			entity.setProperty("Rating", datastoreEntity.getProperty("Rating"));
+		}
+		entity.setProperty("CreatedOrUpdated", Time.from(Instant.now()));
+		return entity;
+	}
+
+	/**
+	 * Utility Methods used to Perform Validations on data sent in
+	 * HttpServletRequest
+	 **/
+
+	/**
+	 * <p>
+	 * Validates the fileInputStream.
+	 * </p>
+	 * <p>
+	 * Checks the MIME TYPE and also the stream to validate if the stream is of an
+	 * Image using the ImageIo Class.
+	 * </p>
+	 * 
+	 * @param fileInputStream
+	 * @param imageFormat
+	 * @param responseMap
+	 * @return LinkedHashMap<String, Object>
+	 * @throws IOException
+	 */
+	private static LinkedHashMap<String, Object> imageValidator(InputStream fileInputStream, String imageFormat,
+			LinkedHashMap<String, Object> responseMap) throws IOException {
+		try {
+			if (imageFormat.equalsIgnoreCase("jpeg") == false && imageFormat.equalsIgnoreCase("jpg") == false
+					&& imageFormat.equalsIgnoreCase("png") == false) {
+				throw new Exception();
+			}
+			ImageIO.read(fileInputStream).toString();
+		} catch (NullPointerException e) {
+			responseMap.put("IMAGE_ERROR", "Invalid Image file or format");
+			responseMap.put("STATUS_CODE", 400);
+		} catch (Exception e) {
+			responseMap.put("IMAGE_ERROR", "Invalid Image file or format");
+			responseMap.put("STATUS_CODE", 400);
+		}
+		return responseMap;
+	}
+
+	public static boolean bookIDValidator(String bookID) {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		// Validating the bookID
+		Entity entity = new Entity("Books", bookID);
+		try {
+			datastore.get(entity.getKey());
+			return true;
+		} catch (EntityNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	/**
+	 * <p>
+	 * Validates the book details created from the HttpServeltRequest Body.
+	 * </p>
+	 * 
+	 * <p>
+	 * Call this method to validate data only when creating a new book.
+	 * </p>
+	 * 
 	 * @param book
 	 * @param errorMap
 	 * @return LinkedHashMap<String, Object>
@@ -583,6 +564,14 @@ public class ServletUtilities {
 	}
 
 	/**
+	 * <p>
+	 * Validates the book details created from the HttpServeltRequest Body.
+	 * </p>
+	 * 
+	 * <p>
+	 * Call this method to validate data only when updating the book details.
+	 * </p>
+	 * 
 	 * @param book
 	 * @param errorMap
 	 * @return LinkedHashMap<String, Object>
@@ -695,247 +684,415 @@ public class ServletUtilities {
 
 	}
 
+	/** Utility Methods to Perform CRUD Operations for the Application **/
+
+	/** 1. CREATE Operation **/
+
 	/**
-	 * @param book
-	 * @param bookID
-	 * @return Entity
+	 * <p>
+	 * Creates a New Entity in the Datastore with all the properties of the Book.
+	 * </p>
+	 * 
+	 * @param jsonInputString
+	 * @return LinkedHashMap<String, Object>
 	 * @throws EntityNotFoundException
 	 */
-	private static Entity UpdatedEntityFromBookForUpdate(Book book, String bookID) throws EntityNotFoundException {
-		Entity entity = new Entity("Books", bookID);
+	public static LinkedHashMap<String, Object> createNewBook(String jsonInputString) throws EntityNotFoundException {
+		Gson gson = new GsonBuilder().serializeNulls().excludeFieldsWithoutExposeAnnotation().create();
+		Book newBook = gson.fromJson(jsonInputString, Book.class);
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-		Entity datastoreEntity = datastore.get(entity.getKey());
-
-		if (book.getAuthor() != null) {
-			entity.setProperty("Author",
-					book.getAuthor().toString().replaceAll("(^\\[|\\]$)", "").replaceAll(", ", ","));
-		} else {
-			entity.setProperty("Author", datastoreEntity.getProperty("Author"));
+		LinkedHashMap<String, Object> responseMap = new LinkedHashMap<>();
+		try {
+			responseMap = requestBookValidator(newBook, responseMap);
+		} catch (Exception e) {
+			responseMap.put("REQUEST_BODY_ERROR", "The request body should contain a json body");
+			responseMap.put("STATUS_CODE", 400);
 		}
-		if (book.getPublication() != null) {
-			entity.setProperty("Publication",
-					book.getPublication().toString().replaceAll("(^\\[|\\]$)", "").replaceAll(", ", ","));
+		if (responseMap.size() != 0) {
+			return responseMap;
 		} else {
-			entity.setProperty("Publication", datastoreEntity.getProperty("Publication"));
+			String bookID = UUID.randomUUID().toString();
+			Entity entity = entityFromBook(newBook, bookID);
+			Key keyObj = datastore.put(entity);
+			try {
+				Entity responseEntity = datastore.get(keyObj);
+				Book responseBookData = new Book();
+				responseBookData = bookFromEntity(responseEntity);
+				responseMap = mapFromBook(responseBookData, responseMap);
+				responseMap.put("BOOK_ID", keyObj.getName());
+				responseMap.put("STATUS_CODE", 200);
+			} catch (Exception e) {
+				System.out.println("Thrown from createNewBook Method");
+				responseMap.put("ERROR", "Book was not created");
+				responseMap.put("STATUS_CODE", 503);
+				e.printStackTrace();
 		}
-		if (book.getTitle() != null) {
-			entity.setProperty("Title", book.getTitle());
-		} else {
-			entity.setProperty("Title", datastoreEntity.getProperty("Title"));
-		}
-		if (book.getLanguage() != null) {
-			entity.setProperty("Language", book.getLanguage());
-		} else {
-			entity.setProperty("Language", datastoreEntity.getProperty("Language"));
-		}
-		if (book.getPages() != null) {
-			entity.setProperty("Pages", book.getPages());
-		} else {
-			entity.setProperty("Pages", datastoreEntity.getProperty("Pages"));
-		}
-		if (book.getReleaseYear() != null) {
-			entity.setProperty("ReleaseYear", book.getReleaseYear());
-		} else {
-			entity.setProperty("ReleaseYear", datastoreEntity.getProperty("ReleaseYear"));
-		}
-		if (book.getCountry() != null) {
-			entity.setProperty("Country", book.getCountry());
-		} else {
-			entity.setProperty("Country", datastoreEntity.getProperty("Country"));
-		}
-
-		entity.setProperty("CoverImage", datastoreEntity.getProperty("CoverImage"));
-
-		if (book.getBookLink() != null) {
-			entity.setProperty("BookLink", book.getBookLink());
-		} else {
-			entity.setProperty("BookLink", datastoreEntity.getProperty("BookLink"));
-		}
-		if (book.getRating() != null) {
-			entity.setProperty("Rating", book.getRating());
-		} else {
-			entity.setProperty("Rating", datastoreEntity.getProperty("Rating"));
-		}
-		entity.setProperty("CreatedOrUpdated", Time.from(Instant.now()));
-		return entity;
-	}
-
-	/**
-	 * @param book
-	 * @param bookID
-	 * @return Entity
-	 * @throws EntityNotFoundException
-	 */
-	private static Entity UpdatedEntityFromBookForUpdate(Book book, String bookID, String updatedFileUrl)
-			throws EntityNotFoundException {
-		Entity entity = new Entity("Books", bookID);
-		System.out.println(entity.getKey().toString());
-		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-		Entity datastoreEntity = datastore.get(entity.getKey());
-
-		if (book.getAuthor() != null) {
-			entity.setProperty("Author",
-					book.getAuthor().toString().replaceAll("(^\\[|\\]$)", "").replaceAll(", ", ","));
-		} else {
-			entity.setProperty("Author", datastoreEntity.getProperty("Author"));
-		}
-		if (book.getPublication() != null) {
-			entity.setProperty("Publication",
-					book.getPublication().toString().replaceAll("(^\\[|\\]$)", "").replaceAll(", ", ","));
-		} else {
-			entity.setProperty("Publication", datastoreEntity.getProperty("Publication"));
-		}
-		if (book.getTitle() != null) {
-			entity.setProperty("Title", book.getTitle());
-		} else {
-			entity.setProperty("Title", datastoreEntity.getProperty("Title"));
-		}
-		if (book.getLanguage() != null) {
-			entity.setProperty("Language", book.getLanguage());
-		} else {
-			entity.setProperty("Language", datastoreEntity.getProperty("Language"));
-		}
-		if (book.getPages() != null) {
-			entity.setProperty("Pages", book.getPages());
-		} else {
-			entity.setProperty("Pages", datastoreEntity.getProperty("Pages"));
-		}
-		if (book.getReleaseYear() != null) {
-			entity.setProperty("ReleaseYear", book.getReleaseYear());
-		} else {
-			entity.setProperty("ReleaseYear", datastoreEntity.getProperty("ReleaseYear"));
-		}
-		if (book.getCountry() != null) {
-			entity.setProperty("Country", book.getCountry());
-		} else {
-			entity.setProperty("Country", datastoreEntity.getProperty("Country"));
-		}
-		// Updating the Cover Image with the Latest URL
-		entity.setProperty("CoverImage", updatedFileUrl);
-
-		if (book.getBookLink() != null) {
-			entity.setProperty("BookLink", book.getBookLink());
-		} else {
-			entity.setProperty("BookLink", datastoreEntity.getProperty("BookLink"));
-		}
-		if (book.getRating() != null) {
-			entity.setProperty("Rating", book.getRating());
-		} else {
-			entity.setProperty("Rating", datastoreEntity.getProperty("Rating"));
-		}
-		entity.setProperty("CreatedOrUpdated", Time.from(Instant.now()));
-		return entity;
-	}
-
-	/**
-	 * @param requestURI
-	 * @return boolean
-	 */
-	public static boolean hasBookKey(String requestURI) {
-		List<String> requestsArray = Arrays.asList(requestURI.split("/"));
-		Integer count = requestsArray.size();
-		if (count == 3) {
-			return true;
-		} else {
-			return false;
+			return responseMap;
 		}
 	}
 
 	/**
-	 * @param requestURI
-	 * @return boolean
-	 */
-	public static boolean isValidEndPoint(String requestURI) {
-		List<String> requestsArray = Arrays.asList(requestURI.split("/"));
-		Integer count = requestsArray.size();
-		if (count == 3 || count == 2) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	/**
-	 * @param request
-	 * @return String
-	 */
-	public static String getBookKeyFromUri(HttpServletRequest request) {
-		String requestUri = request.getRequestURI();
-		String[] requestsArray = requestUri.split("/");
-		String bookID = requestsArray[requestsArray.length - 1];
-		return bookID;
-	}
-
-	/**
-	 * @param responseMap
+	 * <p>
+	 * Creates a New Entity in the Datastore with all the properties of the Book
+	 * along with a Cover Image for the Book. Cover Image will be stored in the GCS.
+	 * </p>
+	 * 
+	 * @param jsonInputString
+	 * @param fileInputStream
+	 * @param imageFormat
 	 * @return Map<String, Object>
+	 * @throws IOException
 	 */
-	public static Map<String, Object> invalidRequestEndpoint(Map<String, Object> responseMap) {
-		/**
-		 * Status Code 422 means Unprocessable Entity The 422 (Unprocessable Entity)
-		 * status code means the server understands the content type of the request
-		 * entity (hence a 415 (Unsupported Media Type) status code is inappropriate),
-		 * and the syntax of the request entity is correct (thus a 400 (Bad Request)
-		 * status code is inappropriate) but was unable to process the contained
-		 * instructions. For example, this error condition may occur if an XML request
-		 * body contains well-formed (i.e., syntactically correct), but semantically
-		 * erroneous, XML instructions.
-		 */
-		responseMap.put("ERROR", "Invalid End Point");
-		responseMap.put("STATUS_CODE", 422);
+	public static Map<String, Object> createNewBook(String jsonInputString, InputStream fileInputStream,
+			String imageFormat) throws IOException {
+		Gson gson = new GsonBuilder().serializeNulls().excludeFieldsWithoutExposeAnnotation().create();
+		Book newBook = gson.fromJson(jsonInputString, Book.class);
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		LinkedHashMap<String, Object> responseMap = new LinkedHashMap<>();
+		try {
+			responseMap = requestBookValidator(newBook, responseMap);
+		} catch (Exception e) {
+			responseMap.put("REQUEST_BODY_ERROR", "The request body should contain a json body");
+			responseMap.put("STATUS_CODE", 400);
+		}
+		try {
+//			Cloning a the inputStream to validate
+			ByteArrayOutputStream baos = cloneInputStream(fileInputStream);
+			fileInputStream = new ByteArrayInputStream(baos.toByteArray());
+			responseMap = imageValidator(new ByteArrayInputStream(baos.toByteArray()), imageFormat, responseMap);
+
+		} catch (Exception e) {
+			responseMap.put("IMAGE_ERROR", "Invalid Image file or format");
+			responseMap.put("STATUS_CODE", 400);
+		}
+		if (responseMap.size() != 0) {
+			return responseMap;
+		} else {
+			String bookID = UUID.randomUUID().toString();
+//			String fileName = bookID + "." + imageFormat;
+			// Upload the file and get its URL
+			String uploadedFileUrl = ServletUtilities.uploadToCloudStorage(bookID, imageFormat, fileInputStream);
+			newBook.setCoverImage(uploadedFileUrl);
+			Entity entity = entityFromBook(newBook, bookID);
+			Key keyObj = datastore.put(entity);
+			try {
+				Entity responseEntity = datastore.get(keyObj);
+				Book responseBookData = new Book();
+				responseBookData = bookFromEntity(responseEntity);
+				responseMap = mapFromBook(responseBookData, responseMap);
+				responseMap.put("BOOK_ID", keyObj.getName());
+				responseMap.put("STATUS_CODE", 200);
+			} catch (Exception e) {
+				System.out.println("Thrown from createNewBook Method");
+				responseMap.put("ERROR", "Book was not created");
+				responseMap.put("STATUS_CODE", 503);
+				e.printStackTrace();
+			}
+			return responseMap;
+		}
+	}
+
+	/** 2. READ Operation **/
+
+	/**
+	 * <p>
+	 * Fetches all the Books from the Datastore.
+	 * </p>
+	 * <p>
+	 * By default the recently updated or created books will be served first.
+	 * </p>
+	 * 
+	 * @return LinkedList<String>
+	 */
+	public static LinkedList<String> getAllBooks() {
+		LinkedHashMap<String, Object> bookAsMap = new LinkedHashMap<String, Object>();
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		Query query = new Query("Books").addSort("CreatedOrUpdated", SortDirection.DESCENDING);
+		List<Entity> bookEntities = datastore.prepare(query).asList(FetchOptions.Builder.withDefaults());
+		List<Book> booksFromEntities = ServletUtilities.booksFromEntities(bookEntities);
+		LinkedList<String> books = new LinkedList<>();
+		for (Book book : booksFromEntities) {
+			books.add(mapToJsonString(mapFromBook(book, bookAsMap)));
+		}
+		return books;
+	}
+
+	/**
+	 * <p>
+	 * Fetches all the Books from the Datastore.
+	 * </p>
+	 * 
+	 * <p>
+	 * By default the recently updated or created books will be served first. User
+	 * can also send parameters to sort the books based on properties both in the
+	 * order of ascending or descending.
+	 * </p>
+	 * 
+	 * <p>
+	 * Parameter Names and their accepted values.
+	 * </p>
+	 * <ol>
+	 * <li>sortOnProperty = {"author", "publication", "title", "pages",
+	 * "releaseYear", "rating"}
+	 * <li>sortDirection = {"ASCENDING", "DESCENDING"}
+	 * </ol>
+	 * <p>
+	 * ParameterNames are <b>Case-Sensitive</b> while Values are
+	 * <b>Case-Insensitive</b>
+	 * </p>
+	 * 
+	 * @param queryParameters
+	 * @return LinkedList<String>
+	 */
+	public static LinkedList<String> getAllBooks(Map<String, String> queryParameters) {
+		LinkedHashMap<String, Object> bookAsMap = new LinkedHashMap<String, Object>();
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		String property = queryParameters.get("sortOnProperty");
+		String direction = queryParameters.get("sortDirection");
+		Query query = new Query("Books").addSort(property, SortDirection.DESCENDING);
+		if (direction.equalsIgnoreCase("ascending")) {
+			query = new Query("Books").addSort(property, SortDirection.ASCENDING);
+		}
+		List<Entity> bookEntities = datastore.prepare(query).asList(FetchOptions.Builder.withDefaults());
+		List<Book> booksFromEntities = ServletUtilities.booksFromEntities(bookEntities);
+		LinkedList<String> books = new LinkedList<>();
+		for (Book book : booksFromEntities) {
+			books.add(mapToJsonString(mapFromBook(book, bookAsMap)));
+		}
+		return books;
+	}
+
+	/**
+	 * <p>
+	 * Serves the data of the Book when passed with the valid ID
+	 * </p>
+	 * 
+	 * @param bookID
+	 * @return LinkedHashMap<String, Object>
+	 * @throws EntityNotFoundException
+	 */
+	public static LinkedHashMap<String, Object> getOneBook(String bookID) throws EntityNotFoundException {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		Key bookKey = KeyFactory.createKey("Books", bookID);
+		LinkedHashMap<String, Object> responseMap = new LinkedHashMap<>();
+		try {
+			Entity responseEntity = datastore.get(bookKey);
+			Book responseBookData = ServletUtilities.bookFromEntity(responseEntity);
+			responseMap = mapFromBook(responseBookData, responseMap);
+			responseMap.put("STATUS_CODE", 200);
+		} catch (Exception e) {
+			System.out.println("Caught in getOneBook method");
+			e.printStackTrace();
+			responseMap.put("ERROR", "Book not Found. Invalid Key");
+			responseMap.put("STATUS_CODE", 404);
+		}
+		return responseMap;
+	}
+
+	/** 3. UPDATE Operation **/
+
+	/**
+	 * <p>
+	 * Updates the Datastore Entity alone.
+	 * </p>
+	 * 
+	 * <p>
+	 * Call this Method to Update Fields of the Book. You won't be able to update
+	 * the coverImage field without Updating the Image in GCS. Method will ignore
+	 * the coverImage field if sent in the request body.
+	 * </p>
+	 * 
+	 * @param jsonInputString
+	 * @param bookID
+	 * @return LinkedHashMap<String, Object>
+	 * @throws EntityNotFoundException
+	 */
+	public static LinkedHashMap<String, Object> updateBook(String jsonInputString, String bookID)
+			throws EntityNotFoundException {
+		Gson gson = new GsonBuilder().serializeNulls().excludeFieldsWithoutExposeAnnotation().create();
+		Book newBook = gson.fromJson(jsonInputString, Book.class);
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		LinkedHashMap<String, Object> responseMap = new LinkedHashMap<>();
+		try {
+			responseMap = requestBookValidatorForUpdation(newBook, responseMap);
+			if (responseMap.size() != 0) {
+				return responseMap;
+			} else {
+				Entity entity = entityFromBookForUpdate(newBook, bookID);
+				Key keyObj = datastore.put(entity);
+				Entity responseEntity = datastore.get(keyObj);
+				Book responseBookData = new Book();
+				responseBookData = bookFromEntity(responseEntity);
+				responseMap = mapFromBook(responseBookData, responseMap);
+				responseMap.put("BOOK_ID", keyObj.getName());
+				responseMap.put("STATUS_CODE", 200);
+			}
+		} catch (Exception e) {
+			System.out.println("Thrown from updateBook Method");
+			responseMap.put("ERROR", "Book not Found. Invalid Key");
+			responseMap.put("STATUS_CODE", 404);
+			e.printStackTrace();
+		}
 		return responseMap;
 	}
 
 	/**
-	 * @param incomingParameters
-	 * @return Map<String, String>
+	 * <p>
+	 * Updates the Image in the GCS
+	 * </p>
+	 * 
+	 * <p>
+	 * Call this Method to Update the Cover Image of the Book. This will update the
+	 * coverImage Field in the Datastore Entity with the updated url of the Image.
+	 * </p>
+	 * 
+	 * @param jsonInputString
+	 * @param fileInputStream
+	 * @param bookID
+	 * @return LinkedHashMap<String, Object>
+	 * @throws EntityNotFoundException
 	 */
-	public static Map<String, String> processQueryParameters(Map<String, String[]> incomingParameters) {
-		Map<String, String> queryParameters = new LinkedHashMap<>();
-		String property;
-		String direction;
-		if (incomingParameters.containsKey("sortOnProperty")) {
-			property = incomingParameters.get("sortOnProperty")[0];
-			if (property.equalsIgnoreCase("author")) {
-				queryParameters.put("sortOnProperty", "Author");
-			} else if (property.equalsIgnoreCase("publication")) {
-				queryParameters.put("sortOnProperty", "Publication");
-			} else if (property.equalsIgnoreCase("title")) {
-				queryParameters.put("sortOnProperty", "Title");
-			} else if (property.equalsIgnoreCase("pages")) {
-				queryParameters.put("sortOnProperty", "Pages");
-			} else if (property.equalsIgnoreCase("releaseYear")) {
-				queryParameters.put("sortOnProperty", "ReleaseYear");
-			} else if (property.equalsIgnoreCase("rating")) {
-				queryParameters.put("sortOnProperty", "Rating");
+	public static LinkedHashMap<String, Object> updateBook(InputStream fileInputStream, String imageFormat,
+			String bookID) throws EntityNotFoundException {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		LinkedHashMap<String, Object> responseMap = new LinkedHashMap<>();
+		try {
+			Book newBook = new Book();
+			// Validating the bookID
+			Entity entity = new Entity("Books", bookID);
+			Entity datastoreEntity = datastore.get(entity.getKey());
+			// Cloning a the inputStream to validate
+			ByteArrayOutputStream baos = cloneInputStream(fileInputStream);
+			fileInputStream = new ByteArrayInputStream(baos.toByteArray());
+			responseMap = imageValidator(new ByteArrayInputStream(baos.toByteArray()), imageFormat, responseMap);
+			if (responseMap.size() != 0) {
+				return responseMap;
 			} else {
-				queryParameters.put("sortOnProperty", "CreatedOrUpdated");
+				// Updating the image in the GCS
+				String uploadedFileUrl = ServletUtilities.uploadToCloudStorage(bookID, imageFormat, fileInputStream);
+				// Creating a entity from the updated POJO to update in Datastore.
+				entity = entityFromBookForUpdate(datastoreEntity, newBook, bookID, uploadedFileUrl);
+				Key keyObj = datastore.put(entity);
+				Entity responseEntity = datastore.get(keyObj);
+				Book responseBookData = new Book();
+				responseBookData = bookFromEntity(responseEntity);
+				responseMap = mapFromBook(responseBookData, responseMap);
+				responseMap.put("BOOK_ID", keyObj.getName());
+				responseMap.put("STATUS_CODE", 200);
 			}
-		} else {
-			queryParameters.put("sortOnProperty", "CreatedOrUpdated");
+		} catch (Exception e) {
+			System.out.println("Thrown from updateBook Method");
+			responseMap.put("ERROR", "Book not Found. Invalid Key");
+			responseMap.put("STATUS_CODE", 404);
+			e.printStackTrace();
 		}
-
-		if (incomingParameters.containsKey("sortDirection")) {
-			direction = incomingParameters.get("sortDirection")[0];
-			if (direction.equalsIgnoreCase("ascending")) {
-				queryParameters.put("sortDirection", "ascending");
-			} else {
-				queryParameters.put("sortDirection", "descending");
-			}
-		} else {
-			queryParameters.put("sortDirection", "descending");
-		}
-		return queryParameters;
+		return responseMap;
 	}
 
 	/**
+	 * 
+	 * <p>
+	 * Updates Both the Datastore Entity and the Image in the GCS.
+	 * </p>
+	 * 
+	 * <p>
+	 * Call this method to update both book's data and coverImage. The coverImage
+	 * field in the Entity will be updated with the new URL after updation of the
+	 * image in the GCS.
+	 * </p>
+	 * 
+	 * @param jsonInputString
+	 * @param fileInputStream
+	 * @param bookID
+	 * @return LinkedHashMap<String, Object>
+	 * @throws EntityNotFoundException
+	 */
+	public static LinkedHashMap<String, Object> updateBook(String jsonInputString, InputStream fileInputStream,
+			String imageFormat, String bookID) throws EntityNotFoundException {
+		Gson gson = new GsonBuilder().serializeNulls().excludeFieldsWithoutExposeAnnotation().create();
+		Book newBook = gson.fromJson(jsonInputString, Book.class);
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		LinkedHashMap<String, Object> responseMap = new LinkedHashMap<>();
+		try {
+			// Validating the bookID
+			Entity entity = new Entity("Books", bookID);
+			Entity datastoreEntity = datastore.get(entity.getKey());
+			// Validating the Data
+			responseMap = requestBookValidatorForUpdation(newBook, responseMap);
+
+			// Creating a clone of InputStream to Validate
+			ByteArrayOutputStream baos = cloneInputStream(fileInputStream);
+			fileInputStream = new ByteArrayInputStream(baos.toByteArray());
+
+			responseMap = imageValidator(new ByteArrayInputStream(baos.toByteArray()), imageFormat, responseMap);
+			if (responseMap.size() != 0) {
+				return responseMap;
+			} else {
+
+				// Updating the image in the GCS
+				String uploadedFileUrl = ServletUtilities.uploadToCloudStorage(bookID, imageFormat, fileInputStream);
+				// Creating a entity from the updated POJO to update in Datastore.
+				entity = entityFromBookForUpdate(datastoreEntity, newBook, bookID, uploadedFileUrl);
+				Key keyObj = datastore.put(entity);
+				Entity responseEntity = datastore.get(keyObj);
+				Book responseBookData = new Book();
+				responseBookData = bookFromEntity(responseEntity);
+				responseMap = mapFromBook(responseBookData, responseMap);
+				responseMap.put("BOOK_ID", keyObj.getName());
+				responseMap.put("STATUS_CODE", 200);
+			}
+		} catch (Exception e) {
+			System.out.println("Thrown from updateBook Method");
+			responseMap.put("ERROR", "Book not Found. Invalid Key");
+			responseMap.put("STATUS_CODE", 404);
+			e.printStackTrace();
+		}
+		return responseMap;
+	}
+
+	/** 4. DELETE Operation **/
+
+	/**
+	 * <p>
+	 * Deletes the Book Entity from Datastore and Deletes the Image in GCS if
+	 * present.
+	 * </p>
+	 * 
+	 * @param bookID
+	 * @return LinkedHashMap<String, Object>
+	 * @throws EntityNotFoundException
+	 */
+	@SuppressWarnings("unused")
+	public static LinkedHashMap<String, Object> deleteBook(String bookID) throws EntityNotFoundException {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		Key entityKey = KeyFactory.createKey("Books", bookID);
+		LinkedHashMap<String, Object> responseMap = new LinkedHashMap<>();
+		try {
+			datastore.get(entityKey);
+			datastore.delete(entityKey);
+			boolean deleted = deleteImageInCloudStorage(bookID);
+			responseMap.put("SUCCESS", "Book was deleted");
+			responseMap.put("STATUS_CODE", 200);
+		} catch (Exception e) {
+			System.out.println("Caught in deleteBook Method");
+			e.printStackTrace();
+			responseMap.put("ERROR", "Book not Found. Invalid Key");
+			responseMap.put("STATUS_CODE", 404);
+		}
+		return responseMap;
+	}
+
+
+	/** Google Cloud Storage Methods **/
+
+	/**
+	 * <p>
+	 * Uploads a file to Cloud Storage and returns the uploaded file's URL.
+	 * </p>
+	 * 
 	 * @param fileName
 	 * @param fileInputStream
 	 * @return String
-	 * 
-	 *         <p>
-	 *         Uploads a file to Cloud Storage and returns the uploaded file's URL.
-	 *         </p>
 	 */
 	public static String uploadToCloudStorage(String fileName, String fileFormat, InputStream fileInputStream) {
 		String projectId = "book-management-system-362310";
@@ -951,38 +1108,14 @@ public class ServletUtilities {
 		return blob.getMediaLink();
 	}
 
-
 	/**
-	 * @param fileName
-	 * @return boolean
+	 * <p>
+	 * Uploads a file to Cloud Storage and returns the uploaded file's URL.
+	 * </p>
 	 * 
-	 *         <p>
-	 *         Deletes the coverImage of the book when the book is deleted.
-	 *         </p>
-	 */
-	@SuppressWarnings("unused")
-	public static boolean deleteImageInCloudStorage(String fileName) {
-		String projectId = "book-management-system-362310";
-		String bucketName = "book-management-system-362310.appspot.com";
-		Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-		BlobId blobId = BlobId.of(bucketName, fileName);
-		Blob blob = storage.get(blobId);
-		blob = storage.get(blobId);
-		if (blob != null) {
-			storage.delete(bucketName, fileName);
-			return true;
-		} else if (blob == null) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
 	 * @param fileName
 	 * @param fileInputStream
 	 * @return String
-	 * 
-	 *         Uploads a file to Cloud Storage and returns the uploaded file's URL.
 	 */
 	@SuppressWarnings("deprecation")
 	public static String updateImageInCloudStorage(String fileName, String fileFormat, InputStream fileInputStream) {
@@ -1005,5 +1138,31 @@ public class ServletUtilities {
 			return blob.getMediaLink();
 		}
 	}
+
+	/**
+	 * <p>
+	 * Deletes the coverImage of the book when the book is deleted.
+	 * </p>
+	 * 
+	 * @param fileName
+	 * @return boolean
+	 */
+	@SuppressWarnings("unused")
+	public static boolean deleteImageInCloudStorage(String fileName) {
+		String projectId = "book-management-system-362310";
+		String bucketName = "book-management-system-362310.appspot.com";
+		Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+		BlobId blobId = BlobId.of(bucketName, fileName);
+		Blob blob = storage.get(blobId);
+		blob = storage.get(blobId);
+		if (blob != null) {
+			storage.delete(bucketName, fileName);
+			return true;
+		} else if (blob == null) {
+			return true;
+		}
+		return false;
+	}
+
 
 }
