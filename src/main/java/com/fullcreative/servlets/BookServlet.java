@@ -20,7 +20,8 @@ import com.fullcreative.utilities.ServletUtilities;
 import com.google.gson.Gson;
 
 @WebServlet(name = "bookServlet", urlPatterns = { "/books", "/books/*" })
-@MultipartConfig(maxFileSize = 1024 * 1024 * 2 /* 2 MB */)
+@MultipartConfig(maxFileSize = 1024 * 1024 * 2 /* 2 MB */,
+		maxRequestSize = 1024 * 1024 * 5 * 5 /* 5 MB */ )
 public class BookServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -8271652320356442502L;
@@ -131,13 +132,23 @@ public class BookServlet extends HttpServlet {
 		}
 		catch (Exception e) {
 			System.out.println("Caught in doPost servlet service method");
-			e.printStackTrace();
-			Map<String, String> internalServerErrorMap = new LinkedHashMap<String, String>();
-			response.setContentType("application/json");
-			internalServerErrorMap.put("500", "Something went wrong");
-			String internalServerError = new Gson().toJson(internalServerErrorMap);
-			response.getWriter().println(internalServerError);
-			response.setStatus(500);
+			if (e.getCause().toString().contains("Multipart Mime part coverImage exceeds max filesize")) {
+				e.printStackTrace();
+				Map<String, String> requestErrorMap = new LinkedHashMap<String, String>();
+				response.setContentType("application/json");
+				requestErrorMap.put("FILE_SIZE_ERROR", "Image should be less than 2 MB");
+				String requestError = new Gson().toJson(requestErrorMap);
+				response.getWriter().println(requestError);
+				response.setStatus(400);
+			} else {
+				e.printStackTrace();
+				Map<String, String> internalServerErrorMap = new LinkedHashMap<String, String>();
+				response.setContentType("application/json");
+				internalServerErrorMap.put("500", "Something went wrong");
+				String internalServerError = new Gson().toJson(internalServerErrorMap);
+				response.getWriter().println(internalServerError);
+				response.setStatus(500);
+			}
 		}
 	}
 

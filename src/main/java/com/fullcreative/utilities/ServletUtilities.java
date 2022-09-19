@@ -19,7 +19,6 @@ import javax.imageio.ImageIO;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.io.IOUtils;
 
 import com.fullcreative.pojo.Book;
 import com.google.appengine.api.datastore.DatastoreService;
@@ -40,6 +39,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 
+/**
+ * @author sriram
+ *
+ */
 /**
  * @author sriram
  *
@@ -134,9 +137,9 @@ public class ServletUtilities {
 			return responseMap;
 		} else {
 			String bookID = UUID.randomUUID().toString();
-			String fileName = bookID + "." + imageFormat;
+//			String fileName = bookID + "." + imageFormat;
 			// Upload the file and get its URL
-			String uploadedFileUrl = ServletUtilities.uploadToCloudStorage(fileName, fileInputStream);
+			String uploadedFileUrl = ServletUtilities.uploadToCloudStorage(bookID, imageFormat, fileInputStream);
 			newBook.setCoverImage(uploadedFileUrl);
 			Entity entity = entityFromBook(newBook, bookID);
 			Key keyObj = datastore.put(entity);
@@ -201,6 +204,41 @@ public class ServletUtilities {
 	 * @return LinkedHashMap<String, Object>
 	 * @throws EntityNotFoundException
 	 */
+	public static LinkedHashMap<String, Object> updateBook(String jsonInputString, InputStream fileInputStream,
+			String bookID) throws EntityNotFoundException {
+		Gson gson = new GsonBuilder().serializeNulls().excludeFieldsWithoutExposeAnnotation().create();
+		Book newBook = gson.fromJson(jsonInputString, Book.class);
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		LinkedHashMap<String, Object> responseMap = new LinkedHashMap<>();
+		try {
+			Entity entity = UpdatedEntityFromBookForUpdate(newBook, bookID);
+			responseMap = requestBookValidatorForUpdation(newBook, responseMap);
+			if (responseMap.size() != 0) {
+				return responseMap;
+			} else {
+				Key keyObj = datastore.put(entity);
+				Entity responseEntity = datastore.get(keyObj);
+				Book responseBookData = new Book();
+				responseBookData = bookFromEntity(responseEntity);
+				responseMap = mapFromBook(responseBookData, responseMap);
+				responseMap.put("BOOK_ID", keyObj.getName());
+				responseMap.put("STATUS_CODE", 200);
+			}
+		} catch (Exception e) {
+			System.out.println("Thrown from updateBook Method");
+			responseMap.put("ERROR", "Book not Found. Invalid Key");
+			responseMap.put("STATUS_CODE", 404);
+			e.printStackTrace();
+		}
+		return responseMap;
+	}
+
+	/**
+	 * @param jsonInputString
+	 * @param bookID
+	 * @return LinkedHashMap<String, Object>
+	 * @throws EntityNotFoundException
+	 */
 	public static LinkedHashMap<String, Object> updateBook(String jsonInputString, String bookID)
 			throws EntityNotFoundException {
 		Gson gson = new GsonBuilder().serializeNulls().excludeFieldsWithoutExposeAnnotation().create();
@@ -229,6 +267,7 @@ public class ServletUtilities {
 		}
 		return responseMap;
 	}
+
 
 
 	/**
@@ -298,6 +337,7 @@ public class ServletUtilities {
 	 * @return LinkedHashMap<String, Object>
 	 * @throws EntityNotFoundException
 	 */
+	@SuppressWarnings("unused")
 	public static LinkedHashMap<String, Object> deleteBook(String bookID) throws EntityNotFoundException {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		Key entityKey = KeyFactory.createKey("Books", bookID);
@@ -305,6 +345,7 @@ public class ServletUtilities {
 		try {
 			datastore.get(entityKey);
 			datastore.delete(entityKey);
+			boolean deleted = deleteImageInCloudStorage(bookID);
 			responseMap.put("SUCCESS", "Book was deleted");
 			responseMap.put("STATUS_CODE", 200);
 		} catch (Exception e) {
@@ -780,17 +821,45 @@ public class ServletUtilities {
 	 * @param fileInputStream
 	 * @return String
 	 * 
+	 *         <p>
 	 *         Uploads a file to Cloud Storage and returns the uploaded file's URL.
+	 *         </p>
 	 */
-	public static String uploadToCloudStorage(String fileName, InputStream fileInputStream) {
+	public static String uploadToCloudStorage(String fileName, String fileFormat, InputStream fileInputStream) {
 		String projectId = "book-management-system-362310";
 		String bucketName = "book-management-system-362310.appspot.com";
 		Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
 		BlobId blobId = BlobId.of(bucketName, fileName);
-		BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
+		BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("image/" + fileFormat).build();
 		@SuppressWarnings("deprecation")
 		Blob blob = storage.create(blobInfo, fileInputStream);
 		return blob.getMediaLink();
+	}
+
+
+	/**
+	 * @param fileName
+	 * @return boolean
+	 * 
+	 *         <p>
+	 *         Deletes the coverImage of the book when the book is deleted.
+	 *         </p>
+	 */
+	@SuppressWarnings("unused")
+	public static boolean deleteImageInCloudStorage(String fileName) {
+		String projectId = "book-management-system-362310";
+		String bucketName = "book-management-system-362310.appspot.com";
+		Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+		BlobId blobId = BlobId.of(bucketName, fileName);
+		Blob blob = storage.get(blobId);
+		blob = storage.get(blobId);
+		if (blob != null) {
+			storage.delete(bucketName, fileName);
+			return true;
+		} else if (blob == null) {
+			return true;
+		}
+		return false;
 	}
 
 }
