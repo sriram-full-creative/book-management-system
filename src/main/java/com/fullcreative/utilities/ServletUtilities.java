@@ -30,6 +30,7 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.cloud.storage.Acl;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
@@ -38,13 +39,8 @@ import com.google.cloud.storage.StorageOptions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-
 /**
- * @author sriram
- *
- */
-/**
- * @author sriram
+ * @author Sriram
  *
  */
 public class ServletUtilities {
@@ -197,42 +193,7 @@ public class ServletUtilities {
 
 		return baos;
 	}
-
-	/**
-	 * @param jsonInputString
-	 * @param bookID
-	 * @return LinkedHashMap<String, Object>
-	 * @throws EntityNotFoundException
-	 */
-	public static LinkedHashMap<String, Object> updateBook(String jsonInputString, InputStream fileInputStream,
-			String bookID) throws EntityNotFoundException {
-		Gson gson = new GsonBuilder().serializeNulls().excludeFieldsWithoutExposeAnnotation().create();
-		Book newBook = gson.fromJson(jsonInputString, Book.class);
-		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-		LinkedHashMap<String, Object> responseMap = new LinkedHashMap<>();
-		try {
-			Entity entity = UpdatedEntityFromBookForUpdate(newBook, bookID);
-			responseMap = requestBookValidatorForUpdation(newBook, responseMap);
-			if (responseMap.size() != 0) {
-				return responseMap;
-			} else {
-				Key keyObj = datastore.put(entity);
-				Entity responseEntity = datastore.get(keyObj);
-				Book responseBookData = new Book();
-				responseBookData = bookFromEntity(responseEntity);
-				responseMap = mapFromBook(responseBookData, responseMap);
-				responseMap.put("BOOK_ID", keyObj.getName());
-				responseMap.put("STATUS_CODE", 200);
-			}
-		} catch (Exception e) {
-			System.out.println("Thrown from updateBook Method");
-			responseMap.put("ERROR", "Book not Found. Invalid Key");
-			responseMap.put("STATUS_CODE", 404);
-			e.printStackTrace();
-		}
-		return responseMap;
-	}
-
+	
 	/**
 	 * @param jsonInputString
 	 * @param bookID
@@ -246,11 +207,11 @@ public class ServletUtilities {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		LinkedHashMap<String, Object> responseMap = new LinkedHashMap<>();
 		try {
-			Entity entity = UpdatedEntityFromBookForUpdate(newBook, bookID);
 			responseMap = requestBookValidatorForUpdation(newBook, responseMap);
 			if (responseMap.size() != 0) {
 				return responseMap;
 			} else {
+				Entity entity = UpdatedEntityFromBookForUpdate(newBook, bookID);
 				Key keyObj = datastore.put(entity);
 				Entity responseEntity = datastore.get(keyObj);
 				Book responseBookData = new Book();
@@ -268,6 +229,92 @@ public class ServletUtilities {
 		return responseMap;
 	}
 
+	/**
+	 * @param jsonInputString
+	 * @param fileInputStream
+	 * @param bookID
+	 * @return LinkedHashMap<String, Object>
+	 * @throws EntityNotFoundException
+	 */
+	public static LinkedHashMap<String, Object> updateBook(String jsonInputString, InputStream fileInputStream,
+			String imageFormat,
+			String bookID) throws EntityNotFoundException {
+		Gson gson = new GsonBuilder().serializeNulls().excludeFieldsWithoutExposeAnnotation().create();
+		Book newBook = gson.fromJson(jsonInputString, Book.class);
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		LinkedHashMap<String, Object> responseMap = new LinkedHashMap<>();
+		try {
+			responseMap = requestBookValidatorForUpdation(newBook, responseMap);
+
+			// Creating a clone of InputStream to Validate
+			ByteArrayOutputStream baos = cloneInputStream(fileInputStream);
+			fileInputStream = new ByteArrayInputStream(baos.toByteArray());
+
+			responseMap = imageValidator(new ByteArrayInputStream(baos.toByteArray()), imageFormat, responseMap);
+			if (responseMap.size() != 0) {
+				return responseMap;
+			} else {
+				// Updating the image in the GCS
+				String uploadedFileUrl = ServletUtilities.uploadToCloudStorage(bookID, imageFormat, fileInputStream);
+				// Creating a entity from the updated POJO to update in Datastore.
+				Entity entity = UpdatedEntityFromBookForUpdate(newBook, bookID, uploadedFileUrl);
+				Key keyObj = datastore.put(entity);
+				Entity responseEntity = datastore.get(keyObj);
+				Book responseBookData = new Book();
+				responseBookData = bookFromEntity(responseEntity);
+				responseMap = mapFromBook(responseBookData, responseMap);
+				responseMap.put("BOOK_ID", keyObj.getName());
+				responseMap.put("STATUS_CODE", 200);
+			}
+		} catch (Exception e) {
+			System.out.println("Thrown from updateBook Method");
+			responseMap.put("ERROR", "Book not Found. Invalid Key");
+			responseMap.put("STATUS_CODE", 404);
+			e.printStackTrace();
+		}
+		return responseMap;
+	}
+
+	/**
+	 * @param jsonInputString
+	 * @param fileInputStream
+	 * @param bookID
+	 * @return LinkedHashMap<String, Object>
+	 * @throws EntityNotFoundException
+	 */
+	public static LinkedHashMap<String, Object> updateBook(InputStream fileInputStream, String imageFormat,
+			String bookID) throws EntityNotFoundException {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		LinkedHashMap<String, Object> responseMap = new LinkedHashMap<>();
+		try {
+			Book newBook = new Book();
+			// Cloning a the inputStream to validate
+			ByteArrayOutputStream baos = cloneInputStream(fileInputStream);
+			fileInputStream = new ByteArrayInputStream(baos.toByteArray());
+			responseMap = imageValidator(new ByteArrayInputStream(baos.toByteArray()), imageFormat, responseMap);
+			if (responseMap.size() != 0) {
+				return responseMap;
+			} else {
+				// Updating the image in the GCS
+				String uploadedFileUrl = ServletUtilities.uploadToCloudStorage(bookID, imageFormat, fileInputStream);
+				// Creating a entity from the updated POJO to update in Datastore.
+				Entity entity = UpdatedEntityFromBookForUpdate(newBook, bookID, uploadedFileUrl);
+				Key keyObj = datastore.put(entity);
+				Entity responseEntity = datastore.get(keyObj);
+				Book responseBookData = new Book();
+				responseBookData = bookFromEntity(responseEntity);
+				responseMap = mapFromBook(responseBookData, responseMap);
+				responseMap.put("BOOK_ID", keyObj.getName());
+				responseMap.put("STATUS_CODE", 200);
+			}
+		} catch (Exception e) {
+			System.out.println("Thrown from updateBook Method");
+			responseMap.put("ERROR", "Book not Found. Invalid Key");
+			responseMap.put("STATUS_CODE", 404);
+			e.printStackTrace();
+		}
+		return responseMap;
+	}
 
 
 	/**
@@ -657,59 +704,124 @@ public class ServletUtilities {
 	private static Entity UpdatedEntityFromBookForUpdate(Book book, String bookID) throws EntityNotFoundException {
 		Entity entity = new Entity("Books", bookID);
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-		Entity newEntity = datastore.get(entity.getKey());
+		Entity datastoreEntity = datastore.get(entity.getKey());
 
 		if (book.getAuthor() != null) {
 			entity.setProperty("Author",
 					book.getAuthor().toString().replaceAll("(^\\[|\\]$)", "").replaceAll(", ", ","));
 		} else {
-			entity.setProperty("Author", newEntity.getProperty("Author"));
+			entity.setProperty("Author", datastoreEntity.getProperty("Author"));
 		}
 		if (book.getPublication() != null) {
 			entity.setProperty("Publication",
 					book.getPublication().toString().replaceAll("(^\\[|\\]$)", "").replaceAll(", ", ","));
 		} else {
-			entity.setProperty("Publication", newEntity.getProperty("Publication"));
+			entity.setProperty("Publication", datastoreEntity.getProperty("Publication"));
 		}
 		if (book.getTitle() != null) {
 			entity.setProperty("Title", book.getTitle());
 		} else {
-			entity.setProperty("Title", newEntity.getProperty("Title"));
+			entity.setProperty("Title", datastoreEntity.getProperty("Title"));
 		}
 		if (book.getLanguage() != null) {
 			entity.setProperty("Language", book.getLanguage());
 		} else {
-			entity.setProperty("Language", newEntity.getProperty("Language"));
+			entity.setProperty("Language", datastoreEntity.getProperty("Language"));
 		}
 		if (book.getPages() != null) {
 			entity.setProperty("Pages", book.getPages());
 		} else {
-			entity.setProperty("Pages", newEntity.getProperty("Pages"));
+			entity.setProperty("Pages", datastoreEntity.getProperty("Pages"));
 		}
 		if (book.getReleaseYear() != null) {
 			entity.setProperty("ReleaseYear", book.getReleaseYear());
 		} else {
-			entity.setProperty("ReleaseYear", newEntity.getProperty("ReleaseYear"));
+			entity.setProperty("ReleaseYear", datastoreEntity.getProperty("ReleaseYear"));
 		}
 		if (book.getCountry() != null) {
 			entity.setProperty("Country", book.getCountry());
 		} else {
-			entity.setProperty("Country", newEntity.getProperty("Country"));
+			entity.setProperty("Country", datastoreEntity.getProperty("Country"));
 		}
-		if (book.getCoverImage() != null) {
-			entity.setProperty("CoverImage", book.getCoverImage());
-		} else {
-			entity.setProperty("CoverImage", newEntity.getProperty("CoverImage"));
-		}
+
+		entity.setProperty("CoverImage", datastoreEntity.getProperty("CoverImage"));
+
 		if (book.getBookLink() != null) {
 			entity.setProperty("BookLink", book.getBookLink());
 		} else {
-			entity.setProperty("BookLink", newEntity.getProperty("BookLink"));
+			entity.setProperty("BookLink", datastoreEntity.getProperty("BookLink"));
 		}
 		if (book.getRating() != null) {
 			entity.setProperty("Rating", book.getRating());
 		} else {
-			entity.setProperty("Rating", newEntity.getProperty("Rating"));
+			entity.setProperty("Rating", datastoreEntity.getProperty("Rating"));
+		}
+		entity.setProperty("CreatedOrUpdated", Time.from(Instant.now()));
+		return entity;
+	}
+
+	/**
+	 * @param book
+	 * @param bookID
+	 * @return Entity
+	 * @throws EntityNotFoundException
+	 */
+	private static Entity UpdatedEntityFromBookForUpdate(Book book, String bookID, String updatedFileUrl)
+			throws EntityNotFoundException {
+		Entity entity = new Entity("Books", bookID);
+		System.out.println(entity.getKey().toString());
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		Entity datastoreEntity = datastore.get(entity.getKey());
+
+		if (book.getAuthor() != null) {
+			entity.setProperty("Author",
+					book.getAuthor().toString().replaceAll("(^\\[|\\]$)", "").replaceAll(", ", ","));
+		} else {
+			entity.setProperty("Author", datastoreEntity.getProperty("Author"));
+		}
+		if (book.getPublication() != null) {
+			entity.setProperty("Publication",
+					book.getPublication().toString().replaceAll("(^\\[|\\]$)", "").replaceAll(", ", ","));
+		} else {
+			entity.setProperty("Publication", datastoreEntity.getProperty("Publication"));
+		}
+		if (book.getTitle() != null) {
+			entity.setProperty("Title", book.getTitle());
+		} else {
+			entity.setProperty("Title", datastoreEntity.getProperty("Title"));
+		}
+		if (book.getLanguage() != null) {
+			entity.setProperty("Language", book.getLanguage());
+		} else {
+			entity.setProperty("Language", datastoreEntity.getProperty("Language"));
+		}
+		if (book.getPages() != null) {
+			entity.setProperty("Pages", book.getPages());
+		} else {
+			entity.setProperty("Pages", datastoreEntity.getProperty("Pages"));
+		}
+		if (book.getReleaseYear() != null) {
+			entity.setProperty("ReleaseYear", book.getReleaseYear());
+		} else {
+			entity.setProperty("ReleaseYear", datastoreEntity.getProperty("ReleaseYear"));
+		}
+		if (book.getCountry() != null) {
+			entity.setProperty("Country", book.getCountry());
+		} else {
+			entity.setProperty("Country", datastoreEntity.getProperty("Country"));
+		}
+		// Updating the Cover Image with the Latest URL
+		entity.setProperty("CoverImage", updatedFileUrl);
+
+		if (book.getBookLink() != null) {
+			entity.setProperty("BookLink", book.getBookLink());
+		} else {
+			entity.setProperty("BookLink", datastoreEntity.getProperty("BookLink"));
+		}
+		if (book.getRating() != null) {
+			entity.setProperty("Rating", book.getRating());
+		} else {
+			entity.setProperty("Rating", datastoreEntity.getProperty("Rating"));
 		}
 		entity.setProperty("CreatedOrUpdated", Time.from(Instant.now()));
 		return entity;
@@ -830,7 +942,10 @@ public class ServletUtilities {
 		String bucketName = "book-management-system-362310.appspot.com";
 		Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
 		BlobId blobId = BlobId.of(bucketName, fileName);
-		BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("image/" + fileFormat).build();
+		BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("image/" + fileFormat)
+				.setAcl(new ArrayList<>(Arrays.asList(Acl.of(Acl.User.ofAllUsers(), Acl.Role.READER),
+						Acl.of(new Acl.Project(Acl.Project.ProjectRole.OWNERS, projectId), Acl.Role.OWNER))))
+				.build();
 		@SuppressWarnings("deprecation")
 		Blob blob = storage.create(blobInfo, fileInputStream);
 		return blob.getMediaLink();
@@ -860,6 +975,35 @@ public class ServletUtilities {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * @param fileName
+	 * @param fileInputStream
+	 * @return String
+	 * 
+	 *         Uploads a file to Cloud Storage and returns the uploaded file's URL.
+	 */
+	@SuppressWarnings("deprecation")
+	public static String updateImageInCloudStorage(String fileName, String fileFormat, InputStream fileInputStream) {
+		String projectId = "book-management-system-362310";
+		String bucketName = "book-management-system-362310.appspot.com";
+		Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+		BlobId blobId = BlobId.of(bucketName, fileName);
+		Blob blob = storage.get(blobId);
+		blob = storage.get(blobId);
+		if (blob != null) {
+			storage.delete(bucketName, fileName);
+			BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("image/" + fileFormat)
+					.setAcl(new ArrayList<>(Arrays.asList(Acl.of(Acl.User.ofAllUsers(), Acl.Role.READER)))).build();
+			blob = storage.create(blobInfo, fileInputStream);
+			return blob.getMediaLink();
+		} else {
+			BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("image/" + fileFormat)
+					.setAcl(new ArrayList<>(Arrays.asList(Acl.of(Acl.User.ofAllUsers(), Acl.Role.READER)))).build();
+			blob = storage.create(blobInfo, fileInputStream);
+			return blob.getMediaLink();
+		}
 	}
 
 }
