@@ -385,7 +385,7 @@ public class DoPutTestCases {
 				put("pages", 784);
 				put("releaseYear", 1836);
 				put("country", "Denmark");
-				put("coverImage", "images/fairy-tales.jpg");
+				put("coverImage", "images/");
 				put("bookLink", "https://en.wikipedia.org/wiki/Fairy_Tales_Told_for_Children._First_Collection.");
 				put("rating", 5);
 			}
