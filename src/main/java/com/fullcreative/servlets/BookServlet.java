@@ -39,8 +39,8 @@ public class BookServlet extends HttpServlet {
 				queryParameters = ServletUtilities.processQueryParameters(request.getParameterMap());
 			}
 			if (ServletUtilities.isValidEndPoint(request.getRequestURI())) {
-				if (ServletUtilities.hasBookKey(request.getRequestURI())) {
-					String bookID = ServletUtilities.getBookKeyFromUri(request);
+				if (ServletUtilities.hasBookID(request.getRequestURI())) {
+					String bookID = ServletUtilities.getBookIDFromUri(request);
 					responseMap = ServletUtilities.getOneBook(bookID);
 					int code = Integer.parseInt(responseMap.remove("STATUS_CODE").toString());
 					String responseAsJson = new Gson().toJson(responseMap);
@@ -59,7 +59,7 @@ public class BookServlet extends HttpServlet {
 					response.setStatus(200);
 				}
 			} else {
-				responseMap = ServletUtilities.invalidRequestEndpoint(responseMap);
+				responseMap = ServletUtilities.invalidRequestEndpointResponse(responseMap);
 				int code = Integer.parseInt(responseMap.remove("STATUS_CODE").toString());
 				String responseAsJson = new Gson().toJson(responseMap);
 				response.setContentType("application/json");
@@ -84,7 +84,7 @@ public class BookServlet extends HttpServlet {
 			throws ServletException, IOException {
 		try {
 			Map<String, Object> responseMap = new LinkedHashMap<>();
-			if (ServletUtilities.hasBookKey(request.getRequestURI()) == false
+			if (ServletUtilities.hasBookID(request.getRequestURI()) == false
 					&& ServletUtilities.isValidEndPoint(request.getRequestURI())) {
 				// Getting json request body
 				String jsonRequestString = request.getParameter("jsonBody");
@@ -108,7 +108,7 @@ public class BookServlet extends HttpServlet {
 				response.getWriter().print(responseAsJson);
 				response.setStatus(statusCode);
 			} else {
-				responseMap = ServletUtilities.invalidRequestEndpoint(responseMap);
+				responseMap = ServletUtilities.invalidRequestEndpointResponse(responseMap);
 				int code = Integer.parseInt(responseMap.remove("STATUS_CODE").toString());
 				String responseAsJson = new Gson().toJson(responseMap);
 				response.setContentType("application/json");
@@ -161,11 +161,11 @@ public class BookServlet extends HttpServlet {
 			throws ServletException, IOException {
 		try {
 			Map<String, Object> responseMap = new LinkedHashMap<>();
-			if (ServletUtilities.hasBookKey(request.getRequestURI()) == true
+			if (ServletUtilities.hasBookID(request.getRequestURI()) == true
 					&& ServletUtilities.isValidEndPoint(request.getRequestURI())) {
-				String bookID = ServletUtilities.getBookKeyFromUri(request);
+				String bookID = ServletUtilities.getBookIDFromUri(request);
 
-				// Getting json request body and image Part
+				// Getting JSON request body and image Part
 				String jsonRequestString = request.getParameter("jsonBody");
 				Part filePart = request.getPart("coverImage");
 
@@ -200,7 +200,7 @@ public class BookServlet extends HttpServlet {
 				response.getWriter().print(responseAsJson);
 				response.setStatus(statusCode);
 			} else {
-				responseMap = ServletUtilities.invalidRequestEndpoint(responseMap);
+				responseMap = ServletUtilities.invalidRequestEndpointResponse(responseMap);
 				int code = Integer.parseInt(responseMap.remove("STATUS_CODE").toString());
 				String responseAsJson = new Gson().toJson(responseMap);
 				response.setContentType("application/json");
@@ -242,17 +242,17 @@ public class BookServlet extends HttpServlet {
 			throws ServletException, IOException {
 		try {
 			Map<String, Object> responseMap = new LinkedHashMap<>();
-			if (ServletUtilities.hasBookKey(request.getRequestURI()) == true
+			if (ServletUtilities.hasBookID(request.getRequestURI()) == true
 					&& ServletUtilities.isValidEndPoint(request.getRequestURI())) {
-				String bookID = ServletUtilities.getBookKeyFromUri(request);
-				responseMap = ServletUtilities.deleteBook(bookID);
+				String bookID = ServletUtilities.getBookIDFromUri(request);
+				responseMap = ServletUtilities.deleteBookWithImage(bookID);
 				int code = Integer.parseInt(responseMap.remove("STATUS_CODE").toString());
 				String responseAsJson = new Gson().toJson(responseMap);
 				response.setContentType("application/json");
 				response.getWriter().print(responseAsJson);
 				response.setStatus(code);
 			} else {
-				responseMap = ServletUtilities.invalidRequestEndpoint(responseMap);
+				responseMap = ServletUtilities.invalidRequestEndpointResponse(responseMap);
 				int code = Integer.parseInt(responseMap.remove("STATUS_CODE").toString());
 				String responseAsJson = new Gson().toJson(responseMap);
 				response.setContentType("application/json");

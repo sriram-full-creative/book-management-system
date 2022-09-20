@@ -79,7 +79,7 @@ public class DoDeleteServiceTest {
 				.get("responseAfterSuccessfullDelete");
 		// Calling deleteBook
 		LinkedHashMap<String, Object> actualResponseMapAfterDelete = ServletUtilities
-				.deleteBook(strippedMapBeforeDelete.get("BOOK_ID").toString());
+				.deleteBookWithoutImage(strippedMapBeforeDelete.get("BOOK_ID").toString());
 		System.out.println(actualResponseMapAfterDelete);
 		System.out.println(expectedResponseMapAfterDelete);
 		LinkedHashMap<String, Object> strippedMapAfterDelete = stripBookInTestEnv(actualResponseMapAfterDelete);
@@ -118,7 +118,8 @@ public class DoDeleteServiceTest {
 				.get("noBookResponse");
 		String wrongBookId = DoDeleteServiceTestCases.bookID.get("INVALID_BOOK_ID");
 		// Calling deleteBook
-		LinkedHashMap<String, Object> actualResponseMapAfterDelete = ServletUtilities.deleteBook(wrongBookId);
+		LinkedHashMap<String, Object> actualResponseMapAfterDelete = ServletUtilities
+				.deleteBookWithoutImage(wrongBookId);
 		System.out.println(actualResponseMapAfterDelete);
 		System.out.println(expectedResponseMapAfterDelete);
 		LinkedHashMap<String, Object> strippedMapAfterDelete = stripBookInTestEnv(actualResponseMapAfterDelete);

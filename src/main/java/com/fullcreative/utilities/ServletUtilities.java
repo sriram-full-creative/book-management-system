@@ -52,10 +52,14 @@ public class ServletUtilities {
 	/** Utility Methods for HttpServletRequest Processing and Validation **/
 
 	/**
+	 * <p>
+	 * Checks if the HttpServletRequest URI has a ID or not.
+	 * </p>
+	 * 
 	 * @param requestURI
 	 * @return boolean
 	 */
-	public static boolean hasBookKey(String requestURI) {
+	public static boolean hasBookID(String requestURI) {
 		List<String> requestsArray = Arrays.asList(requestURI.split("/"));
 		Integer count = requestsArray.size();
 		if (count == 3) {
@@ -66,6 +70,12 @@ public class ServletUtilities {
 	}
 
 	/**
+	 * <p>
+	 * Checks if the Requested End Point (URI) in the HttpServletRequest is valid or
+	 * not. Although the HttpServlet is configured to handle requests sent to
+	 * specific end points, This method verifies if the Sub Path is valid or not.
+	 * <p>
+	 * 
 	 * @param requestURI
 	 * @return boolean
 	 */
@@ -80,10 +90,14 @@ public class ServletUtilities {
 	}
 
 	/**
+	 * <p>
+	 * Extracts the ID from the HttpServletRequest URI.
+	 * <p>
+	 * 
 	 * @param request
 	 * @return String
 	 */
-	public static String getBookKeyFromUri(HttpServletRequest request) {
+	public static String getBookIDFromUri(HttpServletRequest request) {
 		String requestUri = request.getRequestURI();
 		String[] requestsArray = requestUri.split("/");
 		String bookID = requestsArray[requestsArray.length - 1];
@@ -91,10 +105,14 @@ public class ServletUtilities {
 	}
 
 	/**
+	 * <p>
+	 * Generates a Error Response Map for when a requested End Point is Invalid.
+	 * </p>
+	 * 
 	 * @param responseMap
 	 * @return Map<String, Object>
 	 */
-	public static Map<String, Object> invalidRequestEndpoint(Map<String, Object> responseMap) {
+	public static Map<String, Object> invalidRequestEndpointResponse(Map<String, Object> responseMap) {
 		/**
 		 * Status Code 422 means Unprocessable Entity The 422 (Unprocessable Entity)
 		 * status code means the server understands the content type of the request
@@ -111,6 +129,11 @@ public class ServletUtilities {
 	}
 
 	/**
+	 * <p>
+	 * Creates a Map of the Query Parameters which are passed in order to Sort Books
+	 * in a specific order when fetching them.
+	 * </p>
+	 * 
 	 * @param incomingParameters
 	 * @return Map<String, String>
 	 */
@@ -155,6 +178,10 @@ public class ServletUtilities {
 	/** Utility Methods to Manipulate Data Structures and Data Types **/
 
 	/**
+	 * <p>
+	 * Converts a LinkedHashMap into a JSON Formatted String.
+	 * </p>
+	 * 
 	 * @param map
 	 * @return String
 	 */
@@ -178,12 +205,14 @@ public class ServletUtilities {
 
 
 	/**
+	 * <p>
+	 * Creates ByteArrayOutputStream from the InputStream to create clones of the
+	 * InputStream.
+	 * </p>
+	 * 
 	 * @param inputStream
 	 * @return ByteArrayOutputStream
 	 * @throws IOException
-	 * 
-	 *                     Creates ByteArrayOutputStream to create clones of the
-	 *                     InputStream
 	 */
 	private static ByteArrayOutputStream cloneInputStream(InputStream inputStream) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -198,6 +227,10 @@ public class ServletUtilities {
 	}
 
 	/**
+	 * <p>
+	 * Creates a List of Book POJOs from a List of Entities.
+	 * </p>
+	 * 
 	 * @param entities
 	 * @return List<Book>
 	 */
@@ -213,6 +246,10 @@ public class ServletUtilities {
 	}
 
 	/**
+	 * <p>
+	 * Converts the Book POJO into a LinkedHashMap.
+	 * </p>
+	 * 
 	 * @param book
 	 * @param map
 	 * @return LinkedHashMap<String, Object>
@@ -232,6 +269,10 @@ public class ServletUtilities {
 	}
 
 	/**
+	 * <p>
+	 * Creates a Book POJO out of the Properties form the Entity.
+	 * </p>
+	 * 
 	 * @param entity
 	 * @return Book
 	 */
@@ -253,6 +294,13 @@ public class ServletUtilities {
 	}
 
 	/**
+	 * <p>
+	 * Converts the Properties of Book POJO into an Datastore Entity.
+	 * </p>
+	 * <p>
+	 * Call this only when creating a Book.
+	 * </p>
+	 * 
 	 * @param book
 	 * @param bookID
 	 * @return Entity
@@ -275,6 +323,15 @@ public class ServletUtilities {
 	}
 
 	/**
+	 * <p>
+	 * Converts the Properties of Book POJO into an Datastore Entity.
+	 * </p>
+	 * <p>
+	 * Call this only when updating an entity without updating the coverImage for
+	 * the Book. If the Book POJO has a null value for a property, the corresponding
+	 * entity property will be updated from the existing Datastore Entity.
+	 * </p>
+	 * 
 	 * @param book
 	 * @param bookID
 	 * @return Entity
@@ -340,8 +397,20 @@ public class ServletUtilities {
 	}
 
 	/**
+	 * 
+	 * <p>
+	 * Converts the Properties of Book POJO into an Datastore Entity.
+	 * </p>
+	 * <p>
+	 * Call this only when updating an entity when updating the coverImage of the
+	 * Book. If the POJO has a null value for a property, the corresponding entity
+	 * property will be updated from the existing Datastore Entity.
+	 * </p>
+	 * 
+	 * @param datastoreEntity
 	 * @param book
 	 * @param bookID
+	 * @param updatedFileUrl
 	 * @return Entity
 	 * @throws EntityNotFoundException
 	 */
@@ -404,7 +473,7 @@ public class ServletUtilities {
 
 	/**
 	 * Utility Methods used to Perform Validations on data sent in
-	 * HttpServletRequest
+	 * HttpServletRequest.
 	 **/
 
 	/**
@@ -440,6 +509,14 @@ public class ServletUtilities {
 		return responseMap;
 	}
 
+	/**
+	 * <p>
+	 * Validates the bookID by checking the datastore for the presence of the ID.
+	 * </p>
+	 * 
+	 * @param bookID
+	 * @return boolean
+	 */
 	public static boolean bookIDValidator(String bookID) {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		// Validating the bookID
@@ -448,7 +525,6 @@ public class ServletUtilities {
 			datastore.get(entity.getKey());
 			return true;
 		} catch (EntityNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;
 		}
@@ -690,7 +766,8 @@ public class ServletUtilities {
 
 	/**
 	 * <p>
-	 * Creates a New Entity in the Datastore with all the properties of the Book.
+	 * Creates a New Entity in the Datastore with all the properties of the Book
+	 * POJO.
 	 * </p>
 	 * 
 	 * @param jsonInputString
@@ -837,7 +914,7 @@ public class ServletUtilities {
 	 * <li>sortDirection = {"ASCENDING", "DESCENDING"}
 	 * </ol>
 	 * <p>
-	 * ParameterNames are <b>Case-Sensitive</b> while Values are
+	 * ParameterNames are <b>Case-Sensitive</b> while Values are.
 	 * <b>Case-Insensitive</b>
 	 * </p>
 	 * 
@@ -864,7 +941,7 @@ public class ServletUtilities {
 
 	/**
 	 * <p>
-	 * Serves the data of the Book when passed with the valid ID
+	 * Serves the data of the Book when passed with the valid ID.
 	 * </p>
 	 * 
 	 * @param bookID
@@ -938,7 +1015,7 @@ public class ServletUtilities {
 
 	/**
 	 * <p>
-	 * Updates the Image in the GCS
+	 * Updates the Image in the GCS.
 	 * </p>
 	 * 
 	 * <p>
@@ -1054,6 +1131,34 @@ public class ServletUtilities {
 
 	/**
 	 * <p>
+	 * Deletes the Book Entity from Datastore and does not interact with the GCS.
+	 * </p>
+	 * 
+	 * @param bookID
+	 * @return LinkedHashMap<String, Object>
+	 * @throws EntityNotFoundException
+	 */
+	public static LinkedHashMap<String, Object> deleteBookWithoutImage(String bookID) throws EntityNotFoundException {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		Key entityKey = KeyFactory.createKey("Books", bookID);
+		LinkedHashMap<String, Object> responseMap = new LinkedHashMap<>();
+		try {
+			datastore.get(entityKey);
+			datastore.delete(entityKey);
+			responseMap.put("SUCCESS", "Book was deleted");
+			responseMap.put("STATUS_CODE", 200);
+		} catch (Exception e) {
+			System.out.println("Caught in deleteBook Method");
+			e.printStackTrace();
+			responseMap.put("ERROR", "Book not Found. Invalid Key");
+			responseMap.put("STATUS_CODE", 404);
+		}
+		return responseMap;
+	}
+
+
+	/**
+	 * <p>
 	 * Deletes the Book Entity from Datastore and Deletes the Image in GCS if
 	 * present.
 	 * </p>
@@ -1063,7 +1168,7 @@ public class ServletUtilities {
 	 * @throws EntityNotFoundException
 	 */
 	@SuppressWarnings("unused")
-	public static LinkedHashMap<String, Object> deleteBook(String bookID) throws EntityNotFoundException {
+	public static LinkedHashMap<String, Object> deleteBookWithImage(String bookID) throws EntityNotFoundException {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		Key entityKey = KeyFactory.createKey("Books", bookID);
 		LinkedHashMap<String, Object> responseMap = new LinkedHashMap<>();
