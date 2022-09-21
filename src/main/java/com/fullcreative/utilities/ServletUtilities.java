@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.imageio.ImageIO;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -491,14 +490,17 @@ public class ServletUtilities {
 	 * @return LinkedHashMap<String, Object>
 	 * @throws IOException
 	 */
-	private static LinkedHashMap<String, Object> imageValidator(InputStream fileInputStream, String imageFormat,
+	private static LinkedHashMap<String, Object> imageValidator(byte[] imageDataAsByteArray, String imageFormat,
 			LinkedHashMap<String, Object> responseMap) throws IOException {
 		try {
-			if (imageFormat.equalsIgnoreCase("jpeg") == false && imageFormat.equalsIgnoreCase("jpg") == false
-					&& imageFormat.equalsIgnoreCase("png") == false) {
+			imageFormat = getActualImageFormat(imageDataAsByteArray);
+			System.out.println("Uploaded Image format: " + imageFormat);
+			if (imageFormat.equalsIgnoreCase("undefined")) {
 				throw new Exception();
 			}
-			ImageIO.read(fileInputStream).toString();
+		} catch (IOException e) {
+			responseMap.put("IMAGE_ERROR", "Invalid Image file or format");
+			responseMap.put("STATUS_CODE", 400);
 		} catch (NullPointerException e) {
 			responseMap.put("IMAGE_ERROR", "Invalid Image file or format");
 			responseMap.put("STATUS_CODE", 400);
@@ -507,6 +509,30 @@ public class ServletUtilities {
 			responseMap.put("STATUS_CODE", 400);
 		}
 		return responseMap;
+	}
+
+	/**
+	 * Get the file type based on the file signature. Here restricted to only
+	 * recognized file type jpeg, jpg, png where the magic numbers of jpg and jpeg
+	 * files are the same.
+	 *
+	 * @param imageDataAsByteArray Byte array of the file.
+	 * @return String of the file type.
+	 */
+	public static String getActualImageFormat(byte[] imageDataAsByteArray) {
+		String type = "undefined";
+		if (Byte.toUnsignedInt(imageDataAsByteArray[0]) == 0x89 && Byte.toUnsignedInt(imageDataAsByteArray[1]) == 0x50
+				&& Byte.toUnsignedInt(imageDataAsByteArray[2]) == 0x4e
+				&& Byte.toUnsignedInt(imageDataAsByteArray[3]) == 0x47) {
+			type = "png";
+		}
+		else if (Byte.toUnsignedInt(imageDataAsByteArray[0]) == 0xFF
+				&& Byte.toUnsignedInt(imageDataAsByteArray[1]) == 0xD8
+				&& Byte.toUnsignedInt(imageDataAsByteArray[2]) == 0xff
+				&& Byte.toUnsignedInt(imageDataAsByteArray[3]) == 0xe0) {
+			type = "jpg";
+		}
+		return type;
 	}
 
 	/**
@@ -836,7 +862,7 @@ public class ServletUtilities {
 //			Cloning a the inputStream to validate
 			ByteArrayOutputStream baos = cloneInputStream(fileInputStream);
 			fileInputStream = new ByteArrayInputStream(baos.toByteArray());
-			responseMap = imageValidator(new ByteArrayInputStream(baos.toByteArray()), imageFormat, responseMap);
+			responseMap = imageValidator(baos.toByteArray(), imageFormat, responseMap);
 
 		} catch (Exception e) {
 			responseMap.put("IMAGE_ERROR", "Invalid Image file or format");
@@ -846,10 +872,10 @@ public class ServletUtilities {
 			return responseMap;
 		} else {
 			String bookID = UUID.randomUUID().toString();
-//			String fileName = bookID + "." + imageFormat;
 			// Upload the file and get its URL
 			String uploadedFileUrl = ServletUtilities.uploadToCloudStorage(bookID, imageFormat, fileInputStream);
 			newBook.setCoverImage(uploadedFileUrl);
+			System.out.println(uploadedFileUrl);
 			Entity entity = entityFromBook(newBook, bookID);
 			Key keyObj = datastore.put(entity);
 			try {
@@ -1041,7 +1067,7 @@ public class ServletUtilities {
 			// Cloning a the inputStream to validate
 			ByteArrayOutputStream baos = cloneInputStream(fileInputStream);
 			fileInputStream = new ByteArrayInputStream(baos.toByteArray());
-			responseMap = imageValidator(new ByteArrayInputStream(baos.toByteArray()), imageFormat, responseMap);
+			responseMap = imageValidator(baos.toByteArray(), imageFormat, responseMap);
 			if (responseMap.size() != 0) {
 				return responseMap;
 			} else {
@@ -1101,7 +1127,7 @@ public class ServletUtilities {
 			ByteArrayOutputStream baos = cloneInputStream(fileInputStream);
 			fileInputStream = new ByteArrayInputStream(baos.toByteArray());
 
-			responseMap = imageValidator(new ByteArrayInputStream(baos.toByteArray()), imageFormat, responseMap);
+			responseMap = imageValidator(baos.toByteArray(), imageFormat, responseMap);
 			if (responseMap.size() != 0) {
 				return responseMap;
 			} else {
@@ -1202,15 +1228,17 @@ public class ServletUtilities {
 	public static String uploadToCloudStorage(String fileName, String fileFormat, InputStream fileInputStream) {
 		String projectId = "book-management-system-362310";
 		String bucketName = "book-management-system-362310.appspot.com";
+		String publicUrl = "https://storage.googleapis.com/" + bucketName + "/" + fileName;
 		Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
 		BlobId blobId = BlobId.of(bucketName, fileName);
 		BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("image/" + fileFormat)
+				.setCacheControl("no-store")
 				.setAcl(new ArrayList<>(Arrays.asList(Acl.of(Acl.User.ofAllUsers(), Acl.Role.READER),
 						Acl.of(new Acl.Project(Acl.Project.ProjectRole.OWNERS, projectId), Acl.Role.OWNER))))
 				.build();
-		@SuppressWarnings("deprecation")
+		@SuppressWarnings({ "deprecation", "unused" })
 		Blob blob = storage.create(blobInfo, fileInputStream);
-		return blob.getMediaLink();
+		return publicUrl;
 	}
 
 	/**
@@ -1226,6 +1254,7 @@ public class ServletUtilities {
 	public static String updateImageInCloudStorage(String fileName, String fileFormat, InputStream fileInputStream) {
 		String projectId = "book-management-system-362310";
 		String bucketName = "book-management-system-362310.appspot.com";
+		String publicUrl = "https://storage.googleapis.com/" + bucketName + "/" + fileName;
 		Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
 		BlobId blobId = BlobId.of(bucketName, fileName);
 		Blob blob = storage.get(blobId);
@@ -1233,18 +1262,20 @@ public class ServletUtilities {
 		if (blob != null) {
 			storage.delete(bucketName, fileName);
 			BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("image/" + fileFormat)
+					.setCacheControl("no-store")
 					.setAcl(new ArrayList<>(Arrays.asList(Acl.of(Acl.User.ofAllUsers(), Acl.Role.READER),
 							Acl.of(new Acl.Project(Acl.Project.ProjectRole.OWNERS, projectId), Acl.Role.OWNER))))
 					.build();
 			blob = storage.create(blobInfo, fileInputStream);
-			return blob.getMediaLink();
+			return publicUrl;
 		} else {
 			BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("image/" + fileFormat)
+					.setCacheControl("no-store")
 					.setAcl(new ArrayList<>(Arrays.asList(Acl.of(Acl.User.ofAllUsers(), Acl.Role.READER),
 							Acl.of(new Acl.Project(Acl.Project.ProjectRole.OWNERS, projectId), Acl.Role.OWNER))))
 					.build();
 			blob = storage.create(blobInfo, fileInputStream);
-			return blob.getMediaLink();
+			return publicUrl;
 		}
 	}
 
