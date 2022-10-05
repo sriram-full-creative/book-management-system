@@ -188,6 +188,7 @@ public class ServletUtilities {
 	public static String mapToJsonString(LinkedHashMap<String, Object> map) {
 		Gson gson = new Gson();
 		Book book = new Book();
+		book.setId((String) map.get("id"));
 		book.setAuthor((LinkedList<String>) map.get("author"));
 		book.setPublication((LinkedList<String>) map.get("publication"));
 		book.setTitle((String) map.get("title"));
@@ -234,11 +235,9 @@ public class ServletUtilities {
 	 * @return List<Book>
 	 */
 	public static List<Book> booksFromEntities(List<Entity> entities) {
-		LinkedHashMap<String, Object> bookID = new LinkedHashMap<>();
 		List<Book> books = new ArrayList<>();
 		for (Entity entity : entities) {
 			books.add(bookFromEntity(entity));
-			bookID.put(entity.getKey().toString(), bookFromEntity(entity));
 		}
 
 		return books;
@@ -254,6 +253,7 @@ public class ServletUtilities {
 	 * @return LinkedHashMap<String, Object>
 	 */
 	private static LinkedHashMap<String, Object> mapFromBook(Book book, LinkedHashMap<String, Object> map) {
+		map.put("id", book.getId());
 		map.put("author", book.getAuthor());
 		map.put("publication", book.getPublication());
 		map.put("title", book.getTitle());
@@ -277,6 +277,7 @@ public class ServletUtilities {
 	 */
 	private static Book bookFromEntity(Entity entity) {
 		Book book = new Book();
+		book.setId(entity.getKey().getName());
 		book.setAuthor(new LinkedList<String>(Arrays.asList(entity.getProperty("Author").toString().split(","))));
 		book.setPublication(
 				new LinkedList<String>(Arrays.asList(entity.getProperty("Publication").toString().split(","))));
@@ -822,7 +823,7 @@ public class ServletUtilities {
 				Book responseBookData = new Book();
 				responseBookData = bookFromEntity(responseEntity);
 				responseMap = mapFromBook(responseBookData, responseMap);
-				responseMap.put("BOOK_ID", keyObj.getName());
+//				responseMap.put("BOOK_ID", keyObj.getName());
 				responseMap.put("STATUS_CODE", 200);
 			} catch (Exception e) {
 				System.out.println("Thrown from createNewBook Method");
@@ -883,7 +884,7 @@ public class ServletUtilities {
 				Book responseBookData = new Book();
 				responseBookData = bookFromEntity(responseEntity);
 				responseMap = mapFromBook(responseBookData, responseMap);
-				responseMap.put("BOOK_ID", keyObj.getName());
+//				responseMap.put("BOOK_ID", keyObj.getName());
 				responseMap.put("STATUS_CODE", 200);
 			} catch (Exception e) {
 				System.out.println("Thrown from createNewBook Method");
@@ -1027,7 +1028,7 @@ public class ServletUtilities {
 				Book responseBookData = new Book();
 				responseBookData = bookFromEntity(responseEntity);
 				responseMap = mapFromBook(responseBookData, responseMap);
-				responseMap.put("BOOK_ID", keyObj.getName());
+//				responseMap.put("BOOK_ID", keyObj.getName());
 				responseMap.put("STATUS_CODE", 200);
 			}
 		} catch (Exception e) {
@@ -1080,7 +1081,7 @@ public class ServletUtilities {
 				Book responseBookData = new Book();
 				responseBookData = bookFromEntity(responseEntity);
 				responseMap = mapFromBook(responseBookData, responseMap);
-				responseMap.put("BOOK_ID", keyObj.getName());
+//				responseMap.put("BOOK_ID", keyObj.getName());
 				responseMap.put("STATUS_CODE", 200);
 			}
 		} catch (Exception e) {
@@ -1141,7 +1142,7 @@ public class ServletUtilities {
 				Book responseBookData = new Book();
 				responseBookData = bookFromEntity(responseEntity);
 				responseMap = mapFromBook(responseBookData, responseMap);
-				responseMap.put("BOOK_ID", keyObj.getName());
+//				responseMap.put("BOOK_ID", keyObj.getName());
 				responseMap.put("STATUS_CODE", 200);
 			}
 		} catch (Exception e) {

@@ -86,22 +86,30 @@ public class BookServlet extends HttpServlet {
 			Map<String, Object> responseMap = new LinkedHashMap<>();
 			if (ServletUtilities.hasBookID(request.getRequestURI()) == false
 					&& ServletUtilities.isValidEndPoint(request.getRequestURI())) {
+
 				// Getting JSON request body and image Part
 				String jsonRequestString = request.getParameter("jsonBody");
 				Part filePart = request.getPart("coverImage");
+
+				// Request is empty
 				if (jsonRequestString == null && filePart == null) {
 					throw new NullPointerException();
-				} else if (jsonRequestString != null && filePart != null) {
+				}
+				// Request has only book details to be updated
+				else if (jsonRequestString != null && filePart == null) {
+					System.out.println("Request Has only JSON Body");
+					System.out.println("Request JSON Body: " + jsonRequestString);
+					responseMap = ServletUtilities.createNewBook(jsonRequestString);
+				}
+				// Request has both book data and an image to be updated
+				else if (jsonRequestString != null && filePart != null) {
 					System.out.println("Request Has both Image and JSON Body");
 					System.out.println("Request JSON Body: " + jsonRequestString);
 					System.out.println("Detected Type of Image" + filePart.getContentType());
+					// Get the file chosen by the user
 					String imageFormat = filePart.getContentType().replace("image/", "").trim();
 					InputStream fileInputStream = filePart.getInputStream();
 					responseMap = ServletUtilities.createNewBook(jsonRequestString, fileInputStream, imageFormat);
-				} else if (jsonRequestString != null && filePart == null) {
-					System.out.println("Request Has only Image");
-					System.out.println("Detected Type of Image" + filePart.getContentType());
-					responseMap = ServletUtilities.createNewBook(jsonRequestString);
 				}
 				int statusCode = Integer.parseInt(responseMap.remove("STATUS_CODE").toString());
 				if (responseMap.containsKey("BOOK_ID")) {
