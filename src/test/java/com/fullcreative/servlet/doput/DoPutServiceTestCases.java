@@ -13,7 +13,7 @@ import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 
-public class DoPutServiceTest {
+public class DoPutServiceTestCases {
 	private final LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
 
 	@Before
@@ -37,22 +37,22 @@ public class DoPutServiceTest {
 		System.out.println("updateBook_validBook_Test()");
 
 		// Creating a book with wrong details which are to be updated
-		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestCases.testCases.get("validBookBeforeUpdate");
+		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestData.testCases.get("validBookBeforeUpdate");
 		String inputStringBeforeUpdate = ServletUtilities.mapToJsonString(testCaseMapBeforeUpdate);
 		System.out.println(inputStringBeforeUpdate);
 		LinkedHashMap<String, Object> actualBookValueBeforeUpdate = ServletUtilities
 				.createNewBook(inputStringBeforeUpdate);
 		int codeBeforeUpdate = Integer.parseInt(actualBookValueBeforeUpdate.remove("STATUS_CODE").toString());
 		String keyBeforeUpdate = null;
-		if (actualBookValueBeforeUpdate.containsKey("BOOK_ID")) {
-			keyBeforeUpdate = actualBookValueBeforeUpdate.remove("BOOK_ID").toString();
+		if (actualBookValueBeforeUpdate.containsKey("id")) {
+			keyBeforeUpdate = actualBookValueBeforeUpdate.remove("id").toString();
 		}
 		// Checking if the book is created with the sent data
 		assertEquals(200, codeBeforeUpdate);
 		assertEquals(testCaseMapBeforeUpdate.toString(), actualBookValueBeforeUpdate.toString());
 
 		// Updating the Book
-		LinkedHashMap<String, Object> testCaseMapAfterUpdate = DoPutTestCases.testCases.get("validBookAfterUpdate");
+		LinkedHashMap<String, Object> testCaseMapAfterUpdate = DoPutTestData.testCases.get("validBookAfterUpdate");
 		String inputStringAfterUpdate = ServletUtilities.mapToJsonString(testCaseMapAfterUpdate);
 		System.out.println(inputStringAfterUpdate);
 
@@ -61,8 +61,8 @@ public class DoPutServiceTest {
 				.updateBook(inputStringAfterUpdate, keyBeforeUpdate);
 		int code = Integer.parseInt(actualBookValueAfterUpdate.remove("STATUS_CODE").toString());
 		String keyAfterUpdate = null;
-		if (actualBookValueAfterUpdate.containsKey("BOOK_ID")) {
-			keyAfterUpdate = actualBookValueAfterUpdate.remove("BOOK_ID").toString();
+		if (actualBookValueAfterUpdate.containsKey("id")) {
+			keyAfterUpdate = actualBookValueAfterUpdate.remove("id").toString();
 		}
 		assertEquals(200, code);
 		assertEquals(testCaseMapAfterUpdate.toString(), actualBookValueAfterUpdate.toString());
@@ -82,7 +82,7 @@ public class DoPutServiceTest {
 		System.out.println("updateBook_authorName_Test()");
 
 		// Creating a book with wrong details which are to be updated
-		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestCases.testCases
+		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestData.testCases
 				.get("validBookBeforeAuthorUpdate");
 		String inputStringBeforeUpdate = ServletUtilities.mapToJsonString(testCaseMapBeforeUpdate);
 		System.out.println(inputStringBeforeUpdate);
@@ -90,16 +90,16 @@ public class DoPutServiceTest {
 				.createNewBook(inputStringBeforeUpdate);
 		int codeBeforeUpdate = Integer.parseInt(actualBookValueBeforeUpdate.remove("STATUS_CODE").toString());
 		String keyBeforeUpdate = null;
-		if (actualBookValueBeforeUpdate.containsKey("BOOK_ID")) {
-			keyBeforeUpdate = actualBookValueBeforeUpdate.remove("BOOK_ID").toString();
+		if (actualBookValueBeforeUpdate.containsKey("id")) {
+			keyBeforeUpdate = actualBookValueBeforeUpdate.remove("id").toString();
 		}
 		// Checking if the book is created with the sent data
 		assertEquals(200, codeBeforeUpdate);
 		assertEquals(testCaseMapBeforeUpdate.toString(), actualBookValueBeforeUpdate.toString());
 
 		// Updating the Book
-		LinkedHashMap<String, Object> testCaseMapForUpdate = DoPutTestCases.testCases.get("validBookForAuthorUpdate");
-		LinkedHashMap<String, Object> testCaseMapAfterUpdate = DoPutTestCases.testCases
+		LinkedHashMap<String, Object> testCaseMapForUpdate = DoPutTestData.testCases.get("validBookForAuthorUpdate");
+		LinkedHashMap<String, Object> testCaseMapAfterUpdate = DoPutTestData.testCases
 				.get("validBookAfterAuthorUpdate");
 		String inputStringForrUpdate = ServletUtilities.mapToJsonString(testCaseMapForUpdate);
 		String inputStringAfterUpdate = ServletUtilities.mapToJsonString(testCaseMapAfterUpdate);
@@ -110,15 +110,14 @@ public class DoPutServiceTest {
 				keyBeforeUpdate);
 		int code = Integer.parseInt(actualBookValueAfterUpdate.remove("STATUS_CODE").toString());
 		String keyAfterUpdate = null;
-		if (actualBookValueAfterUpdate.containsKey("BOOK_ID")) {
-			keyAfterUpdate = actualBookValueAfterUpdate.remove("BOOK_ID").toString();
+		if (actualBookValueAfterUpdate.containsKey("id")) {
+			keyAfterUpdate = actualBookValueAfterUpdate.remove("id").toString();
 		}
 		assertEquals(200, code);
 		assertEquals(testCaseMapAfterUpdate.toString(), actualBookValueAfterUpdate.toString());
 
 		// Asserting if we updated the same book by checking the returned key
 		assertEquals(keyBeforeUpdate, keyAfterUpdate);
-
 	}
 
 	/**
@@ -131,7 +130,7 @@ public class DoPutServiceTest {
 		System.out.println("updateBook_publication_Test()");
 
 		// Creating a book with wrong details which are to be updated
-		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestCases.testCases
+		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestData.testCases
 				.get("validBookBeforePublicationUpdate");
 		String inputStringBeforeUpdate = ServletUtilities.mapToJsonString(testCaseMapBeforeUpdate);
 		System.out.println(inputStringBeforeUpdate);
@@ -139,17 +138,17 @@ public class DoPutServiceTest {
 				.createNewBook(inputStringBeforeUpdate);
 		int codeBeforeUpdate = Integer.parseInt(actualBookValueBeforeUpdate.remove("STATUS_CODE").toString());
 		String keyBeforeUpdate = null;
-		if (actualBookValueBeforeUpdate.containsKey("BOOK_ID")) {
-			keyBeforeUpdate = actualBookValueBeforeUpdate.remove("BOOK_ID").toString();
+		if (actualBookValueBeforeUpdate.containsKey("id")) {
+			keyBeforeUpdate = actualBookValueBeforeUpdate.remove("id").toString();
 		}
 		// Checking if the book is created with the sent data
 		assertEquals(200, codeBeforeUpdate);
 		assertEquals(testCaseMapBeforeUpdate.toString(), actualBookValueBeforeUpdate.toString());
 
 		// Updating the Book
-		LinkedHashMap<String, Object> testCaseMapForUpdate = DoPutTestCases.testCases
+		LinkedHashMap<String, Object> testCaseMapForUpdate = DoPutTestData.testCases
 				.get("validBookForPublicationUpdate");
-		LinkedHashMap<String, Object> testCaseMapAfterUpdate = DoPutTestCases.testCases
+		LinkedHashMap<String, Object> testCaseMapAfterUpdate = DoPutTestData.testCases
 				.get("validBookAfterPublicationUpdate");
 		String inputStringForrUpdate = ServletUtilities.mapToJsonString(testCaseMapForUpdate);
 		String inputStringAfterUpdate = ServletUtilities.mapToJsonString(testCaseMapAfterUpdate);
@@ -160,8 +159,8 @@ public class DoPutServiceTest {
 				keyBeforeUpdate);
 		int code = Integer.parseInt(actualBookValueAfterUpdate.remove("STATUS_CODE").toString());
 		String keyAfterUpdate = null;
-		if (actualBookValueAfterUpdate.containsKey("BOOK_ID")) {
-			keyAfterUpdate = actualBookValueAfterUpdate.remove("BOOK_ID").toString();
+		if (actualBookValueAfterUpdate.containsKey("id")) {
+			keyAfterUpdate = actualBookValueAfterUpdate.remove("id").toString();
 		}
 		assertEquals(200, code);
 		assertEquals(testCaseMapAfterUpdate.toString(), actualBookValueAfterUpdate.toString());
@@ -181,7 +180,7 @@ public class DoPutServiceTest {
 		System.out.println("updateBook_title_Test()");
 
 		// Creating a book with wrong details which are to be updated
-		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestCases.testCases
+		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestData.testCases
 				.get("validBookBeforeTitleUpdate");
 		String inputStringBeforeUpdate = ServletUtilities.mapToJsonString(testCaseMapBeforeUpdate);
 		System.out.println(inputStringBeforeUpdate);
@@ -189,16 +188,16 @@ public class DoPutServiceTest {
 				.createNewBook(inputStringBeforeUpdate);
 		int codeBeforeUpdate = Integer.parseInt(actualBookValueBeforeUpdate.remove("STATUS_CODE").toString());
 		String keyBeforeUpdate = null;
-		if (actualBookValueBeforeUpdate.containsKey("BOOK_ID")) {
-			keyBeforeUpdate = actualBookValueBeforeUpdate.remove("BOOK_ID").toString();
+		if (actualBookValueBeforeUpdate.containsKey("id")) {
+			keyBeforeUpdate = actualBookValueBeforeUpdate.remove("id").toString();
 		}
 		// Checking if the book is created with the sent data
 		assertEquals(200, codeBeforeUpdate);
 		assertEquals(testCaseMapBeforeUpdate.toString(), actualBookValueBeforeUpdate.toString());
 
 		// Updating the Book
-		LinkedHashMap<String, Object> testCaseMapForUpdate = DoPutTestCases.testCases.get("validBookForTitleUpdate");
-		LinkedHashMap<String, Object> testCaseMapAfterUpdate = DoPutTestCases.testCases
+		LinkedHashMap<String, Object> testCaseMapForUpdate = DoPutTestData.testCases.get("validBookForTitleUpdate");
+		LinkedHashMap<String, Object> testCaseMapAfterUpdate = DoPutTestData.testCases
 				.get("validBookAfterTitleUpdate");
 		String inputStringForrUpdate = ServletUtilities.mapToJsonString(testCaseMapForUpdate);
 		String inputStringAfterUpdate = ServletUtilities.mapToJsonString(testCaseMapAfterUpdate);
@@ -209,8 +208,8 @@ public class DoPutServiceTest {
 				keyBeforeUpdate);
 		int code = Integer.parseInt(actualBookValueAfterUpdate.remove("STATUS_CODE").toString());
 		String keyAfterUpdate = null;
-		if (actualBookValueAfterUpdate.containsKey("BOOK_ID")) {
-			keyAfterUpdate = actualBookValueAfterUpdate.remove("BOOK_ID").toString();
+		if (actualBookValueAfterUpdate.containsKey("id")) {
+			keyAfterUpdate = actualBookValueAfterUpdate.remove("id").toString();
 		}
 		assertEquals(200, code);
 		assertEquals(testCaseMapAfterUpdate.toString(), actualBookValueAfterUpdate.toString());
@@ -230,7 +229,7 @@ public class DoPutServiceTest {
 		System.out.println("updateBook_language_Test()");
 
 		// Creating a book with wrong details which are to be updated
-		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestCases.testCases
+		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestData.testCases
 				.get("validBookBeforeLanguageUpdate");
 		String inputStringBeforeUpdate = ServletUtilities.mapToJsonString(testCaseMapBeforeUpdate);
 		System.out.println(inputStringBeforeUpdate);
@@ -238,16 +237,16 @@ public class DoPutServiceTest {
 				.createNewBook(inputStringBeforeUpdate);
 		int codeBeforeUpdate = Integer.parseInt(actualBookValueBeforeUpdate.remove("STATUS_CODE").toString());
 		String keyBeforeUpdate = null;
-		if (actualBookValueBeforeUpdate.containsKey("BOOK_ID")) {
-			keyBeforeUpdate = actualBookValueBeforeUpdate.remove("BOOK_ID").toString();
+		if (actualBookValueBeforeUpdate.containsKey("id")) {
+			keyBeforeUpdate = actualBookValueBeforeUpdate.remove("id").toString();
 		}
 		// Checking if the book is created with the sent data
 		assertEquals(200, codeBeforeUpdate);
 		assertEquals(testCaseMapBeforeUpdate.toString(), actualBookValueBeforeUpdate.toString());
 
 		// Updating the Book
-		LinkedHashMap<String, Object> testCaseMapForUpdate = DoPutTestCases.testCases.get("validBookForLanguageUpdate");
-		LinkedHashMap<String, Object> testCaseMapAfterUpdate = DoPutTestCases.testCases
+		LinkedHashMap<String, Object> testCaseMapForUpdate = DoPutTestData.testCases.get("validBookForLanguageUpdate");
+		LinkedHashMap<String, Object> testCaseMapAfterUpdate = DoPutTestData.testCases
 				.get("validBookAfterLanguageUpdate");
 		String inputStringForrUpdate = ServletUtilities.mapToJsonString(testCaseMapForUpdate);
 		String inputStringAfterUpdate = ServletUtilities.mapToJsonString(testCaseMapAfterUpdate);
@@ -258,8 +257,8 @@ public class DoPutServiceTest {
 				keyBeforeUpdate);
 		int code = Integer.parseInt(actualBookValueAfterUpdate.remove("STATUS_CODE").toString());
 		String keyAfterUpdate = null;
-		if (actualBookValueAfterUpdate.containsKey("BOOK_ID")) {
-			keyAfterUpdate = actualBookValueAfterUpdate.remove("BOOK_ID").toString();
+		if (actualBookValueAfterUpdate.containsKey("id")) {
+			keyAfterUpdate = actualBookValueAfterUpdate.remove("id").toString();
 		}
 		assertEquals(200, code);
 		assertEquals(testCaseMapAfterUpdate.toString(), actualBookValueAfterUpdate.toString());
@@ -279,7 +278,7 @@ public class DoPutServiceTest {
 		System.out.println("updateBook_pages_Test()");
 
 		// Creating a book with wrong details which are to be updated
-		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestCases.testCases
+		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestData.testCases
 				.get("validBookBeforePagesUpdate");
 		String inputStringBeforeUpdate = ServletUtilities.mapToJsonString(testCaseMapBeforeUpdate);
 		System.out.println(inputStringBeforeUpdate);
@@ -287,16 +286,16 @@ public class DoPutServiceTest {
 				.createNewBook(inputStringBeforeUpdate);
 		int codeBeforeUpdate = Integer.parseInt(actualBookValueBeforeUpdate.remove("STATUS_CODE").toString());
 		String keyBeforeUpdate = null;
-		if (actualBookValueBeforeUpdate.containsKey("BOOK_ID")) {
-			keyBeforeUpdate = actualBookValueBeforeUpdate.remove("BOOK_ID").toString();
+		if (actualBookValueBeforeUpdate.containsKey("id")) {
+			keyBeforeUpdate = actualBookValueBeforeUpdate.remove("id").toString();
 		}
 		// Checking if the book is created with the sent data
 		assertEquals(200, codeBeforeUpdate);
 		assertEquals(testCaseMapBeforeUpdate.toString(), actualBookValueBeforeUpdate.toString());
 
 		// Updating the Book
-		LinkedHashMap<String, Object> testCaseMapForUpdate = DoPutTestCases.testCases.get("validBookForPagesUpdate");
-		LinkedHashMap<String, Object> testCaseMapAfterUpdate = DoPutTestCases.testCases
+		LinkedHashMap<String, Object> testCaseMapForUpdate = DoPutTestData.testCases.get("validBookForPagesUpdate");
+		LinkedHashMap<String, Object> testCaseMapAfterUpdate = DoPutTestData.testCases
 				.get("validBookAfterPagesUpdate");
 		String inputStringForrUpdate = ServletUtilities.mapToJsonString(testCaseMapForUpdate);
 		String inputStringAfterUpdate = ServletUtilities.mapToJsonString(testCaseMapAfterUpdate);
@@ -307,8 +306,8 @@ public class DoPutServiceTest {
 				keyBeforeUpdate);
 		int code = Integer.parseInt(actualBookValueAfterUpdate.remove("STATUS_CODE").toString());
 		String keyAfterUpdate = null;
-		if (actualBookValueAfterUpdate.containsKey("BOOK_ID")) {
-			keyAfterUpdate = actualBookValueAfterUpdate.remove("BOOK_ID").toString();
+		if (actualBookValueAfterUpdate.containsKey("id")) {
+			keyAfterUpdate = actualBookValueAfterUpdate.remove("id").toString();
 		}
 		assertEquals(200, code);
 		assertEquals(testCaseMapAfterUpdate.toString(), actualBookValueAfterUpdate.toString());
@@ -328,7 +327,7 @@ public class DoPutServiceTest {
 		System.out.println("updateBook_releaseYear_Test()");
 
 		// Creating a book with wrong details which are to be updated
-		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestCases.testCases
+		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestData.testCases
 				.get("validBookBeforeReleaseYearUpdate");
 		String inputStringBeforeUpdate = ServletUtilities.mapToJsonString(testCaseMapBeforeUpdate);
 		System.out.println(inputStringBeforeUpdate);
@@ -336,17 +335,17 @@ public class DoPutServiceTest {
 				.createNewBook(inputStringBeforeUpdate);
 		int codeBeforeUpdate = Integer.parseInt(actualBookValueBeforeUpdate.remove("STATUS_CODE").toString());
 		String keyBeforeUpdate = null;
-		if (actualBookValueBeforeUpdate.containsKey("BOOK_ID")) {
-			keyBeforeUpdate = actualBookValueBeforeUpdate.remove("BOOK_ID").toString();
+		if (actualBookValueBeforeUpdate.containsKey("id")) {
+			keyBeforeUpdate = actualBookValueBeforeUpdate.remove("id").toString();
 		}
 		// Checking if the book is created with the sent data
 		assertEquals(200, codeBeforeUpdate);
 		assertEquals(testCaseMapBeforeUpdate.toString(), actualBookValueBeforeUpdate.toString());
 
 		// Updating the Book
-		LinkedHashMap<String, Object> testCaseMapForUpdate = DoPutTestCases.testCases
+		LinkedHashMap<String, Object> testCaseMapForUpdate = DoPutTestData.testCases
 				.get("validBookForReleaseYearUpdate");
-		LinkedHashMap<String, Object> testCaseMapAfterUpdate = DoPutTestCases.testCases
+		LinkedHashMap<String, Object> testCaseMapAfterUpdate = DoPutTestData.testCases
 				.get("validBookAfterReleaseYearUpdate");
 		String inputStringForrUpdate = ServletUtilities.mapToJsonString(testCaseMapForUpdate);
 		String inputStringAfterUpdate = ServletUtilities.mapToJsonString(testCaseMapAfterUpdate);
@@ -357,8 +356,8 @@ public class DoPutServiceTest {
 				keyBeforeUpdate);
 		int code = Integer.parseInt(actualBookValueAfterUpdate.remove("STATUS_CODE").toString());
 		String keyAfterUpdate = null;
-		if (actualBookValueAfterUpdate.containsKey("BOOK_ID")) {
-			keyAfterUpdate = actualBookValueAfterUpdate.remove("BOOK_ID").toString();
+		if (actualBookValueAfterUpdate.containsKey("id")) {
+			keyAfterUpdate = actualBookValueAfterUpdate.remove("id").toString();
 		}
 		assertEquals(200, code);
 		assertEquals(testCaseMapAfterUpdate.toString(), actualBookValueAfterUpdate.toString());
@@ -378,7 +377,7 @@ public class DoPutServiceTest {
 		System.out.println("updateBook_country_Test()");
 
 		// Creating a book with wrong details which are to be updated
-		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestCases.testCases
+		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestData.testCases
 				.get("validBookBeforeCountryUpdate");
 		String inputStringBeforeUpdate = ServletUtilities.mapToJsonString(testCaseMapBeforeUpdate);
 		System.out.println(inputStringBeforeUpdate);
@@ -386,16 +385,16 @@ public class DoPutServiceTest {
 				.createNewBook(inputStringBeforeUpdate);
 		int codeBeforeUpdate = Integer.parseInt(actualBookValueBeforeUpdate.remove("STATUS_CODE").toString());
 		String keyBeforeUpdate = null;
-		if (actualBookValueBeforeUpdate.containsKey("BOOK_ID")) {
-			keyBeforeUpdate = actualBookValueBeforeUpdate.remove("BOOK_ID").toString();
+		if (actualBookValueBeforeUpdate.containsKey("id")) {
+			keyBeforeUpdate = actualBookValueBeforeUpdate.remove("id").toString();
 		}
 		// Checking if the book is created with the sent data
 		assertEquals(200, codeBeforeUpdate);
 		assertEquals(testCaseMapBeforeUpdate.toString(), actualBookValueBeforeUpdate.toString());
 
 		// Updating the Book
-		LinkedHashMap<String, Object> testCaseMapForUpdate = DoPutTestCases.testCases.get("validBookForCountryUpdate");
-		LinkedHashMap<String, Object> testCaseMapAfterUpdate = DoPutTestCases.testCases
+		LinkedHashMap<String, Object> testCaseMapForUpdate = DoPutTestData.testCases.get("validBookForCountryUpdate");
+		LinkedHashMap<String, Object> testCaseMapAfterUpdate = DoPutTestData.testCases
 				.get("validBookAfterCountryUpdate");
 		String inputStringForrUpdate = ServletUtilities.mapToJsonString(testCaseMapForUpdate);
 		String inputStringAfterUpdate = ServletUtilities.mapToJsonString(testCaseMapAfterUpdate);
@@ -406,8 +405,8 @@ public class DoPutServiceTest {
 				keyBeforeUpdate);
 		int code = Integer.parseInt(actualBookValueAfterUpdate.remove("STATUS_CODE").toString());
 		String keyAfterUpdate = null;
-		if (actualBookValueAfterUpdate.containsKey("BOOK_ID")) {
-			keyAfterUpdate = actualBookValueAfterUpdate.remove("BOOK_ID").toString();
+		if (actualBookValueAfterUpdate.containsKey("id")) {
+			keyAfterUpdate = actualBookValueAfterUpdate.remove("id").toString();
 		}
 		assertEquals(200, code);
 		assertEquals(testCaseMapAfterUpdate.toString(), actualBookValueAfterUpdate.toString());
@@ -427,7 +426,7 @@ public class DoPutServiceTest {
 		System.out.println("updateBook_coverImage_Test()");
 
 		// Creating a book with wrong details which are to be updated
-		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestCases.testCases
+		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestData.testCases
 				.get("validBookBeforeCoverImageUpdate");
 		String inputStringBeforeUpdate = ServletUtilities.mapToJsonString(testCaseMapBeforeUpdate);
 		System.out.println(inputStringBeforeUpdate);
@@ -435,17 +434,17 @@ public class DoPutServiceTest {
 				.createNewBook(inputStringBeforeUpdate);
 		int codeBeforeUpdate = Integer.parseInt(actualBookValueBeforeUpdate.remove("STATUS_CODE").toString());
 		String keyBeforeUpdate = null;
-		if (actualBookValueBeforeUpdate.containsKey("BOOK_ID")) {
-			keyBeforeUpdate = actualBookValueBeforeUpdate.remove("BOOK_ID").toString();
+		if (actualBookValueBeforeUpdate.containsKey("id")) {
+			keyBeforeUpdate = actualBookValueBeforeUpdate.remove("id").toString();
 		}
 		// Checking if the book is created with the sent data
 		assertEquals(200, codeBeforeUpdate);
 		assertEquals(testCaseMapBeforeUpdate.toString(), actualBookValueBeforeUpdate.toString());
 
 		// Updating the Book
-		LinkedHashMap<String, Object> testCaseMapForUpdate = DoPutTestCases.testCases
+		LinkedHashMap<String, Object> testCaseMapForUpdate = DoPutTestData.testCases
 				.get("validBookForCoverImageUpdate");
-		LinkedHashMap<String, Object> testCaseMapAfterUpdate = DoPutTestCases.testCases
+		LinkedHashMap<String, Object> testCaseMapAfterUpdate = DoPutTestData.testCases
 				.get("validBookAfterCoverImageUpdate");
 		String inputStringForrUpdate = ServletUtilities.mapToJsonString(testCaseMapForUpdate);
 		String inputStringAfterUpdate = ServletUtilities.mapToJsonString(testCaseMapAfterUpdate);
@@ -456,8 +455,8 @@ public class DoPutServiceTest {
 				keyBeforeUpdate);
 		int code = Integer.parseInt(actualBookValueAfterUpdate.remove("STATUS_CODE").toString());
 		String keyAfterUpdate = null;
-		if (actualBookValueAfterUpdate.containsKey("BOOK_ID")) {
-			keyAfterUpdate = actualBookValueAfterUpdate.remove("BOOK_ID").toString();
+		if (actualBookValueAfterUpdate.containsKey("id")) {
+			keyAfterUpdate = actualBookValueAfterUpdate.remove("id").toString();
 		}
 		assertEquals(200, code);
 		assertEquals(testCaseMapAfterUpdate.toString(), actualBookValueAfterUpdate.toString());
@@ -477,7 +476,7 @@ public class DoPutServiceTest {
 		System.out.println("updateBook_bookLink_Test()");
 
 		// Creating a book with wrong details which are to be updated
-		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestCases.testCases
+		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestData.testCases
 				.get("validBookBeforeBookLinkUpdate");
 		String inputStringBeforeUpdate = ServletUtilities.mapToJsonString(testCaseMapBeforeUpdate);
 		System.out.println(inputStringBeforeUpdate);
@@ -485,16 +484,16 @@ public class DoPutServiceTest {
 				.createNewBook(inputStringBeforeUpdate);
 		int codeBeforeUpdate = Integer.parseInt(actualBookValueBeforeUpdate.remove("STATUS_CODE").toString());
 		String keyBeforeUpdate = null;
-		if (actualBookValueBeforeUpdate.containsKey("BOOK_ID")) {
-			keyBeforeUpdate = actualBookValueBeforeUpdate.remove("BOOK_ID").toString();
+		if (actualBookValueBeforeUpdate.containsKey("id")) {
+			keyBeforeUpdate = actualBookValueBeforeUpdate.remove("id").toString();
 		}
 		// Checking if the book is created with the sent data
 		assertEquals(200, codeBeforeUpdate);
 		assertEquals(testCaseMapBeforeUpdate.toString(), actualBookValueBeforeUpdate.toString());
 
 		// Updating the Book
-		LinkedHashMap<String, Object> testCaseMapForUpdate = DoPutTestCases.testCases.get("validBookForBookLinkUpdate");
-		LinkedHashMap<String, Object> testCaseMapAfterUpdate = DoPutTestCases.testCases
+		LinkedHashMap<String, Object> testCaseMapForUpdate = DoPutTestData.testCases.get("validBookForBookLinkUpdate");
+		LinkedHashMap<String, Object> testCaseMapAfterUpdate = DoPutTestData.testCases
 				.get("validBookAfterBookLinkUpdate");
 		String inputStringForrUpdate = ServletUtilities.mapToJsonString(testCaseMapForUpdate);
 		String inputStringAfterUpdate = ServletUtilities.mapToJsonString(testCaseMapAfterUpdate);
@@ -505,8 +504,8 @@ public class DoPutServiceTest {
 				keyBeforeUpdate);
 		int code = Integer.parseInt(actualBookValueAfterUpdate.remove("STATUS_CODE").toString());
 		String keyAfterUpdate = null;
-		if (actualBookValueAfterUpdate.containsKey("BOOK_ID")) {
-			keyAfterUpdate = actualBookValueAfterUpdate.remove("BOOK_ID").toString();
+		if (actualBookValueAfterUpdate.containsKey("id")) {
+			keyAfterUpdate = actualBookValueAfterUpdate.remove("id").toString();
 		}
 		assertEquals(200, code);
 		assertEquals(testCaseMapAfterUpdate.toString(), actualBookValueAfterUpdate.toString());
@@ -526,7 +525,7 @@ public class DoPutServiceTest {
 		System.out.println("updateBook_rating_Test()");
 
 		// Creating a book with wrong details which are to be updated
-		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestCases.testCases
+		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestData.testCases
 				.get("validBookBeforeRatingUpdate");
 		String inputStringBeforeUpdate = ServletUtilities.mapToJsonString(testCaseMapBeforeUpdate);
 		System.out.println(inputStringBeforeUpdate);
@@ -534,16 +533,16 @@ public class DoPutServiceTest {
 				.createNewBook(inputStringBeforeUpdate);
 		int codeBeforeUpdate = Integer.parseInt(actualBookValueBeforeUpdate.remove("STATUS_CODE").toString());
 		String keyBeforeUpdate = null;
-		if (actualBookValueBeforeUpdate.containsKey("BOOK_ID")) {
-			keyBeforeUpdate = actualBookValueBeforeUpdate.remove("BOOK_ID").toString();
+		if (actualBookValueBeforeUpdate.containsKey("id")) {
+			keyBeforeUpdate = actualBookValueBeforeUpdate.remove("id").toString();
 		}
 		// Checking if the book is created with the sent data
 		assertEquals(200, codeBeforeUpdate);
 		assertEquals(testCaseMapBeforeUpdate.toString(), actualBookValueBeforeUpdate.toString());
 
 		// Updating the Book
-		LinkedHashMap<String, Object> testCaseMapForUpdate = DoPutTestCases.testCases.get("validBookForRatingUpdate");
-		LinkedHashMap<String, Object> testCaseMapAfterUpdate = DoPutTestCases.testCases
+		LinkedHashMap<String, Object> testCaseMapForUpdate = DoPutTestData.testCases.get("validBookForRatingUpdate");
+		LinkedHashMap<String, Object> testCaseMapAfterUpdate = DoPutTestData.testCases
 				.get("validBookAfterRatingUpdate");
 		String inputStringForrUpdate = ServletUtilities.mapToJsonString(testCaseMapForUpdate);
 		String inputStringAfterUpdate = ServletUtilities.mapToJsonString(testCaseMapAfterUpdate);
@@ -554,8 +553,8 @@ public class DoPutServiceTest {
 				keyBeforeUpdate);
 		int code = Integer.parseInt(actualBookValueAfterUpdate.remove("STATUS_CODE").toString());
 		String keyAfterUpdate = null;
-		if (actualBookValueAfterUpdate.containsKey("BOOK_ID")) {
-			keyAfterUpdate = actualBookValueAfterUpdate.remove("BOOK_ID").toString();
+		if (actualBookValueAfterUpdate.containsKey("id")) {
+			keyAfterUpdate = actualBookValueAfterUpdate.remove("id").toString();
 		}
 		assertEquals(200, code);
 		assertEquals(testCaseMapAfterUpdate.toString(), actualBookValueAfterUpdate.toString());
@@ -576,28 +575,28 @@ public class DoPutServiceTest {
 		System.out.println("updateBook_invalidKey_Test()");
 
 		// Creating a book with wrong details which are to be updated
-		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestCases.testCases.get("validBookBeforeUpdate");
+		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestData.testCases.get("validBookBeforeUpdate");
 		String inputStringBeforeUpdate = ServletUtilities.mapToJsonString(testCaseMapBeforeUpdate);
 		System.out.println(inputStringBeforeUpdate);
 		LinkedHashMap<String, Object> actualBookValueBeforeUpdate = ServletUtilities
 				.createNewBook(inputStringBeforeUpdate);
 		int codeBeforeUpdate = Integer.parseInt(actualBookValueBeforeUpdate.remove("STATUS_CODE").toString());
 		String keyBeforeUpdate = null;
-		if (actualBookValueBeforeUpdate.containsKey("BOOK_ID")) {
-			keyBeforeUpdate = actualBookValueBeforeUpdate.remove("BOOK_ID").toString();
+		if (actualBookValueBeforeUpdate.containsKey("id")) {
+			keyBeforeUpdate = actualBookValueBeforeUpdate.remove("id").toString();
 		}
 		// Checking if the book is created with the sent data
 		assertEquals(200, codeBeforeUpdate);
 		assertEquals(testCaseMapBeforeUpdate.toString(), actualBookValueBeforeUpdate.toString());
 
 		// Updating the book with valid and correct details
-		LinkedHashMap<String, Object> validBookMapAfterUpdate = DoPutTestCases.testCases.get("validBookAfterUpdate");
+		LinkedHashMap<String, Object> validBookMapAfterUpdate = DoPutTestData.testCases.get("validBookAfterUpdate");
 		String inputStringStringForUpdate = ServletUtilities.mapToJsonString(validBookMapAfterUpdate);
 		System.out.println(inputStringStringForUpdate);
 		// Calling updatBook but with the wrong bookID
 		LinkedHashMap<String, Object> actualBookMapAfterUpdate = ServletUtilities.updateBook(inputStringStringForUpdate,
-				DoPutTestCases.bookID.get("INVALID_BOOK_ID").toString());
-		LinkedHashMap<String, Object> expectedResponseMap = DoPutTestCases.testCases.get("noBookResponse");
+				DoPutTestData.bookID.get("INVALID_BOOK_ID").toString());
+		LinkedHashMap<String, Object> expectedResponseMap = DoPutTestData.testCases.get("noBookResponse");
 		System.out.println(expectedResponseMap);
 		String actualBookStringAfterUpdate = actualBookMapAfterUpdate.toString();
 		assertEquals(expectedResponseMap.toString(), actualBookStringAfterUpdate);

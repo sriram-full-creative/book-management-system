@@ -5,6 +5,9 @@ import java.util.LinkedList;
 import com.google.gson.annotations.Expose;
 
 public class Book {
+
+	@Expose(serialize = true, deserialize = true)
+	private String id;
 	@Expose(serialize = true, deserialize = true)
 	private LinkedList<String> author;
 	@Expose(serialize = true, deserialize = true)
@@ -25,6 +28,16 @@ public class Book {
 	private String bookLink;
 	@Expose(serialize = true, deserialize = true)
 	private Integer rating;
+
+	/** Getters and Setters **/
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
 
 	public LinkedList<String> getAuthor() {
 		return author;

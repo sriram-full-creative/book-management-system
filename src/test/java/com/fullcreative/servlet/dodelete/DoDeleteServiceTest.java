@@ -43,9 +43,9 @@ public class DoDeleteServiceTest {
 		LinkedHashMap<String, Object> strippedMap = new LinkedHashMap<>();
 		int code = Integer.parseInt(createdBook.remove("STATUS_CODE").toString());
 		strippedMap.put("STATUS_CODE", code);
-		if (createdBook.containsKey("BOOK_ID")) {
-			String key = createdBook.remove("BOOK_ID").toString();
-			strippedMap.put("BOOK_ID", key);
+		if (createdBook.containsKey("id")) {
+			String key = createdBook.remove("id").toString();
+			strippedMap.put("id", key);
 		}
 		return strippedMap;
 	}
@@ -63,12 +63,13 @@ public class DoDeleteServiceTest {
 		// Creating a book using test utility method
 		LinkedHashMap<String, Object> createdBookBeforeDelete = createBookInTestEnv(validBookMapBeforeDelete);
 		LinkedHashMap<String, Object> strippedMapBeforeDelete = stripBookInTestEnv(createdBookBeforeDelete);
-		String bookIDBeforeDelete = strippedMapBeforeDelete.get("BOOK_ID").toString();
+		String bookIDBeforeDelete = strippedMapBeforeDelete.get("id").toString();
 		int codeBeforeDelete = Integer.parseInt(strippedMapBeforeDelete.get("STATUS_CODE").toString());
 
 		String createdBookStringBeforeDelete = ServletUtilities.mapToJsonString(createdBookBeforeDelete);
 
 		LinkedHashMap<String, Object> actualBookMapBeforeDelete = ServletUtilities.getOneBook(bookIDBeforeDelete);
+		actualBookMapBeforeDelete.remove("id");
 		String actualBookStringBeforeDelete = ServletUtilities.mapToJsonString(actualBookMapBeforeDelete);
 
 		assertEquals(200, codeBeforeDelete);
@@ -79,7 +80,7 @@ public class DoDeleteServiceTest {
 				.get("responseAfterSuccessfullDelete");
 		// Calling deleteBook
 		LinkedHashMap<String, Object> actualResponseMapAfterDelete = ServletUtilities
-				.deleteBookWithoutImage(strippedMapBeforeDelete.get("BOOK_ID").toString());
+				.deleteBookWithoutImage(strippedMapBeforeDelete.get("id").toString());
 		System.out.println(actualResponseMapAfterDelete);
 		System.out.println(expectedResponseMapAfterDelete);
 		LinkedHashMap<String, Object> strippedMapAfterDelete = stripBookInTestEnv(actualResponseMapAfterDelete);
@@ -102,12 +103,13 @@ public class DoDeleteServiceTest {
 		// Creating a book using test utility method
 		LinkedHashMap<String, Object> createdBookBeforeDelete = createBookInTestEnv(validBookMapBeforeDelete);
 		LinkedHashMap<String, Object> strippedMapBeforeDelete = stripBookInTestEnv(createdBookBeforeDelete);
-		String bookIDBeforeDelete = strippedMapBeforeDelete.get("BOOK_ID").toString();
+		String bookIDBeforeDelete = strippedMapBeforeDelete.get("id").toString();
 		int codeBeforeDelete = Integer.parseInt(strippedMapBeforeDelete.get("STATUS_CODE").toString());
 
 		String createdBookStringBeforeDelete = ServletUtilities.mapToJsonString(createdBookBeforeDelete);
 
 		LinkedHashMap<String, Object> actualBookMapBeforeDelete = ServletUtilities.getOneBook(bookIDBeforeDelete);
+		actualBookMapBeforeDelete.remove("id");
 		String actualBookStringBeforeDelete = ServletUtilities.mapToJsonString(actualBookMapBeforeDelete);
 
 		assertEquals(200, codeBeforeDelete);

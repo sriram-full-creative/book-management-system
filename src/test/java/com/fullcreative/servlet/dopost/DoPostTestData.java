@@ -9,7 +9,7 @@ import java.util.Map;
  * @author sriram
  *
  */
-public class DoPostTestCases {
+public class DoPostTestData {
 	public static Map<String, LinkedHashMap<String, Object>> errorMessages = new LinkedHashMap<>();
 	public static Map<String, LinkedHashMap<String, Object>> testCases = new LinkedHashMap<>();
 	static {
