@@ -1,30 +1,27 @@
 package com.fullcreative.servlets;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.ListIterator;
 import java.util.Map;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
 
-
+import com.fullcreative.pojo.Book;
 import com.fullcreative.utilities.ServletUtilities;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 /**
  * @author Sriram
  *
  */
 @WebServlet(name = "bookServlet", urlPatterns = { "/books", "/books/*" })
-@MultipartConfig(maxFileSize = 1024 * 1024 * 2 /* 2 MB */,
-		maxRequestSize = 1024 * 1024 * 5 * 5 /* 5 MB */ )
 public class BookServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -8271652320356442502L;
@@ -43,7 +40,7 @@ public class BookServlet extends HttpServlet {
 					String bookID = ServletUtilities.getBookIDFromUri(request);
 					responseMap = ServletUtilities.getOneBook(bookID);
 					int code = Integer.parseInt(responseMap.remove("STATUS_CODE").toString());
-					String responseAsJson = new Gson().toJson(responseMap);
+					String responseAsJson = new GsonBuilder().setPrettyPrinting().create().toJson(responseMap);
 					response.setContentType("application/json");
 					response.getWriter().println(responseAsJson);
 					response.setStatus(code);
@@ -53,6 +50,12 @@ public class BookServlet extends HttpServlet {
 						arrayOfBooks = ServletUtilities.getAllBooks(queryParameters);
 					} else {
 						arrayOfBooks = ServletUtilities.getAllBooks();
+					}
+					Gson gson = new Gson().newBuilder().setPrettyPrinting().create();
+					ListIterator<String> iterator = arrayOfBooks.listIterator();
+					while (iterator.hasNext()) {
+						Book book = gson.fromJson(iterator.next(), Book.class);
+						iterator.set(gson.toJson(book));
 					}
 					response.setContentType("application/json");
 					response.getWriter().println(arrayOfBooks);
@@ -78,7 +81,7 @@ public class BookServlet extends HttpServlet {
 		}
 	}
 
-	@SuppressWarnings("unused")
+//	@SuppressWarnings("unused")
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -88,33 +91,20 @@ public class BookServlet extends HttpServlet {
 					&& ServletUtilities.isValidEndPoint(request.getRequestURI())) {
 
 				// Getting JSON request body and image Part
-				String jsonRequestString = request.getParameter("jsonBody");
-				Part filePart = request.getPart("coverImage");
+				String jsonRequestString = ServletUtilities.payloadFromRequest(request);
 
 				// Request is empty
-				if (jsonRequestString == null && filePart == null) {
+				if (jsonRequestString.length() == 0
+						|| jsonRequestString.substring(1).replaceAll("}", "").length() == 0) {
 					throw new NullPointerException();
 				}
 				// Request has only book details to be updated
-				else if (jsonRequestString != null && filePart == null) {
-					System.out.println("Request Has only JSON Body");
+				else if (jsonRequestString != null) {
+					System.out.println("Request Has JSON Body");
 					System.out.println("Request JSON Body: " + jsonRequestString);
 					responseMap = ServletUtilities.createNewBook(jsonRequestString);
 				}
-				// Request has both book data and an image to be updated
-				else if (jsonRequestString != null && filePart != null) {
-					System.out.println("Request Has both Image and JSON Body");
-					System.out.println("Request JSON Body: " + jsonRequestString);
-					System.out.println("Detected Type of Image" + filePart.getContentType());
-					// Get the file chosen by the user
-					String imageFormat = filePart.getContentType().replace("image/", "").trim();
-					InputStream fileInputStream = filePart.getInputStream();
-					responseMap = ServletUtilities.createNewBook(jsonRequestString, fileInputStream, imageFormat);
-				}
 				int statusCode = Integer.parseInt(responseMap.remove("STATUS_CODE").toString());
-				if (responseMap.containsKey("BOOK_ID")) {
-					String key = responseMap.remove("BOOK_ID").toString();
-				}
 				String responseAsJson = new Gson().toJson(responseMap);
 				response.setContentType("application/json");
 				response.getWriter().print(responseAsJson);
@@ -127,47 +117,19 @@ public class BookServlet extends HttpServlet {
 				response.getWriter().print(responseAsJson);
 				response.setStatus(code);
 			}
-		} catch (NullPointerException e) {
+		} catch (Exception e) {
 			// Thrown when a file is sent but with a different parameter name.
 			e.printStackTrace();
 			Map<String, String> requestErrorMap = new LinkedHashMap<String, String>();
 			response.setContentType("application/json");
-			requestErrorMap.put("EMPTY_REQUEST_ERROR", "Request should contain a image or json body");
+			requestErrorMap.put("EMPTY_REQUEST_ERROR", "Request should contain json body");
 			String requestError = new Gson().toJson(requestErrorMap);
 			response.getWriter().println(requestError);
 			response.setStatus(400);
-		} catch (ServletException e) {
-			// Thrown when the request is an empty request
-			e.printStackTrace();
-			Map<String, String> requestErrorMap = new LinkedHashMap<String, String>();
-			response.setContentType("application/json");
-			requestErrorMap.put("EMPTY_REQUEST_ERROR", "Request should contain a image or json body");
-			String requestError = new Gson().toJson(requestErrorMap);
-			response.getWriter().println(requestError);
-			response.setStatus(400);
-		} catch (Exception e) {
-			System.out.println("Caught in doPost servlet service method");
-			if (e.getCause().toString().contains("Multipart Mime part coverImage exceeds max filesize")) {
-				e.printStackTrace();
-				Map<String, String> requestErrorMap = new LinkedHashMap<String, String>();
-				response.setContentType("application/json");
-				requestErrorMap.put("FILE_SIZE_ERROR", "Image should be less than 2 MB");
-				String requestError = new Gson().toJson(requestErrorMap);
-				response.getWriter().println(requestError);
-				response.setStatus(400);
-			} else {
-				e.printStackTrace();
-				Map<String, String> internalServerErrorMap = new LinkedHashMap<String, String>();
-				response.setContentType("application/json");
-				internalServerErrorMap.put("500", "Something went wrong");
-				String internalServerError = new Gson().toJson(internalServerErrorMap);
-				response.getWriter().println(internalServerError);
-				response.setStatus(500);
-			}
 		}
 	}
 
-	@SuppressWarnings("unused")
+//	@SuppressWarnings("unused")
 	@Override
 	protected void doPut(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -177,43 +139,21 @@ public class BookServlet extends HttpServlet {
 					&& ServletUtilities.isValidEndPoint(request.getRequestURI())) {
 				String bookID = ServletUtilities.getBookIDFromUri(request);
 
-				// Getting JSON request body and image Part
-				String jsonRequestString = request.getParameter("jsonBody");
-				Part filePart = request.getPart("coverImage");
+				// Getting JSON request body
+				String jsonRequestString = ServletUtilities.payloadFromRequest(request);
 
 				// Request is empty
-				if (jsonRequestString == null && filePart == null) {
+				if (jsonRequestString.length() == 0
+						|| jsonRequestString.substring(1).replaceAll("}", "").length() == 0) {
 					throw new NullPointerException();
-				}
-				// Request has both book data and an image to be updated
-				else if (jsonRequestString != null && filePart != null) {
-					System.out.println("Request Has both Image and JSON Body");
-					System.out.println("Request JSON Body: " + jsonRequestString);
-					System.out.println("Detected Type of Image" + filePart.getContentType());
-					// Get the file chosen by the user
-					String imageFormat = filePart.getContentType().replace("image/", "").trim();
-					InputStream fileInputStream = filePart.getInputStream();
-					responseMap = ServletUtilities.updateBook(jsonRequestString, fileInputStream, imageFormat, bookID);
-				}
-				// Request has only image to be updated
-				else if (jsonRequestString == null && filePart != null) {
-					System.out.println("Request Has only Image");
-					System.out.println("Detected Type of Image" + filePart.getContentType());
-					// Get the file chosen by the user
-					String imageFormat = filePart.getContentType().replace("image/", "").trim();
-					InputStream fileInputStream = filePart.getInputStream();
-					responseMap = ServletUtilities.updateBook(fileInputStream, imageFormat, bookID);
 				}
 				// Request has only book details to be updated
 				else {
-					System.out.println("Request Has only JSON Body");
+					System.out.println("Request Has JSON Body");
 					System.out.println("Request JSON Body: " + jsonRequestString);
 					responseMap = ServletUtilities.updateBook(jsonRequestString, bookID);
 				}
 				int statusCode = Integer.parseInt(responseMap.remove("STATUS_CODE").toString());
-				if (responseMap.containsKey("BOOK_ID")) {
-					String key = responseMap.remove("BOOK_ID").toString();
-				}
 				String responseAsJson = new Gson().toJson(responseMap);
 				response.setContentType("application/json");
 				response.getWriter().print(responseAsJson);
@@ -231,16 +171,7 @@ public class BookServlet extends HttpServlet {
 			e.printStackTrace();
 			Map<String, String> requestErrorMap = new LinkedHashMap<String, String>();
 			response.setContentType("application/json");
-			requestErrorMap.put("EMPTY_REQUEST_ERROR", "Request should contain a image or json body");
-			String requestError = new Gson().toJson(requestErrorMap);
-			response.getWriter().println(requestError);
-			response.setStatus(400);
-		} catch (ServletException e) {
-			// Thrown when the request is an empty request
-			e.printStackTrace();
-			Map<String, String> requestErrorMap = new LinkedHashMap<String, String>();
-			response.setContentType("application/json");
-			requestErrorMap.put("EMPTY_REQUEST_ERROR", "Request should contain a image or json body");
+			requestErrorMap.put("EMPTY_REQUEST_ERROR", "Request should contain json body");
 			String requestError = new Gson().toJson(requestErrorMap);
 			response.getWriter().println(requestError);
 			response.setStatus(400);

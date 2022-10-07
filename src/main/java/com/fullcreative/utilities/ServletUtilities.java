@@ -1,5 +1,6 @@
 package com.fullcreative.utilities;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -40,10 +41,6 @@ import com.google.gson.GsonBuilder;
 
 /**
  * @author Sriram
- *
- */
-/**
- * @author sriram
  *
  */
 public class ServletUtilities {
@@ -105,6 +102,25 @@ public class ServletUtilities {
 
 	/**
 	 * <p>
+	 * Extracts the JSON Payload from the HttpServletRequest
+	 * </p>
+	 * 
+	 * @param request
+	 * @return String
+	 * @throws IOException
+	 */
+	public static String payloadFromRequest(HttpServletRequest request) throws IOException {
+		StringBuffer jsonString = new StringBuffer();
+		String line = null;
+		BufferedReader reader = request.getReader();
+		while ((line = reader.readLine()) != null) {
+			jsonString.append(line);
+		}
+		return jsonString.toString();
+	}
+
+	/**
+	 * <p>
 	 * Generates a Error Response Map for when a requested End Point is Invalid.
 	 * </p>
 	 * 
@@ -113,17 +129,11 @@ public class ServletUtilities {
 	 */
 	public static Map<String, Object> invalidRequestEndpointResponse(Map<String, Object> responseMap) {
 		/**
-		 * Status Code 422 means Unprocessable Entity The 422 (Unprocessable Entity)
-		 * status code means the server understands the content type of the request
-		 * entity (hence a 415 (Unsupported Media Type) status code is inappropriate),
-		 * and the syntax of the request entity is correct (thus a 400 (Bad Request)
-		 * status code is inappropriate) but was unable to process the contained
-		 * instructions. For example, this error condition may occur if an XML request
-		 * body contains well-formed (i.e., syntactically correct), but semantically
-		 * erroneous, XML instructions.
+		 * The HTTP 414 URI Too Long response status code indicates that the URI
+		 * requested by the client is longer than the server is willing to interpret.
 		 */
-		responseMap.put("ERROR", "Invalid End Point");
-		responseMap.put("STATUS_CODE", 422);
+		responseMap.put("ERROR", "Recheck the URI");
+		responseMap.put("STATUS_CODE", 400);
 		return responseMap;
 	}
 
@@ -823,7 +833,6 @@ public class ServletUtilities {
 				Book responseBookData = new Book();
 				responseBookData = bookFromEntity(responseEntity);
 				responseMap = mapFromBook(responseBookData, responseMap);
-//				responseMap.put("BOOK_ID", keyObj.getName());
 				responseMap.put("STATUS_CODE", 200);
 			} catch (Exception e) {
 				System.out.println("Thrown from createNewBook Method");
@@ -860,7 +869,7 @@ public class ServletUtilities {
 			responseMap.put("STATUS_CODE", 400);
 		}
 		try {
-//			Cloning a the inputStream to validate
+			// Cloning a the inputStream to validate
 			ByteArrayOutputStream baos = cloneInputStream(fileInputStream);
 			fileInputStream = new ByteArrayInputStream(baos.toByteArray());
 			responseMap = imageValidator(baos.toByteArray(), imageFormat, responseMap);
@@ -884,7 +893,6 @@ public class ServletUtilities {
 				Book responseBookData = new Book();
 				responseBookData = bookFromEntity(responseEntity);
 				responseMap = mapFromBook(responseBookData, responseMap);
-//				responseMap.put("BOOK_ID", keyObj.getName());
 				responseMap.put("STATUS_CODE", 200);
 			} catch (Exception e) {
 				System.out.println("Thrown from createNewBook Method");
@@ -1028,7 +1036,6 @@ public class ServletUtilities {
 				Book responseBookData = new Book();
 				responseBookData = bookFromEntity(responseEntity);
 				responseMap = mapFromBook(responseBookData, responseMap);
-//				responseMap.put("BOOK_ID", keyObj.getName());
 				responseMap.put("STATUS_CODE", 200);
 			}
 		} catch (Exception e) {
@@ -1081,7 +1088,6 @@ public class ServletUtilities {
 				Book responseBookData = new Book();
 				responseBookData = bookFromEntity(responseEntity);
 				responseMap = mapFromBook(responseBookData, responseMap);
-//				responseMap.put("BOOK_ID", keyObj.getName());
 				responseMap.put("STATUS_CODE", 200);
 			}
 		} catch (Exception e) {
@@ -1142,7 +1148,7 @@ public class ServletUtilities {
 				Book responseBookData = new Book();
 				responseBookData = bookFromEntity(responseEntity);
 				responseMap = mapFromBook(responseBookData, responseMap);
-//				responseMap.put("BOOK_ID", keyObj.getName());
+				// responseMap.put("BOOK_ID", keyObj.getName());
 				responseMap.put("STATUS_CODE", 200);
 			}
 		} catch (Exception e) {
@@ -1294,13 +1300,19 @@ public class ServletUtilities {
 		String bucketName = "book-management-system-362310.appspot.com";
 		Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
 		BlobId blobId = BlobId.of(bucketName, fileName);
-		Blob blob = storage.get(blobId);
-		blob = storage.get(blobId);
-		if (blob != null) {
-			storage.delete(bucketName, fileName);
-			return true;
-		} else if (blob == null) {
-			return true;
+		try {
+			Blob blob = storage.get(blobId);
+			blob = storage.get(blobId);
+			if (blob != null) {
+				storage.delete(bucketName, fileName);
+				return true;
+			} else if (blob == null) {
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("Caught in deleteImageInCloudStorage Method");
+			return false;
 		}
 		return false;
 	}
