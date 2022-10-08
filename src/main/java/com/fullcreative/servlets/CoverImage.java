@@ -21,7 +21,7 @@ import com.google.gson.Gson;
  *
  */
 @WebServlet(name = "coverImage", urlPatterns = { "/images/*" })
-@MultipartConfig(maxFileSize = 1024 * 1024 * 2 /* 2 MB */, maxRequestSize = 1024 * 1024 * 2 /* 5 MB */)
+@MultipartConfig(maxFileSize = 1024 * 1024 * 2 /* 2 MB */, maxRequestSize = 1024 * 1024 * 3 /* 3 MB */)
 public class CoverImage extends HttpServlet {
 	private static final long serialVersionUID = 3468208303755887709L;
 	@Override

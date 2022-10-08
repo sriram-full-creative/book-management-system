@@ -814,6 +814,7 @@ public class ServletUtilities {
 	public static LinkedHashMap<String, Object> createNewBook(String jsonInputString) throws EntityNotFoundException {
 		Gson gson = new GsonBuilder().serializeNulls().excludeFieldsWithoutExposeAnnotation().create();
 		Book newBook = gson.fromJson(jsonInputString, Book.class);
+		newBook.setCoverImage("");
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		LinkedHashMap<String, Object> responseMap = new LinkedHashMap<>();
 		try {
