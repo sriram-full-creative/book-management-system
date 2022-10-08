@@ -39,7 +39,7 @@ public class DoPutServiceTestCases {
 		// Creating a book with wrong details which are to be updated
 		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestData.testCases.get("validBookBeforeUpdate");
 		String inputStringBeforeUpdate = ServletUtilities.mapToJsonString(testCaseMapBeforeUpdate);
-		System.out.println(inputStringBeforeUpdate);
+		System.out.println("inputStringBeforeUpdate => " + inputStringBeforeUpdate);
 		LinkedHashMap<String, Object> actualBookValueBeforeUpdate = ServletUtilities
 				.createNewBook(inputStringBeforeUpdate);
 		int codeBeforeUpdate = Integer.parseInt(actualBookValueBeforeUpdate.remove("STATUS_CODE").toString());
@@ -54,7 +54,7 @@ public class DoPutServiceTestCases {
 		// Updating the Book
 		LinkedHashMap<String, Object> testCaseMapAfterUpdate = DoPutTestData.testCases.get("validBookAfterUpdate");
 		String inputStringAfterUpdate = ServletUtilities.mapToJsonString(testCaseMapAfterUpdate);
-		System.out.println(inputStringAfterUpdate);
+		System.out.println("inputStringAfterUpdate => " + inputStringAfterUpdate);
 
 		// Updating the book by passing the bookID received from creating the book.
 		LinkedHashMap<String, Object> actualBookValueAfterUpdate = ServletUtilities
@@ -85,7 +85,7 @@ public class DoPutServiceTestCases {
 		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestData.testCases
 				.get("validBookBeforeAuthorUpdate");
 		String inputStringBeforeUpdate = ServletUtilities.mapToJsonString(testCaseMapBeforeUpdate);
-		System.out.println(inputStringBeforeUpdate);
+		System.out.println("inputStringBeforeUpdate => " + inputStringBeforeUpdate);
 		LinkedHashMap<String, Object> actualBookValueBeforeUpdate = ServletUtilities
 				.createNewBook(inputStringBeforeUpdate);
 		int codeBeforeUpdate = Integer.parseInt(actualBookValueBeforeUpdate.remove("STATUS_CODE").toString());
@@ -103,7 +103,7 @@ public class DoPutServiceTestCases {
 				.get("validBookAfterAuthorUpdate");
 		String inputStringForrUpdate = ServletUtilities.mapToJsonString(testCaseMapForUpdate);
 		String inputStringAfterUpdate = ServletUtilities.mapToJsonString(testCaseMapAfterUpdate);
-		System.out.println(inputStringAfterUpdate);
+		System.out.println("inputStringAfterUpdate => " + inputStringAfterUpdate);
 
 		// Updating the book by passing the bookID received from creating the book.
 		LinkedHashMap<String, Object> actualBookValueAfterUpdate = ServletUtilities.updateBook(inputStringForrUpdate,
@@ -133,7 +133,7 @@ public class DoPutServiceTestCases {
 		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestData.testCases
 				.get("validBookBeforePublicationUpdate");
 		String inputStringBeforeUpdate = ServletUtilities.mapToJsonString(testCaseMapBeforeUpdate);
-		System.out.println(inputStringBeforeUpdate);
+		System.out.println("inputStringBeforeUpdate => " + inputStringBeforeUpdate);
 		LinkedHashMap<String, Object> actualBookValueBeforeUpdate = ServletUtilities
 				.createNewBook(inputStringBeforeUpdate);
 		int codeBeforeUpdate = Integer.parseInt(actualBookValueBeforeUpdate.remove("STATUS_CODE").toString());
@@ -152,7 +152,7 @@ public class DoPutServiceTestCases {
 				.get("validBookAfterPublicationUpdate");
 		String inputStringForrUpdate = ServletUtilities.mapToJsonString(testCaseMapForUpdate);
 		String inputStringAfterUpdate = ServletUtilities.mapToJsonString(testCaseMapAfterUpdate);
-		System.out.println(inputStringAfterUpdate);
+		System.out.println("inputStringAfterUpdate => " + inputStringAfterUpdate);
 
 		// Updating the book by passing the bookID received from creating the book.
 		LinkedHashMap<String, Object> actualBookValueAfterUpdate = ServletUtilities.updateBook(inputStringForrUpdate,
@@ -183,7 +183,7 @@ public class DoPutServiceTestCases {
 		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestData.testCases
 				.get("validBookBeforeTitleUpdate");
 		String inputStringBeforeUpdate = ServletUtilities.mapToJsonString(testCaseMapBeforeUpdate);
-		System.out.println(inputStringBeforeUpdate);
+		System.out.println("inputStringBeforeUpdate => " + inputStringBeforeUpdate);
 		LinkedHashMap<String, Object> actualBookValueBeforeUpdate = ServletUtilities
 				.createNewBook(inputStringBeforeUpdate);
 		int codeBeforeUpdate = Integer.parseInt(actualBookValueBeforeUpdate.remove("STATUS_CODE").toString());
@@ -201,7 +201,7 @@ public class DoPutServiceTestCases {
 				.get("validBookAfterTitleUpdate");
 		String inputStringForrUpdate = ServletUtilities.mapToJsonString(testCaseMapForUpdate);
 		String inputStringAfterUpdate = ServletUtilities.mapToJsonString(testCaseMapAfterUpdate);
-		System.out.println(inputStringAfterUpdate);
+		System.out.println("inputStringAfterUpdate => " + inputStringAfterUpdate);
 
 		// Updating the book by passing the bookID received from creating the book.
 		LinkedHashMap<String, Object> actualBookValueAfterUpdate = ServletUtilities.updateBook(inputStringForrUpdate,
@@ -232,7 +232,7 @@ public class DoPutServiceTestCases {
 		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestData.testCases
 				.get("validBookBeforeLanguageUpdate");
 		String inputStringBeforeUpdate = ServletUtilities.mapToJsonString(testCaseMapBeforeUpdate);
-		System.out.println(inputStringBeforeUpdate);
+		System.out.println("inputStringBeforeUpdate => " + inputStringBeforeUpdate);
 		LinkedHashMap<String, Object> actualBookValueBeforeUpdate = ServletUtilities
 				.createNewBook(inputStringBeforeUpdate);
 		int codeBeforeUpdate = Integer.parseInt(actualBookValueBeforeUpdate.remove("STATUS_CODE").toString());
@@ -250,7 +250,7 @@ public class DoPutServiceTestCases {
 				.get("validBookAfterLanguageUpdate");
 		String inputStringForrUpdate = ServletUtilities.mapToJsonString(testCaseMapForUpdate);
 		String inputStringAfterUpdate = ServletUtilities.mapToJsonString(testCaseMapAfterUpdate);
-		System.out.println(inputStringAfterUpdate);
+		System.out.println("inputStringAfterUpdate => " + inputStringAfterUpdate);
 
 		// Updating the book by passing the bookID received from creating the book.
 		LinkedHashMap<String, Object> actualBookValueAfterUpdate = ServletUtilities.updateBook(inputStringForrUpdate,
@@ -281,7 +281,7 @@ public class DoPutServiceTestCases {
 		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestData.testCases
 				.get("validBookBeforePagesUpdate");
 		String inputStringBeforeUpdate = ServletUtilities.mapToJsonString(testCaseMapBeforeUpdate);
-		System.out.println(inputStringBeforeUpdate);
+		System.out.println("inputStringBeforeUpdate => " + inputStringBeforeUpdate);
 		LinkedHashMap<String, Object> actualBookValueBeforeUpdate = ServletUtilities
 				.createNewBook(inputStringBeforeUpdate);
 		int codeBeforeUpdate = Integer.parseInt(actualBookValueBeforeUpdate.remove("STATUS_CODE").toString());
@@ -299,7 +299,7 @@ public class DoPutServiceTestCases {
 				.get("validBookAfterPagesUpdate");
 		String inputStringForrUpdate = ServletUtilities.mapToJsonString(testCaseMapForUpdate);
 		String inputStringAfterUpdate = ServletUtilities.mapToJsonString(testCaseMapAfterUpdate);
-		System.out.println(inputStringAfterUpdate);
+		System.out.println("inputStringAfterUpdate => " + inputStringAfterUpdate);
 
 		// Updating the book by passing the bookID received from creating the book.
 		LinkedHashMap<String, Object> actualBookValueAfterUpdate = ServletUtilities.updateBook(inputStringForrUpdate,
@@ -330,7 +330,7 @@ public class DoPutServiceTestCases {
 		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestData.testCases
 				.get("validBookBeforeReleaseYearUpdate");
 		String inputStringBeforeUpdate = ServletUtilities.mapToJsonString(testCaseMapBeforeUpdate);
-		System.out.println(inputStringBeforeUpdate);
+		System.out.println("inputStringBeforeUpdate => " + inputStringBeforeUpdate);
 		LinkedHashMap<String, Object> actualBookValueBeforeUpdate = ServletUtilities
 				.createNewBook(inputStringBeforeUpdate);
 		int codeBeforeUpdate = Integer.parseInt(actualBookValueBeforeUpdate.remove("STATUS_CODE").toString());
@@ -349,7 +349,7 @@ public class DoPutServiceTestCases {
 				.get("validBookAfterReleaseYearUpdate");
 		String inputStringForrUpdate = ServletUtilities.mapToJsonString(testCaseMapForUpdate);
 		String inputStringAfterUpdate = ServletUtilities.mapToJsonString(testCaseMapAfterUpdate);
-		System.out.println(inputStringAfterUpdate);
+		System.out.println("inputStringAfterUpdate => " + inputStringAfterUpdate);
 
 		// Updating the book by passing the bookID received from creating the book.
 		LinkedHashMap<String, Object> actualBookValueAfterUpdate = ServletUtilities.updateBook(inputStringForrUpdate,
@@ -380,7 +380,7 @@ public class DoPutServiceTestCases {
 		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestData.testCases
 				.get("validBookBeforeCountryUpdate");
 		String inputStringBeforeUpdate = ServletUtilities.mapToJsonString(testCaseMapBeforeUpdate);
-		System.out.println(inputStringBeforeUpdate);
+		System.out.println("inputStringBeforeUpdate => " + inputStringBeforeUpdate);
 		LinkedHashMap<String, Object> actualBookValueBeforeUpdate = ServletUtilities
 				.createNewBook(inputStringBeforeUpdate);
 		int codeBeforeUpdate = Integer.parseInt(actualBookValueBeforeUpdate.remove("STATUS_CODE").toString());
@@ -398,7 +398,7 @@ public class DoPutServiceTestCases {
 				.get("validBookAfterCountryUpdate");
 		String inputStringForrUpdate = ServletUtilities.mapToJsonString(testCaseMapForUpdate);
 		String inputStringAfterUpdate = ServletUtilities.mapToJsonString(testCaseMapAfterUpdate);
-		System.out.println(inputStringAfterUpdate);
+		System.out.println("inputStringAfterUpdate => " + inputStringAfterUpdate);
 
 		// Updating the book by passing the bookID received from creating the book.
 		LinkedHashMap<String, Object> actualBookValueAfterUpdate = ServletUtilities.updateBook(inputStringForrUpdate,
@@ -429,7 +429,7 @@ public class DoPutServiceTestCases {
 		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestData.testCases
 				.get("validBookBeforeCoverImageUpdate");
 		String inputStringBeforeUpdate = ServletUtilities.mapToJsonString(testCaseMapBeforeUpdate);
-		System.out.println(inputStringBeforeUpdate);
+		System.out.println("inputStringBeforeUpdate => " + inputStringBeforeUpdate);
 		LinkedHashMap<String, Object> actualBookValueBeforeUpdate = ServletUtilities
 				.createNewBook(inputStringBeforeUpdate);
 		int codeBeforeUpdate = Integer.parseInt(actualBookValueBeforeUpdate.remove("STATUS_CODE").toString());
@@ -448,7 +448,7 @@ public class DoPutServiceTestCases {
 				.get("validBookAfterCoverImageUpdate");
 		String inputStringForrUpdate = ServletUtilities.mapToJsonString(testCaseMapForUpdate);
 		String inputStringAfterUpdate = ServletUtilities.mapToJsonString(testCaseMapAfterUpdate);
-		System.out.println(inputStringAfterUpdate);
+		System.out.println("inputStringAfterUpdate => " + inputStringAfterUpdate);
 
 		// Updating the book by passing the bookID received from creating the book.
 		LinkedHashMap<String, Object> actualBookValueAfterUpdate = ServletUtilities.updateBook(inputStringForrUpdate,
@@ -479,7 +479,7 @@ public class DoPutServiceTestCases {
 		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestData.testCases
 				.get("validBookBeforeBookLinkUpdate");
 		String inputStringBeforeUpdate = ServletUtilities.mapToJsonString(testCaseMapBeforeUpdate);
-		System.out.println(inputStringBeforeUpdate);
+		System.out.println("inputStringBeforeUpdate => " + inputStringBeforeUpdate);
 		LinkedHashMap<String, Object> actualBookValueBeforeUpdate = ServletUtilities
 				.createNewBook(inputStringBeforeUpdate);
 		int codeBeforeUpdate = Integer.parseInt(actualBookValueBeforeUpdate.remove("STATUS_CODE").toString());
@@ -497,7 +497,7 @@ public class DoPutServiceTestCases {
 				.get("validBookAfterBookLinkUpdate");
 		String inputStringForrUpdate = ServletUtilities.mapToJsonString(testCaseMapForUpdate);
 		String inputStringAfterUpdate = ServletUtilities.mapToJsonString(testCaseMapAfterUpdate);
-		System.out.println(inputStringAfterUpdate);
+		System.out.println("inputStringAfterUpdate => " + inputStringAfterUpdate);
 
 		// Updating the book by passing the bookID received from creating the book.
 		LinkedHashMap<String, Object> actualBookValueAfterUpdate = ServletUtilities.updateBook(inputStringForrUpdate,
@@ -528,7 +528,7 @@ public class DoPutServiceTestCases {
 		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestData.testCases
 				.get("validBookBeforeRatingUpdate");
 		String inputStringBeforeUpdate = ServletUtilities.mapToJsonString(testCaseMapBeforeUpdate);
-		System.out.println(inputStringBeforeUpdate);
+		System.out.println("inputStringBeforeUpdate => " + inputStringBeforeUpdate);
 		LinkedHashMap<String, Object> actualBookValueBeforeUpdate = ServletUtilities
 				.createNewBook(inputStringBeforeUpdate);
 		int codeBeforeUpdate = Integer.parseInt(actualBookValueBeforeUpdate.remove("STATUS_CODE").toString());
@@ -546,7 +546,7 @@ public class DoPutServiceTestCases {
 				.get("validBookAfterRatingUpdate");
 		String inputStringForrUpdate = ServletUtilities.mapToJsonString(testCaseMapForUpdate);
 		String inputStringAfterUpdate = ServletUtilities.mapToJsonString(testCaseMapAfterUpdate);
-		System.out.println(inputStringAfterUpdate);
+		System.out.println("inputStringAfterUpdate => " + inputStringAfterUpdate);
 
 		// Updating the book by passing the bookID received from creating the book.
 		LinkedHashMap<String, Object> actualBookValueAfterUpdate = ServletUtilities.updateBook(inputStringForrUpdate,
@@ -577,7 +577,7 @@ public class DoPutServiceTestCases {
 		// Creating a book with wrong details which are to be updated
 		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestData.testCases.get("validBookBeforeUpdate");
 		String inputStringBeforeUpdate = ServletUtilities.mapToJsonString(testCaseMapBeforeUpdate);
-		System.out.println(inputStringBeforeUpdate);
+		System.out.println("inputStringBeforeUpdate => " + inputStringBeforeUpdate);
 		LinkedHashMap<String, Object> actualBookValueBeforeUpdate = ServletUtilities
 				.createNewBook(inputStringBeforeUpdate);
 		int codeBeforeUpdate = Integer.parseInt(actualBookValueBeforeUpdate.remove("STATUS_CODE").toString());
@@ -592,12 +592,12 @@ public class DoPutServiceTestCases {
 		// Updating the book with valid and correct details
 		LinkedHashMap<String, Object> validBookMapAfterUpdate = DoPutTestData.testCases.get("validBookAfterUpdate");
 		String inputStringStringForUpdate = ServletUtilities.mapToJsonString(validBookMapAfterUpdate);
-		System.out.println(inputStringStringForUpdate);
+		System.out.println("inputStringForUpdate => " + inputStringStringForUpdate);
 		// Calling updatBook but with the wrong bookID
 		LinkedHashMap<String, Object> actualBookMapAfterUpdate = ServletUtilities.updateBook(inputStringStringForUpdate,
 				DoPutTestData.bookID.get("INVALID_BOOK_ID").toString());
 		LinkedHashMap<String, Object> expectedResponseMap = DoPutTestData.testCases.get("noBookResponse");
-		System.out.println(expectedResponseMap);
+		System.out.println("expectedResponseMap => " + expectedResponseMap);
 		String actualBookStringAfterUpdate = actualBookMapAfterUpdate.toString();
 		assertEquals(expectedResponseMap.toString(), actualBookStringAfterUpdate);
 	}

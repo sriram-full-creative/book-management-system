@@ -1,17 +1,78 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
-  <head>
-    <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Book Management System</title>
-  </head>
+    <link rel="icon" href="book-manager-logo.svg" type="image/svg">
+    <link rel="stylesheet" href="main.css">
+</head>
 
-  <body>
-    <h1>Welcome to the Book Management System!</h1>
+<body>
+    <nav class="navbar">
+        <div class="brand-title"><img src="book-manager-logo.svg" alt="logo" class="brand-logo">&nbsp;Book Manager
+        </div>
+        <a href="#" class="toggle-button">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </a>
+        <div class="navbar-links">
+            <ul>
+                <li><a href="add-book.html">Add a Book</a></li>
+                <li>
+                    <div class="container">
+                        <div class="interior">
+                            <a class="btn" href="#open-about">About</a>
+                        </div>
+                    </div>
+                    <div id="open-about" class="about-window">
+                        <div>
+                            <a href="#" title="Close" class="about-close">Close</a>
+                            <h1>Hellooo!</h1>
+                            <div>
+                                <img src="book-manager-logo.svg" alt="" width="50px">
+                                <p>This is a Pocket library. Hope you find it helpful.</p>
+                                <p>&copy; Sriram S</p>
+                            </div>
+                            <br>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
 
-    <table>
-      <tr>
-        <td><a href='/books'>View All the Books Here</a></td>
-      </tr>
-    </table>
-  </body>
+    <div class="sort-container">
+        <label for="sorting-books">Sort by: </label>
+        <select name="sorting-books" id="sorting-books">
+            <option value="default">Recently Updated</option>
+
+            <option value="author">Author: Ascending Alphabetically</option>
+            <option value="author">Author: Descending Alphabetically</option>
+
+            <option value="publication">Publication: Ascending Alphabetically</option>
+            <option value="publication">Publication: Descending Alphabetically</option>
+
+            <option value="title">Title: Ascending Alphabetically</option>
+            <option value="title">Title: Descending Alphabetically</option>
+
+            <option value="pages">Pages: High to Low</option>
+            <option value="pages">Pages: Low to High</option>
+
+            <option value="release-year">Release Year: High to Low</option>
+            <option value="release-year">Release Year: Low to High</option>
+
+            <option value="rating">Rating: High to Low</option>
+            <option value="rating">Rating: Low to High</option>
+        </select>
+    </div>
+
+
+    <div class="books-container" id="books-container">
+    </div>
+    <script type="module" src="script.js"></script>
+</body>
+
 </html>
