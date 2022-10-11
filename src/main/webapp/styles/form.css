@@ -1,0 +1,175 @@
+#form-container {
+    position: relative;
+    display: none;
+    top: 0;
+    margin: 0;
+    padding: 0;
+    font-family: 'inter';
+    height: 500px;
+    max-height: 500px;
+}
+
+.close-button-container {
+    color: gray;
+    top: 0;
+    right: 0;
+    text-align: end;
+    font-size: larger;
+}
+
+.close-button {
+    margin-top: 35px;
+}
+
+.close-button:hover {
+    color: white;
+}
+
+.heading {
+    color: white;
+    text-align: center;
+    font-size: 1.5rem;
+}
+
+form {
+    background-color: black;
+    padding: 1.5rem 1.5rem;
+    border: 1px solid gray;
+    border-radius: 1.2rem;
+    color: #fff;
+    font-size: 1.1rem;
+    width: 550px;
+    height: 500px;
+    max-height: fit-content;
+}
+
+.input-field {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.input-field>input {
+    width: 60%;
+    color: white;
+}
+
+label {
+    letter-spacing: .2rem;
+    text-transform: uppercase;
+    color: white;
+    text-shadow: 0 0 10px rgba(168, 166, 166, 0.4);
+}
+
+#book-title,
+#book-title,
+#author-name,
+#publication,
+#language,
+#pages,
+#release-year,
+#country,
+#rating,
+#submit,
+#reset {
+    padding: 0.3rem;
+    border: 1px solid #111;
+    border-radius: .3rem;
+    background-color: #222;
+    transition: 100ms linear;
+}
+
+
+input {
+    width: fit-content;
+    margin: 5px;
+    font-size: 15px;
+}
+
+.form-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding-top: 25px;
+    justify-items: center;
+}
+
+.form-buttons>button {
+    height: 100%;
+    display: grid;
+    font-weight: bold;
+    border-radius: .3rem;
+    text-transform: uppercase;
+    color: white;
+    background-color: #222;
+    cursor: pointer;
+    font-size: 0.8rem;
+    height: 100%;
+}
+
+#book-title:hover,
+#book-title:hover,
+#author-name:hover,
+#publication:hover,
+#language:hover,
+#pages:hover,
+#release-year:hover,
+#country:hover,
+#rating:hover,
+#submit:hover,
+#reset:hover {
+    background-color: white;
+    color: black;
+}
+
+@media(max-width: 800px) {
+    /* body {
+        backdrop-filter: blur(3px);
+    } */
+
+    .heading {
+        color: white;
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+
+    .form-buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        padding-top: 25px;
+        justify-items: center;
+    }
+
+    .form-buttons>button {
+        height: 100%;
+        display: grid;
+        font-weight: bold;
+        border-radius: .3rem;
+        text-transform: uppercase;
+        color: white;
+        background-color: #222;
+        cursor: pointer;
+        font-size: 0.8rem;
+        height: 100%;
+    }
+
+
+    #form-container {
+        display: none;
+        top: 0;
+        margin: 0;
+        font-family: 'inter';
+        height: 500px;
+        max-height: 500px;
+    }
+
+    form {
+        display: block;
+        background-color: black;
+        border: 1px solid gray;
+        border-radius: 1.2rem;
+        color: white;
+        font-size: 10px;
+        max-width: 400px;
+    }
+}
