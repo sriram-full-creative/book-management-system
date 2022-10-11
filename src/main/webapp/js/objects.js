@@ -19,7 +19,8 @@ const sortDirection = {
 }
 
 const domain = {
-    name: "https://book-management-system-362310.uc.r.appspot.com"
+    name: "http://localhost:10000"
+    // name: "https://book-management-system-362310.uc.r.appspot.com"
 }
 
-let apiUrl = requestUrlConstructor(domain.name, ENDPOINTS.getBooks, sortOnProperty.default, sortDirection.default);
+let apiUrl = getRequestUrlConstructor(domain.name, ENDPOINTS.getBooks, sortOnProperty.default, sortDirection.default);

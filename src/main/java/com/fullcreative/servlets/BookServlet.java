@@ -48,6 +48,7 @@ public class BookServlet extends HttpServlet {
 					LinkedList<String> arrayOfBooks = null;
 					if (queryParameters != null) {
 						arrayOfBooks = ServletUtilities.getAllBooks(queryParameters);
+						System.out.println(queryParameters);
 					} else {
 						arrayOfBooks = ServletUtilities.getAllBooks();
 					}

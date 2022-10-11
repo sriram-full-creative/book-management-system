@@ -12,8 +12,12 @@ String.prototype.toCamelCase = function () {
     });
 };
 
-function requestUrlConstructor(domainName, endPoint, firstQueryParameter, secondQueryParameter) {
+function getRequestUrlConstructor(domainName, endPoint, firstQueryParameter, secondQueryParameter) {
     return domainName + endPoint + "?" + firstQueryParameter + "&" + secondQueryParameter;
+}
+
+function deleteRequestUrlContructor(domainName, endPoint, bookId) {
+    return domainName + endPoint + "/" + bookId;
 }
 
 function clearBookContainer() {
@@ -155,8 +159,23 @@ function updateBook(bookId) {
 }
 
 function deleteBook(bookId) {
-
-    console.log(document.getElementById(bookId));
+    console.log(deleteRequestUrlContructor(domain.name, ENDPOINTS.getBooks, bookId));
+    fetch(deleteRequestUrlContructor(domain.name, ENDPOINTS.getBooks, bookId), {
+        method: "DELETE",
+        headers: {
+            'Content-type': 'application/json'
+        }
+    }).then(res => res.json())
+        .then(data => {
+            console.log(data);
+			apiUrl = getRequestUrlConstructor(domain.name, ENDPOINTS.getBooks, sortOnProperty.default, sortDirection.default);
+    		getBooks(apiUrl);
+        })
+        .catch(error => {
+			console.log(error);
+			apiUrl = getRequestUrlConstructor(domain.name, ENDPOINTS.getBooks, sortOnProperty.default, sortDirection.default);
+    		getBooks(apiUrl);
+		});
 }
 
 function processBooks() {
@@ -182,14 +201,14 @@ function searchBooks() {
 function processOption(selectedOption) {
     switch (selectedOption) {
         case "time-descending":
-            return requestUrlConstructor(
+            return getRequestUrlConstructor(
                 domain.name,
                 ENDPOINTS.getBooks,
                 sortOnProperty.default,
                 sortDirection.default
             )
         case "time-ascending":
-            return requestUrlConstructor(
+            return getRequestUrlConstructor(
                 domain.name,
                 ENDPOINTS.getBooks,
                 sortOnProperty.default,
@@ -197,7 +216,7 @@ function processOption(selectedOption) {
             )
             break;
         case "author-descending":
-            return requestUrlConstructor(
+            return getRequestUrlConstructor(
                 domain.name,
                 ENDPOINTS.getBooks,
                 sortOnProperty.author,
@@ -205,7 +224,7 @@ function processOption(selectedOption) {
             )
             break;
         case "author-ascending":
-            return requestUrlConstructor(
+            return getRequestUrlConstructor(
                 domain.name,
                 ENDPOINTS.getBooks,
                 sortOnProperty.author,
@@ -213,7 +232,7 @@ function processOption(selectedOption) {
             )
             break;
         case "publication-descending":
-            return requestUrlConstructor(
+            return getRequestUrlConstructor(
                 domain.name,
                 ENDPOINTS.getBooks,
                 sortOnProperty.publication,
@@ -221,7 +240,7 @@ function processOption(selectedOption) {
             )
             break;
         case "publication-ascending":
-            return requestUrlConstructor(
+            return getRequestUrlConstructor(
                 domain.name,
                 ENDPOINTS.getBooks,
                 sortOnProperty.publication,
@@ -229,7 +248,7 @@ function processOption(selectedOption) {
             )
             break;
         case "title-descending":
-            return requestUrlConstructor(
+            return getRequestUrlConstructor(
                 domain.name,
                 ENDPOINTS.getBooks,
                 sortOnProperty.title,
@@ -237,7 +256,7 @@ function processOption(selectedOption) {
             )
             break;
         case "title-ascending":
-            return requestUrlConstructor(
+            return getRequestUrlConstructor(
                 domain.name,
                 ENDPOINTS.getBooks,
                 sortOnProperty.title,
@@ -245,7 +264,7 @@ function processOption(selectedOption) {
             )
             break;
         case "pages-descending":
-            return requestUrlConstructor(
+            return getRequestUrlConstructor(
                 domain.name,
                 ENDPOINTS.getBooks,
                 sortOnProperty.pages,
@@ -253,7 +272,7 @@ function processOption(selectedOption) {
             )
             break;
         case "pages-ascending":
-            return requestUrlConstructor(
+            return getRequestUrlConstructor(
                 domain.name,
                 ENDPOINTS.getBooks,
                 sortOnProperty.pages,
@@ -261,7 +280,7 @@ function processOption(selectedOption) {
             )
             break;
         case "release-year-descending":
-            return requestUrlConstructor(
+            return getRequestUrlConstructor(
                 domain.name,
                 ENDPOINTS.getBooks,
                 sortOnProperty.releaseYear,
@@ -269,7 +288,7 @@ function processOption(selectedOption) {
             )
             break;
         case "release-year-ascending":
-            return requestUrlConstructor(
+            return getRequestUrlConstructor(
                 domain.name,
                 ENDPOINTS.getBooks,
                 sortOnProperty.releaseYear,
@@ -277,7 +296,7 @@ function processOption(selectedOption) {
             )
             break;
         case "rating-descending":
-            return requestUrlConstructor(
+            return getRequestUrlConstructor(
                 domain.name,
                 ENDPOINTS.getBooks,
                 sortOnProperty.rating,
@@ -285,7 +304,7 @@ function processOption(selectedOption) {
             )
             break;
         case "rating-ascending":
-            return requestUrlConstructor(
+            return getRequestUrlConstructor(
                 domain.name,
                 ENDPOINTS.getBooks,
                 sortOnProperty.rating,
