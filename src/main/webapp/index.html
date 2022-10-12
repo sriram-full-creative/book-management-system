@@ -115,55 +115,133 @@
             <button class="welcome-view-books-button"><a href="#books">Click Me!!</a></button>
         </div>
 
-        <!-- <template data-book-form-template> -->
-        <div id="form-container" class="form-container">
-            <form action="" method="" id="book-form" class="book-form">
-                <div class="close-button-container"><a href="#" onclick="closeModel()" title="Close"
-                        class="close-button">Close</a>
-                </div>
-                <h2 class="heading">Enter Book Details</h2>
-                <div class="book-details">
-                    <div class="input-field">
-                        <label for="book-title">Title:</label>
-                        <input id="book-title" name="title" type="text" placeholder=" ">
+        <template data-add-book-form-template>
+            <div id="add-book-form-container" class="add-book-form-container">
+                <form action="" method="" id="book-form" class="book-form">
+                    <div class="close-button-container"><a href="#" onclick="closeModel()" title="Close"
+                            class="close-button"></a>
                     </div>
-                    <div class="input-field">
-                        <label for="author-name">Author:</label>
-                        <input id="author-name" name="author" type="text" placeholder=" ">
+                    <h2 class="heading">Enter Book Details</h2>
+                    <div class="book-details">
+                        <div class="input-field">
+                            <label for="book-title">Title:</label>
+                            <input id="book-title" name="title" type="text" placeholder=" " required>
+                        </div>
+                        <div class="input-field">
+                            <label for="author-name">Author:</label>
+                            <input id="author-name" name="author" type="text" placeholder=" " required>
+                        </div>
+                        <div class="input-field">
+                            <label for="publication">Publication:</label>
+                            <input id="publication" name="publication" type="text" placeholder=" " required>
+                        </div>
+                        <div class="input-field">
+                            <label for="language">Language:</label>
+                            <input id="language" name="language" type="text" placeholder=" " required>
+                        </div>
+                        <div class="input-field">
+                            <label for="pages">Pages:</label>
+                            <input id="pages" name="pages" type="number" min="20" max="9999" placeholder=" " required>
+                        </div>
+                        <div class="input-field">
+                            <label for="release-year">Release Year:</label>
+                            <input id="release-year" name="releaseYear" type="number" min="1000" max="9999"
+                                placeholder=" " required>
+                        </div>
+                        <div class="input-field">
+                            <label for="country">Country:</label>
+                            <input id="country" name="country" type="text" placeholder=" " required>
+                        </div>
+                        <div class="input-field">
+                            <label for="rating">Rating:</label>
+                            <input id="rating" name="rating" type="number" min="0" max="5" placeholder=" " required>
+                        </div>
                     </div>
-                    <div class="input-field">
-                        <label for="publication">Publication:</label>
-                        <input id="publication" name="publication" type="text" placeholder=" ">
+                    <div id="input-field" class="form-buttons">
+                        <button id="add-book-submit" type="submit">Add Book</button>
+                        <button id="add-book-reset" type="reset">Clear Details</button>
                     </div>
-                    <div class="input-field">
-                        <label for="language">Language:</label>
-                        <input id="language" name="language" type="text" placeholder=" ">
+                    <div class="text-base text-center text-gray-400" id="result-container">
+                </form>
+            </div>
+        </template>
+
+        <template data-update-book-form-template>
+            <div id="update-book-form-container" class="update-book-form-container">
+                <form action="" method="" id="book-form" class="book-form">
+                    <div class="close-button-container"><a href="#" onclick="closeModel()" title="Close"
+                            class="close-button"></a>
                     </div>
-                    <div class="input-field">
-                        <label for="pages">Pages:</label>
-                        <input id="pages" name="pages" type="number" min="20" max="9999" placeholder=" ">
+                    <h2 class="heading">Enter Book Details</h2>
+                    <div class="book-details">
+                        <div class="input-field">
+                            <label for="book-title">Title:</label>
+                            <input id="book-title" name="title" type="text" placeholder=" " required>
+                        </div>
+                        <div class="input-field">
+                            <label for="author-name">Author:</label>
+                            <input id="author-name" name="author" type="text" placeholder=" " required>
+                        </div>
+                        <div class="input-field">
+                            <label for="publication">Publication:</label>
+                            <input id="publication" name="publication" type="text" placeholder=" " required>
+                        </div>
+                        <div class="input-field">
+                            <label for="language">Language:</label>
+                            <input id="language" name="language" type="text" placeholder=" ">
+                        </div>
+                        <div class="input-field">
+                            <label for="pages">Pages:</label>
+                            <input id="pages" name="pages" type="number" min="20" max="9999" placeholder=" " required>
+                        </div>
+                        <div class="input-field">
+                            <label for="release-year">Release Year:</label>
+                            <input id="release-year" name="releaseYear" type="number" min="1000" max="9999"
+                                placeholder=" " required>
+                        </div>
+                        <div class="input-field">
+                            <label for="country">Country:</label>
+                            <input id="country" name="country" type="text" placeholder=" " required>
+                        </div>
+                        <div class="input-field">
+                            <label for="rating">Rating:</label>
+                            <input id="rating" name="rating" type="number" min="0" max="5" placeholder=" " required>
+                        </div>
                     </div>
-                    <div class="input-field">
-                        <label for="release-year">Release Year:</label>
-                        <input id="release-year" name="releaseYear" type="number" min="1000" max="9999" placeholder=" ">
+                    <div id="input-field" class="form-buttons">
+                        <button id="update-book-submit" type="submit">Update Book</button>
+                        <button id="update-book-reset" type="reset">Clear Details</button>
                     </div>
-                    <div class="input-field">
-                        <label for="country">Country:</label>
-                        <input id="country" name="country" type="text" placeholder=" ">
+                    <div class="text-base text-center text-gray-400" id="result-container">
+
                     </div>
-                    <div class="input-field">
-                        <label for="rating">Rating:</label>
-                        <input id="rating" name="rating" type="number" min="0" max="5" placeholder=" ">
+                </form>
+            </div>
+        </template>
+
+        <template data-update-cover-image-form-template>
+            <div id="update-book-form-container" class="update-cover-image-form-container">
+                <form action="" method="" id="book-form" class="book-form" enctype="multipart/form-data">
+                    <div class="close-button-container"><a href="#" onclick="closeModel()" title="Close"
+                            class="close-button"></a>
                     </div>
-                </div>
-                <div id="input-field" class="form-buttons">
-                    <button id="submit" type="submit">Add Book</button>
-                    <button id="reset" type="reset">Clear Details</button>
-                </div>
-                <p class="text-base text-center text-gray-400" id="result"></p>
-            </form>
-        </div>
-        <!-- </template> -->
+                    <h2 class="heading">Choose An Image</h2>
+                    <div class="book-details">
+                        <div class="cover-image-input-field">
+                            <input id="cover-image" name="cover-image" type="file"
+                                accept="image/png, image/jpg, image/jpeg">
+                        </div>
+                    </div>
+                    <div id="input-field" class="form-buttons">
+                        <button id="cover-image-submit" type="submit">Update Image</button>
+                        <button id="cover-image-reset" type="reset">Clear</button>
+                    </div>
+                    <div class="text-base text-center text-gray-400" id="result-container">
+
+                    </div>
+                </form>
+            </div>
+        </template>
 
     </div>
 </body>

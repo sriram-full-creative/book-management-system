@@ -5,7 +5,6 @@
   justify-content: space-between;
   align-items: center;
   background-color: #000;
-  color: white;
   width: 100%;
   position: fixed;
   top: 0;
@@ -19,6 +18,7 @@
   font-weight: bold;
   font-size: 1.5rem;
   text-transform: uppercase;
+  color: whitesmoke;
 }
 
 .brand-logo {
@@ -44,14 +44,14 @@
 
 .navbar-links li a {
   text-decoration: none;
-  color: white;
+  color: wheat;
   padding: 1rem;
   display: block;
 }
 
 .navbar-links li a:hover {
-  background-color: white;
-  color: #555;
+  background-color: wheat;
+  color: #111;
 }
 
 
@@ -103,7 +103,7 @@
   left: 50%;
   transform: translate(-50%, -50%);
   padding: 2em;
-  color: grey;
+  color: #999;
 }
 
 .about-window header {
@@ -111,7 +111,7 @@
 }
 
 .about-window h1 {
-  color: white;
+  color: wheat;
   font-size: 150%;
   margin: 0 0 15px;
 }
@@ -129,11 +129,13 @@ a {
   text-align: center;
   top: 0;
   width: 70px;
-  color: grey;
+  color: grey !important;
 }
 
 .about-close:hover {
-  color: white;
+  color: black !important;
+  font-weight: bold;
+  border-radius: 0px 10px 0px 1px;
 }
 
 .container {
@@ -166,15 +168,32 @@ a {
   font-size: 0.9rem;
   font-family: 'inter';
   margin-left: 5px;
-  color: black;
-  border-color: #888;
+  color: wheat;
+  border-color: whitesmoke;
   border-radius: 9px;
-  background-color: white;
+  background-color: #333;
+  padding-left: 10px;
+}
+
+.search-wrapper>input:hover {
+  width: 250px;
+  height: 30px;
+  font-size: 0.9rem;
+  font-family: 'inter';
+  margin-left: 5px;
+  color: #111;
+  border-color: #333;
+  border-radius: 9px;
+  background-color: whitesmoke;
   padding-left: 10px;
 }
 
 .search-wrapper>input::placeholder {
-  color: grey;
+  color: whitesmoke;
+}
+
+.search-wrapper>input:hover::placeholder {
+  color: #333;
 }
 
 @media(max-width: 800px) {

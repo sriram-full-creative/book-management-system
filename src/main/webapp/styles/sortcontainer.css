@@ -9,7 +9,7 @@
     visibility: hidden;
     display: block;
     border-radius: 10px;
-    margin-top: 100px;
+    margin-top: 130px;
     margin-left: 20px;
     padding-left: 10px;
     margin-right: auto;
@@ -23,17 +23,31 @@
 }
 
 .sort-container>select {
+    padding: 100%;
+    display: inline-flex;
     border-radius: 7px;
-    color: grey;
+    color: #777;
+}
+
+.sort-container>label {
+    font-weight: normal;
+    display: inline-flex;
+    padding: 0px 0px 10px 0px;
+    letter-spacing: 1px;
+    font-size: 0.95rem;
+    text-transform: none;
 }
 
 .sort-container select {
     font-size: 0.95rem;
     font-weight: normal;
     max-width: 100%;
-    padding: 8px 24px 8px 10px;
-    border: none;
+    padding: 11px 4px 8px 10px;
     background-color: #000;
+    border: #000;
+    align-items: stretch;
+    flex-direction: column;
+    flex-wrap: wrap;
 }
 
 .sort-container select:active,

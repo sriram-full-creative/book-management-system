@@ -5,6 +5,8 @@ function setAttribute(element, attributes) {
     }
 }
 
+let currentBookId = "";
+
 String.prototype.toCamelCase = function () {
     return this.replace(/^([A-Z])|\s(\w)/g, function (match, p1, p2, offset) {
         if (p2) return p2.toUpperCase();
@@ -12,8 +14,45 @@ String.prototype.toCamelCase = function () {
     });
 };
 
+function processPostRequestOptions(bookObj) {
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    const rawJson = JSON.stringify(bookObj);
+    const postRequestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: rawJson,
+        redirect: 'follow'
+    };
+    return postRequestOptions;
+}
+
+
+function processPutRequestOptions(bookObj) {
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    const rawJson = JSON.stringify(bookObj);
+
+    const putRequestOptions = {
+        method: 'PUT',
+        headers: myHeaders,
+        body: rawJson,
+        redirect: 'follow'
+    };
+    return putRequestOptions;
+}
+
 function getRequestUrlConstructor(domainName, endPoint, firstQueryParameter, secondQueryParameter) {
     return domainName + endPoint + "?" + firstQueryParameter + "&" + secondQueryParameter;
+}
+
+function postRequestUrlConstructor(domainName, endPoint) {
+    return domainName + endPoint;
+}
+
+function putRequestUrlConstructor(domainName, endPoint, bookid) {
+    return domainName + endPoint + "/" + bookid;
 }
 
 function deleteRequestUrlContructor(domainName, endPoint, bookId) {
@@ -83,34 +122,95 @@ function clearFormDetails(modalForm) {
     inputFields.forEach(input => {
         input.value = ""
     });
-    const addBookButton = modalForm.querySelector("#submit");
-    addBookButton.value = "Add Book";
-    addBookButton.innerText = "Add Book";
 }
 
 function toggleAddBookForm() {
+    const addBookFormContainer = addBookFormTemplate.content.cloneNode(true).children[0];
+    const modalForm = addBookFormContainer.querySelector("#book-form");
     clearBookContainer();
     modalForm.style.display = "grid";
-    modalForm.children[0].classList.add("add-book-form");
+    modalForm.classList.add("add-book-form");
     clearFormDetails(modalForm);
     booksContainer.appendChild(modalForm);
     sortByContainer.style.visibility = "hidden";
-    // prevent  background scroll
-    document.documentElement.style.overflow = 'hidden';
-    document.body.scroll = 'no';
 }
 
 function closeModel() {
+    const modalForm = document.querySelector("#book-form");
     modalForm.style.display = "none";
-    modalForm.children[0].classList.remove("add-book-form");
-    modalForm.children[0].classList.remove("update-book-form");
-    modalForm.querySelector("#submit").innerHTML = ""
-    modalForm.querySelector("#submit").value = ""
+    modalForm.classList.remove("add-book-form");
+    modalForm.classList.remove("update-book-form");
     document.documentElement.style.overflow = 'scroll';
     document.body.scroll = 'yes';
     sortByContainer.style.visibility = "visible";
+    currentBookId = "";
+    apiUrl = getRequestUrlConstructor(domain.name, ENDPOINTS.books, sortOnProperty.default, sortDirection.default);
     getBooks(apiUrl);
 }
+
+function isEmpty(object) {
+    for (const property in object) {
+        return false;
+    }
+    return true;
+}
+
+function bookFormValidator(jsonObject) {
+    const errorMessages = {};
+    var hasNumber = /\d/;
+    if (jsonObject["title"] == "") {
+        errorMessages["TITLE_FIELD_EMPTY"] = "Title Can't be Empty";
+    }
+    if (jsonObject["author"] == "") {
+        errorMessages["AUTHOR_NAME_EMPTY"] = "Author name Can't be Empty";
+    }
+    if (hasNumber.test(jsonObject["author"])) {
+        errorMessages["AUTHOR_NAME_FORMAT_ERROR"] = "Author name Should container Only Alphabets";
+    }
+    if (jsonObject["publication"] == "") {
+        errorMessages["PUBLICATION_FIELD_EMPTY"] = "Publication Field Can't be Empty";
+    }
+
+    if (jsonObject["language"] == "") {
+        errorMessages["Language_FIELD_EMPTY"] = "Language Field Can't be Empty";
+    }
+    if (hasNumber.test(jsonObject["language"])) {
+        errorMessages["LANGUAGE_FORMAT_ERROR"] = "Language Should container Only Alphabets";
+    }
+
+    if (jsonObject["pages"] == "") {
+        errorMessages["PAGES_FIELD_EMPTY"] = "Pages Field Can't be Empty";
+    } else if (!(jsonObject["pages"] == "")) {
+        if (jsonObject["pages"] < 20) {
+            errorMessages["PAGES_MIN_COUNT_ERROR"] = "Book must have a minimum of 20 Pages";
+        } else if (jsonObject["pages"] < 0) {
+            errorMessages["PAGES_FORMAT_ERROR"] = "Pages Can't be negative";
+        }
+    }
+
+    if (jsonObject["releaseYear"] == "") {
+        errorMessages["YEAR_FIELD_EMPTY"] = "Release Year Field Can't be Empty";
+    } else if (!(jsonObject["releaseYear"] == "")) {
+        if (jsonObject["releaseYear"] <= 0) {
+            errorMessages["YEAR_FIELD_FORMAT_ERROR"] = "Release Year Field Can't be Negative";
+        } else if (jsonObject["releaseYear"] > (new Date().getFullYear())) {
+            errorMessages["YEAR_FIELD_FUTURE_ERROR"] = "Release Year can't be set in future";
+        }
+    }
+
+    if (jsonObject["country"] == "") {
+        errorMessages["COUNTRY_FIELD_EMPTY"] = "Country Field Can't be Empty";
+    }
+    if (hasNumber.test(jsonObject["country"])) {
+        errorMessages["COUNTRY_FORMAT_ERROR"] = "Country Should container Only Alphabets";
+    }
+
+    if (jsonObject["rating"] === "" || jsonObject["rating"] === NaN || jsonObject["rating"] === 0 || jsonObject["rating"] === null) {
+        jsonObject["rating"] = 0;
+    }
+
+    return errorMessages;
+};
 
 function poulateFormWithBookDetails(detailsForUpdate, modalForm) {
     const bookDetailsContainer = detailsForUpdate.getElementsByClassName("book-details-list")[0].childNodes;
@@ -135,32 +235,185 @@ function poulateFormWithBookDetails(detailsForUpdate, modalForm) {
     modalForm.querySelector("#country").value = bookDetailObj["country"];
     modalForm.querySelector("#rating").value = bookDetailObj["rating"];
 
-    const updateBookButton = modalForm.querySelector("#submit");
+    const updateBookButton = modalForm.querySelector("#update-book-submit");
     console.log(updateBookButton);
-    updateBookButton.value = "Update Book";
-    updateBookButton.innerText = "Update Book";
 }
 
 
-function updateCoverImage(bookId) {
+function toggleUpdateCoverImageForm(bookId) {
     console.log(document.getElementById(bookId));
+    const updateCoverImageFormContainer = updateCoverImageFormTemplate.content.cloneNode(true).children[0];
+    const modalForm = updateCoverImageFormContainer.querySelector("#book-form");
+    clearBookContainer();
+    modalForm.style.display = "grid";
+    modalForm.classList.add("update-cover-image-form");
+    booksContainer.appendChild(modalForm);
+    console.log(modalForm);
+    sortByContainer.style.visibility = "hidden";
+    currentBookId = bookId;
+    console.log(currentBookId);
 }
 
-function updateBook(bookId) {
+function toggleUpdateBookForm(bookId) {
     const detailsForUpdate = document.getElementById(bookId);
+    const updateBookFormContainer = updateBookFormTemplate.content.cloneNode(true).children[0];
+    const modalForm = updateBookFormContainer.querySelector("#book-form");
     clearBookContainer();
     poulateFormWithBookDetails(detailsForUpdate, modalForm);
     modalForm.style.display = "grid";
-    modalForm.children[0].classList.add("update-book-form");
+    modalForm.classList.add("update-book-form");
     booksContainer.appendChild(modalForm);
     sortByContainer.style.visibility = "hidden";
-    document.documentElement.style.overflow = 'hidden';
-    document.body.scroll = 'no';
+    currentBookId = bookId;
+    console.log(currentBookId);
+}
+
+function addNewBook(formData, bookForm) {
+    const bookObj = {};
+    formData.forEach((value, key) => {
+        if (key == "author") {
+            const authors = new Array();
+            authors.push(value);
+            bookObj[key] = authors;
+        } else if (key == "publication") {
+            const publication = new Array();
+            publication.push(value);
+            bookObj[key] = publication;
+        } else if (key == "pages" || key == "releaseYear" || key == "rating") {
+            bookObj[key] = parseInt(value);
+        } else {
+            bookObj[key] = value;
+        }
+    });
+    const errorMessagesObj = bookFormValidator(bookObj);
+    console.log(Object.keys(errorMessagesObj).length);
+    if (isEmpty(errorMessagesObj)) {
+        console.log("valid form");
+        console.log(bookObj);
+        const requestOptions = processPostRequestOptions(bookObj);
+        apiUrl = postRequestUrlConstructor(domain.name, ENDPOINTS.books);
+        fetch(apiUrl, requestOptions)
+            .then(response => response.text())
+            .then(responseJson => {
+                console.log(responseJson);
+                const resultContainer = bookForm.querySelector("#result-container");
+                resultContainer.classList.add("oaerror");
+                resultContainer.classList.add("success");
+                resultContainer.style.display = "grid";
+                resultContainer.style.justifyContent = "space-around";
+                resultContainer.innerHTML = "";
+                const resultMessage = document.createElement("p");
+                resultMessage.classList.add("result-message-entries")
+                resultMessage.style.padding = "0";
+                resultMessage.style.margin = "0";
+                resultMessage.style.fontFamily = `apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif`;
+                resultMessage.innerHTML = "<strong>Success : </strong>Added a new Book";
+                resultContainer.appendChild(resultMessage);
+            })
+            .catch(error => {
+                responseJson = error;
+                console.log("addNewBook Function => ", error);
+                const resultContainer = bookForm.querySelector("#result-container");
+                resultContainer.innerHTML = "";
+                resultContainer.innerText = responseJson;
+            });
+    } else {
+        const errorContainer = bookForm.querySelector("#result-container");
+        errorContainer.style.display = "grid";
+        errorContainer.style.justifyContent = "space-around";
+        errorContainer.innerHTML = "";
+        errorContainer.classList.add("oaerror");
+        errorContainer.classList.add("danger");
+        errorObjKeys = Object.keys(errorMessagesObj);
+        errorObjKeys.forEach((key) => {
+            const errorMessage = document.createElement("p");
+            errorMessage.classList.add("result-message-entries")
+            errorMessage.style.padding = "0";
+            errorMessage.style.margin = "0";
+            errorMessage.style.fontFamily = `apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif`;
+            errorMessage.innerHTML = "<strong>Error : </strong>" + errorMessagesObj[key];
+            errorContainer.appendChild(errorMessage);
+        });
+    }
+}
+
+function updateBookDetails(formData, bookForm) {
+    const bookObj = {};
+    formData.forEach((value, key) => {
+        if (key == "author") {
+            const authors = new Array();
+            authors.push(value);
+            bookObj[key] = authors;
+        } else if (key == "publication") {
+            const publication = new Array();
+            publication.push(value);
+            bookObj[key] = publication;
+        } else if (key == "pages" || key == "releaseYear" || key == "rating") {
+            if (key == "rating" && bookObj[key] == "") {
+                bookObj[key] = parseInt("0");
+            } else {
+                bookObj[key] = parseInt(value);
+            }
+        } else {
+            bookObj[key] = value;
+        }
+    });
+    console.log(JSON.stringify(bookObj));
+    const errorMessagesObj = bookFormValidator(bookObj);
+    console.log(Object.keys(errorMessagesObj).length);
+    if (isEmpty(errorMessagesObj)) {
+        console.log("valid form");
+        console.log(bookObj);
+        const requestOptions = processPutRequestOptions(bookObj);
+        apiUrl = putRequestUrlConstructor(domain.name, ENDPOINTS.books, currentBookId);
+        fetch(apiUrl, requestOptions)
+            .then(response => response.text())
+            .then(responseJson => {
+                console.log(responseJson);
+                const resultContainer = bookForm.querySelector("#result-container");
+                resultContainer.classList.add("success");
+                resultContainer.classList.add("oaerror");
+                resultContainer.style.display = "grid";
+                resultContainer.style.justifyContent = "space-around";
+                resultContainer.innerHTML = "";
+                const resultMessage = document.createElement("p");
+                resultMessage.classList.add("result-message-entries")
+                resultMessage.style.padding = "0";
+                resultMessage.style.margin = "0";
+                resultMessage.style.fontFamily = `apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif`;
+                resultMessage.innerHTML = "<strong>Success : </strong>Updated the Book Details";
+                resultContainer.appendChild(resultMessage);
+            })
+            .catch(error => {
+                console.log("updateBookDetails Function => ", error);
+                responseJson = error;
+                const resultContainer = bookForm.querySelector("#result-container");
+                resultContainer.innerHTML = "";
+                resultContainer.innerText = responseJson;
+            });
+    } else {
+        const errorContainer = bookForm.querySelector("#result-container");
+        errorContainer.style.display = "grid";
+        errorContainer.style.justifyContent = "space-around";
+        errorContainer.innerHTML = "";
+        errorContainer.classList.add("danger");
+        errorContainer.classList.add("oaerror");
+        errorObjKeys = Object.keys(errorMessagesObj);
+        errorObjKeys.forEach((key) => {
+            const errorMessage = document.createElement("p");
+            errorMessage.classList.add("result-message-entries")
+            errorMessage.style.padding = "0";
+            errorMessage.style.margin = "0";
+            errorMessage.style.fontFamily = `apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif`;
+            errorMessage.innerHTML = "<strong>Error : </strong>" + errorMessagesObj[key];
+            errorContainer.appendChild(errorMessage);
+        });
+    }
 }
 
 function deleteBook(bookId) {
-    console.log(deleteRequestUrlContructor(domain.name, ENDPOINTS.getBooks, bookId));
-    fetch(deleteRequestUrlContructor(domain.name, ENDPOINTS.getBooks, bookId), {
+    console.log(deleteRequestUrlContructor(domain.name, ENDPOINTS.books, bookId));
+    fetch(deleteRequestUrlContructor(domain.name, ENDPOINTS.books, bookId), {
         method: "DELETE",
         headers: {
             'Content-type': 'application/json'
@@ -168,21 +421,60 @@ function deleteBook(bookId) {
     }).then(res => res.json())
         .then(data => {
             console.log(data);
-			apiUrl = getRequestUrlConstructor(domain.name, ENDPOINTS.getBooks, sortOnProperty.default, sortDirection.default);
-    		getBooks(apiUrl);
+            apiUrl = getRequestUrlConstructor(domain.name, ENDPOINTS.books, sortOnProperty.default, sortDirection.default);
+            getBooks(apiUrl);
         })
         .catch(error => {
-			console.log(error);
-			apiUrl = getRequestUrlConstructor(domain.name, ENDPOINTS.getBooks, sortOnProperty.default, sortDirection.default);
-    		getBooks(apiUrl);
-		});
+            console.log(error);
+            apiUrl = getRequestUrlConstructor(domain.name, ENDPOINTS.books, sortOnProperty.default, sortDirection.default);
+            getBooks(apiUrl);
+        });
+}
+
+function updateCoverImage(ImagefileInput, bookForm) {
+    const myHeaders = new Headers();
+    myHeaders.append("Cache-Control", "no-store");
+
+    const formdata = new FormData();
+    formdata.append("coverImage", ImagefileInput.files[0]);
+
+    const requestOptions = {
+        method: 'PUT',
+        headers: myHeaders,
+        body: formdata,
+        redirect: 'follow'
+    };
+
+    apiUrl = putRequestUrlConstructor(domain.name, ENDPOINTS.images, currentBookId);
+
+    fetch(apiUrl, requestOptions)
+        .then(response => response.text())
+        .then(responseJson => {
+            console.log(responseJson);
+            const resultContainer = bookForm.querySelector("#result-container");
+            resultContainer.classList.add("oaerror");
+            resultContainer.classList.add("success");
+            resultContainer.style.display = "grid";
+            resultContainer.style.justifyContent = "space-around";
+            resultContainer.innerHTML = "";
+            const resultMessage = document.createElement("p");
+            resultMessage.classList.add("result-message-entries")
+            resultMessage.style.padding = "0";
+            resultMessage.style.margin = "0";
+            resultMessage.style.fontFamily = `apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif`;
+            resultMessage.innerHTML = "<strong>Success : </strong>Added a new Book";
+            resultContainer.appendChild(resultMessage);
+        })
+        .catch(error => {
+            console.log("updateCoverImage Function => ", error);
+        });
 }
 
 function processBooks() {
     if (event.target.classList == 'cover-image-button') {
-        updateCoverImage(event.target.dataset.updateCoverImageButtonId);
+        toggleUpdateCoverImageForm(event.target.dataset.updateCoverImageButtonId);
     } else if (event.target.classList == 'update-book-button') {
-        updateBook(event.target.dataset.updateBookButtonId);
+        toggleUpdateBookForm(event.target.dataset.updateBookButtonId);
     } else if (event.target.classList == 'delete-book-button') {
         deleteBook(event.target.dataset.deleteBookButtonId);
     }
@@ -203,114 +495,101 @@ function processOption(selectedOption) {
         case "time-descending":
             return getRequestUrlConstructor(
                 domain.name,
-                ENDPOINTS.getBooks,
+                ENDPOINTS.books,
                 sortOnProperty.default,
                 sortDirection.default
             )
         case "time-ascending":
             return getRequestUrlConstructor(
                 domain.name,
-                ENDPOINTS.getBooks,
+                ENDPOINTS.books,
                 sortOnProperty.default,
                 sortDirection.ascending
             )
-            break;
         case "author-descending":
             return getRequestUrlConstructor(
                 domain.name,
-                ENDPOINTS.getBooks,
+                ENDPOINTS.books,
                 sortOnProperty.author,
                 sortDirection.default
             )
-            break;
         case "author-ascending":
             return getRequestUrlConstructor(
                 domain.name,
-                ENDPOINTS.getBooks,
+                ENDPOINTS.books,
                 sortOnProperty.author,
                 sortDirection.ascending
             )
-            break;
         case "publication-descending":
             return getRequestUrlConstructor(
                 domain.name,
-                ENDPOINTS.getBooks,
+                ENDPOINTS.books,
                 sortOnProperty.publication,
                 sortDirection.default
             )
-            break;
         case "publication-ascending":
             return getRequestUrlConstructor(
                 domain.name,
-                ENDPOINTS.getBooks,
+                ENDPOINTS.books,
                 sortOnProperty.publication,
                 sortDirection.ascending
             )
-            break;
         case "title-descending":
             return getRequestUrlConstructor(
                 domain.name,
-                ENDPOINTS.getBooks,
+                ENDPOINTS.books,
                 sortOnProperty.title,
                 sortDirection.default
             )
-            break;
         case "title-ascending":
             return getRequestUrlConstructor(
                 domain.name,
-                ENDPOINTS.getBooks,
+                ENDPOINTS.books,
                 sortOnProperty.title,
                 sortDirection.ascending
             )
-            break;
         case "pages-descending":
             return getRequestUrlConstructor(
                 domain.name,
-                ENDPOINTS.getBooks,
+                ENDPOINTS.books,
                 sortOnProperty.pages,
                 sortDirection.default
             )
-            break;
         case "pages-ascending":
             return getRequestUrlConstructor(
                 domain.name,
-                ENDPOINTS.getBooks,
+                ENDPOINTS.books,
                 sortOnProperty.pages,
                 sortDirection.ascending
             )
-            break;
         case "release-year-descending":
             return getRequestUrlConstructor(
                 domain.name,
-                ENDPOINTS.getBooks,
+                ENDPOINTS.books,
                 sortOnProperty.releaseYear,
                 sortDirection.default
             )
-            break;
         case "release-year-ascending":
             return getRequestUrlConstructor(
                 domain.name,
-                ENDPOINTS.getBooks,
+                ENDPOINTS.books,
                 sortOnProperty.releaseYear,
                 sortDirection.ascending
             )
-            break;
         case "rating-descending":
             return getRequestUrlConstructor(
                 domain.name,
-                ENDPOINTS.getBooks,
+                ENDPOINTS.books,
                 sortOnProperty.rating,
                 sortDirection.default
             )
-            break;
         case "rating-ascending":
             return getRequestUrlConstructor(
                 domain.name,
-                ENDPOINTS.getBooks,
+                ENDPOINTS.books,
                 sortOnProperty.rating,
                 sortDirection.ascending
             )
-            break;
         default:
             break;
     }
