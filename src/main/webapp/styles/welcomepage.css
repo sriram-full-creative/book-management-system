@@ -1,0 +1,111 @@
+.welcome-message-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.hello-Message {
+    position: relative;
+    font-size: 7vw;
+    color: #fff;
+}
+
+.hello-Message::after {
+    content: '';
+    height: 140%;
+    width: 1px;
+    background: transparent;
+    position: absolute;
+    display: block;
+    right: -1vw;
+    top: -20%;
+    animation: blink 1.2s linear infinite;
+}
+
+.welcome-view-books-button {
+    align-items: center;
+    border-color: rgba(160, 157, 157, 0.438);
+    border-left: none;
+    border-right: none;
+    background-color: rgb(41, 40, 40);
+    box-sizing: border-box;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    font-family: Montserrat, sans-serif;
+    font-size: 20px;
+    justify-content: center;
+    max-width: 100%;
+    border: 1px solid black;
+    padding: 14px 22px;
+    transition: all .2s;
+    user-select: none;
+    touch-action: manipulation;
+    width: 100%;
+    border-radius: 10px;
+
+}
+
+.welcome-view-books-button:hover {
+    color: black;
+    background-color: white;
+    transition: 100ms;
+}
+
+@-moz-keyframes blink {
+    49% {
+        background: transparent;
+    }
+
+    50% {
+        background: red;
+    }
+
+    100% {
+        background: red;
+    }
+}
+
+@-webkit-keyframes blink {
+    49% {
+        background: transparent;
+    }
+
+    50% {
+        background: red;
+    }
+
+    100% {
+        background: red;
+    }
+}
+
+@-o-keyframes blink {
+    49% {
+        background: transparent;
+    }
+
+    50% {
+        background: red;
+    }
+
+    100% {
+        background: red;
+    }
+}
+
+@keyframes blink {
+    49% {
+        background: transparent;
+    }
+
+    50% {
+        background: red;
+    }
+
+    100% {
+        background: red;
+    }
+}

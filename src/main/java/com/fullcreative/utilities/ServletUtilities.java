@@ -207,7 +207,6 @@ public class ServletUtilities {
 		book.setReleaseYear((Integer) map.get("releaseYear"));
 		book.setCountry((String) map.get("country"));
 		book.setCoverImage((String) map.get("coverImage"));
-		book.setBookLink((String) map.get("bookLink"));
 		book.setRating((Integer) map.get("rating"));
 		String jsonString = gson.toJson(book);
 		return jsonString;
@@ -272,7 +271,6 @@ public class ServletUtilities {
 		map.put("releaseYear", book.getReleaseYear());
 		map.put("country", book.getCountry());
 		map.put("coverImage", book.getCoverImage());
-		map.put("bookLink", book.getBookLink());
 		map.put("rating", book.getRating());
 		return map;
 	}
@@ -297,7 +295,6 @@ public class ServletUtilities {
 		book.setReleaseYear(Integer.parseInt(entity.getProperty("ReleaseYear").toString()));
 		book.setCountry(entity.getProperty("Country").toString());
 		book.setCoverImage(entity.getProperty("CoverImage").toString());
-		book.setBookLink(entity.getProperty("BookLink").toString());
 		book.setRating(Integer.parseInt(entity.getProperty("Rating").toString()));
 
 		return book;
@@ -326,7 +323,6 @@ public class ServletUtilities {
 		entity.setProperty("ReleaseYear", book.getReleaseYear());
 		entity.setProperty("Country", book.getCountry());
 		entity.setProperty("CoverImage", book.getCoverImage());
-		entity.setProperty("BookLink", book.getBookLink());
 		entity.setProperty("Rating", book.getRating());
 		entity.setProperty("CreatedOrUpdated", Time.from(Instant.now()));
 		return entity;
@@ -392,11 +388,6 @@ public class ServletUtilities {
 
 		entity.setProperty("CoverImage", datastoreEntity.getProperty("CoverImage"));
 
-		if (book.getBookLink() != null) {
-			entity.setProperty("BookLink", book.getBookLink());
-		} else {
-			entity.setProperty("BookLink", datastoreEntity.getProperty("BookLink"));
-		}
 		if (book.getRating() != null) {
 			entity.setProperty("Rating", book.getRating());
 		} else {
@@ -467,11 +458,6 @@ public class ServletUtilities {
 		// Updating the Cover Image with the Latest URL
 		entity.setProperty("CoverImage", updatedFileUrl);
 
-		if (book.getBookLink() != null) {
-			entity.setProperty("BookLink", book.getBookLink());
-		} else {
-			entity.setProperty("BookLink", datastoreEntity.getProperty("BookLink"));
-		}
 		if (book.getRating() != null) {
 			entity.setProperty("Rating", book.getRating());
 		} else {

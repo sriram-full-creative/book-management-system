@@ -29,7 +29,6 @@ public class DoPostTestData {
 				put("releaseYear", 1836);
 				put("country", "Denmark");
 				put("coverImage", "");
-				put("bookLink", "https://en.wikipedia.org/wiki/Fairy_Tales_Told_for_Children._First_Collection.");
 				put("rating", 5);
 			}
 		});
@@ -49,7 +48,6 @@ public class DoPostTestData {
 				put("releaseYear", 1836);
 				put("country", "Denmark");
 				put("coverImage", "");
-				put("bookLink", "https://en.wikipedia.org/wiki/Fairy_Tales_Told_for_Children._First_Collection.");
 				put("rating", 5);
 			}
 		});
@@ -78,7 +76,6 @@ public class DoPostTestData {
 				put("releaseYear", 1836);
 				put("country", "Denmark");
 				put("coverImage", "");
-				put("bookLink", "https://en.wikipedia.org/wiki/Fairy_Tales_Told_for_Children._First_Collection.");
 				put("rating", 5);
 			}
 		});
@@ -106,7 +103,6 @@ public class DoPostTestData {
 				put("releaseYear", 1836);
 				put("country", "Denmark");
 				put("coverImage", "");
-				put("bookLink", "https://en.wikipedia.org/wiki/Fairy_Tales_Told_for_Children._First_Collection.");
 				put("rating", 5);
 			}
 		});
@@ -134,7 +130,6 @@ public class DoPostTestData {
 				put("releaseYear", 1836);
 				put("country", "Denmark");
 				put("coverImage", "");
-				put("bookLink", "https://en.wikipedia.org/wiki/Fairy_Tales_Told_for_Children._First_Collection.");
 				put("rating", 5);
 			}
 		});
@@ -162,7 +157,6 @@ public class DoPostTestData {
 				put("releaseYear", 1836);
 				put("country", "Denmark");
 				put("coverImage", "");
-				put("bookLink", "https://en.wikipedia.org/wiki/Fairy_Tales_Told_for_Children._First_Collection.");
 				put("rating", 5);
 			}
 		});
@@ -189,7 +183,6 @@ public class DoPostTestData {
 				put("releaseYear", 1836);
 				put("country", "Denmark");
 				put("coverImage", "");
-				put("bookLink", "https://en.wikipedia.org/wiki/Fairy_Tales_Told_for_Children._First_Collection.");
 				put("rating", 5);
 			}
 		});
@@ -217,7 +210,6 @@ public class DoPostTestData {
 				put("releaseYear", 1836);
 				put("country", "Denmark");
 				put("coverImage", "");
-				put("bookLink", "https://en.wikipedia.org/wiki/Fairy_Tales_Told_for_Children._First_Collection.");
 				put("rating", 5);
 			}
 		});
@@ -244,7 +236,6 @@ public class DoPostTestData {
 				put("releaseYear", 1836);
 				put("country", "Denmark");
 				put("coverImage", "");
-				put("bookLink", "https://en.wikipedia.org/wiki/Fairy_Tales_Told_for_Children._First_Collection.");
 				put("rating", 5);
 			}
 		});
@@ -271,7 +262,6 @@ public class DoPostTestData {
 				put("releaseYear", -1836);
 				put("country", "Denmark");
 				put("coverImage", "");
-				put("bookLink", "https://en.wikipedia.org/wiki/Fairy_Tales_Told_for_Children._First_Collection.");
 				put("rating", 5);
 			}
 		});
@@ -298,7 +288,6 @@ public class DoPostTestData {
 				put("releaseYear", 2023);
 				put("country", "Denmark");
 				put("coverImage", "");
-				put("bookLink", "https://en.wikipedia.org/wiki/Fairy_Tales_Told_for_Children._First_Collection.");
 				put("rating", 5);
 			}
 		});
@@ -325,7 +314,6 @@ public class DoPostTestData {
 				put("releaseYear", 1836);
 				put("country", "");
 				put("coverImage", "");
-				put("bookLink", "https://en.wikipedia.org/wiki/Fairy_Tales_Told_for_Children._First_Collection.");
 				put("rating", 5);
 			}
 		});
@@ -353,7 +341,6 @@ public class DoPostTestData {
 				put("releaseYear", 1836);
 				put("country", "Denmark453");
 				put("coverImage", "");
-				put("bookLink", "https://en.wikipedia.org/wiki/Fairy_Tales_Told_for_Children._First_Collection.");
 				put("rating", 5);
 			}
 		});
@@ -380,7 +367,6 @@ public class DoPostTestData {
 				put("releaseYear", 1836);
 				put("country", "Denmark");
 				put("coverImage", "");
-				put("bookLink", "https://en.wikipedia.org/wiki/Fairy_Tales_Told_for_Children._First_Collection.");
 				put("rating", 6);
 			}
 		});

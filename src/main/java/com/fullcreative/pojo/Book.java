@@ -25,8 +25,6 @@ public class Book {
 	@Expose(serialize = true, deserialize = true)
 	private String coverImage;
 	@Expose(serialize = true, deserialize = true)
-	private String bookLink;
-	@Expose(serialize = true, deserialize = true)
 	private Integer rating;
 
 	/** Getters and Setters **/
@@ -98,12 +96,6 @@ public class Book {
 	public void setCoverImage(String coverImage) {
 		this.coverImage = coverImage;
 	}
-	public String getBookLink() {
-		return bookLink;
-	}
-	public void setBookLink(String bookLink) {
-		this.bookLink = bookLink;
-	}
 	public Integer getRating() {
 		return rating;
 	}
@@ -113,13 +105,10 @@ public class Book {
 
 	@Override
 	public String toString() {
-		return "Book [authors=" + author + ", publication=" + publication + ", title=" + title + ", language="
-				+ language + ", pages=" + pages + ", releaseYear=" + releaseYear + ", country=" + country
-				+ ", coverImage=" + coverImage + ", bookLink=" + bookLink + ", rating=" + rating + ", getAuthors()="
-				+ getAuthor() + ", getPublication()=" + getPublication() + ", getTitle()=" + getTitle()
-				+ ", getLanguage()=" + getLanguage() + ", getPages()=" + getPages() + ", getReleaseYear()="
-				+ getReleaseYear() + ", getCountry()=" + getCountry() + ", getCoverImage()=" + getCoverImage()
-				+ ", getBookLink()=" + getBookLink() + ", getRating()=" + getRating() + "]";
+		return "Book [id=" + id + ", author=" + author + ", publication=" + publication + ", title=" + title
+				+ ", language=" + language + ", pages=" + pages + ", releaseYear=" + releaseYear + ", country="
+				+ country + ", coverImage=" + coverImage + ", rating=" + rating + "]";
 	}
+
 
 }

@@ -12,7 +12,6 @@
     "releaseYear": 1958,
     "country": "Nigeria",
     "coverImage": "images/things-fall-apart.jpg",
-    "bookLink": "https://en.wikipedia.org/wiki/Things_Fall_Apart",
     "rating" : 3
   },
    {
@@ -28,7 +27,6 @@
     "releaseYear": 1836,
     "country": "Denmark",
     "coverImage": "images/fairy-tales.jpg",
-    "bookLink": "https://en.wikipedia.org/wiki/Fairy_Tales_Told_for_Children._First_Collection.",
     "rating" : 5
   },
    {
@@ -44,7 +42,6 @@
     "releaseYear": 1315,
     "country": "Italy",
     "coverImage": "images/the-divine-comedy.jpg",
-    "bookLink": "https://en.wikipedia.org/wiki/Divine_Comedy",
     "rating" : 4
   },
    {
@@ -60,7 +57,6 @@
     "releaseYear": 1813,
     "country": "United Kingdom",
     "coverImage": "images/pride-and-prejudice.jpg",
-    "bookLink": "https://en.wikipedia.org/wiki/Pride_and_Prejudice",
     "rating" : 5
   },
    {
@@ -76,7 +72,6 @@
     "releaseYear": 1952,
     "country": "Republic of Ireland",
     "coverImage": "images/molloy-malone-dies-the-unnamable.jpg",
-    "bookLink": "https://en.wikipedia.org/wiki/Molloy_(novel)",
     "rating" : 5
   },
    {
@@ -92,7 +87,6 @@
     "releaseYear": 1952,
     "country": "Republic of Ireland",
     "coverImage": "images/molloy-malone-dies-the-unnamable.jpg",
-    "bookLink": "https://en.wikipedia.org/wiki/Molloy_(novel)",
     "rating" : 4
   },
   {
@@ -108,7 +102,6 @@
     "releaseYear": 1351,
     "country": "Italy",
     "coverImage": "images/the-decameron.jpg",
-    "bookLink": "https://en.wikipedia.org/wiki/The_Decameron",
     "rating": 3
 },
   {
@@ -124,7 +117,6 @@
     "releaseYear": 1965,
     "country": "Argentina",
     "coverImage": "images/ficciones.jpg",
-    "bookLink": "https://en.wikipedia.org/wiki/Ficciones",
     "rating" : 4
   },
   {
@@ -140,7 +132,6 @@
     "releaseYear": 1942,
     "country": "Algeria, French Empire",
     "coverImage": "images/l-etranger.jpg",
-    "bookLink": "https://en.wikipedia.org/wiki/The_Stranger_(novel)",
     "rating" : 5
   },
    {
@@ -156,7 +147,6 @@
     "releaseYear": 1847,
     "country": "United Kingdom",
     "coverImage": "images/wuthering-heights.jpg",
-    "bookLink": "https://en.wikipedia.org/wiki/Wuthering_Heights",
     "rating" : 5
   }
   

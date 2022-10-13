@@ -26,7 +26,6 @@ public class DoGetServiceTestData {
 				put("releaseYear", 1836);
 				put("country", "Denmark");
 				put("coverImage", "images/fairy-tales.jpg");
-				put("bookLink", "https://en.wikipedia.org/wiki/Fairy_Tales_Told_for_Children._First_Collection.");
 				put("rating", 5);
 			}
 		});
@@ -42,7 +41,6 @@ public class DoGetServiceTestData {
 				put("releaseYear", 1965);
 				put("country", "Argentina");
 				put("coverImage", "images/ficciones.jpg");
-				put("bookLink", "https://en.wikipedia.org/wiki/Ficciones");
 				put("rating", 4);
 			}
 		});
@@ -58,7 +56,6 @@ public class DoGetServiceTestData {
 				put("releaseYear", 1958);
 				put("country", "Nigeria");
 				put("coverImage", "images/things-fall-apart.jpg");
-				put("bookLink", "https://en.wikipedia.org/wiki/Things_Fall_Apart");
 				put("rating", 3);
 			}
 		});

@@ -466,54 +466,6 @@ public class DoPutServiceTestCases {
 
 	}
 
-	/**
-	 * Updating Single Entities - bookLink
-	 */
-
-	@Test
-	public void updateBook_bookLink_Test() throws EntityNotFoundException {
-		System.out.println();
-		System.out.println("updateBook_bookLink_Test()");
-
-		// Creating a book with wrong details which are to be updated
-		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestData.testCases
-				.get("validBookBeforeBookLinkUpdate");
-		String inputStringBeforeUpdate = ServletUtilities.mapToJsonString(testCaseMapBeforeUpdate);
-		System.out.println("inputStringBeforeUpdate => " + inputStringBeforeUpdate);
-		LinkedHashMap<String, Object> actualBookValueBeforeUpdate = ServletUtilities
-				.createNewBook(inputStringBeforeUpdate);
-		int codeBeforeUpdate = Integer.parseInt(actualBookValueBeforeUpdate.remove("STATUS_CODE").toString());
-		String keyBeforeUpdate = null;
-		if (actualBookValueBeforeUpdate.containsKey("id")) {
-			keyBeforeUpdate = actualBookValueBeforeUpdate.remove("id").toString();
-		}
-		// Checking if the book is created with the sent data
-		assertEquals(200, codeBeforeUpdate);
-		assertEquals(testCaseMapBeforeUpdate.toString(), actualBookValueBeforeUpdate.toString());
-
-		// Updating the Book
-		LinkedHashMap<String, Object> testCaseMapForUpdate = DoPutTestData.testCases.get("validBookForBookLinkUpdate");
-		LinkedHashMap<String, Object> testCaseMapAfterUpdate = DoPutTestData.testCases
-				.get("validBookAfterBookLinkUpdate");
-		String inputStringForrUpdate = ServletUtilities.mapToJsonString(testCaseMapForUpdate);
-		String inputStringAfterUpdate = ServletUtilities.mapToJsonString(testCaseMapAfterUpdate);
-		System.out.println("inputStringAfterUpdate => " + inputStringAfterUpdate);
-
-		// Updating the book by passing the bookID received from creating the book.
-		LinkedHashMap<String, Object> actualBookValueAfterUpdate = ServletUtilities.updateBook(inputStringForrUpdate,
-				keyBeforeUpdate);
-		int code = Integer.parseInt(actualBookValueAfterUpdate.remove("STATUS_CODE").toString());
-		String keyAfterUpdate = null;
-		if (actualBookValueAfterUpdate.containsKey("id")) {
-			keyAfterUpdate = actualBookValueAfterUpdate.remove("id").toString();
-		}
-		assertEquals(200, code);
-		assertEquals(testCaseMapAfterUpdate.toString(), actualBookValueAfterUpdate.toString());
-
-		// Asserting if we updated the same book by checking the returned key
-		assertEquals(keyBeforeUpdate, keyAfterUpdate);
-
-	}
 
 	/**
 	 * Updating Single Entities - rating
