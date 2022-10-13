@@ -16,25 +16,31 @@ const navbar = document.querySelector(".navbar");
 const addBookFormTemplate = document.querySelector("[data-add-book-form-template]");
 const updateBookFormTemplate = document.querySelector("[data-update-book-form-template]");
 const updateCoverImageFormTemplate = document.querySelector("[data-update-cover-image-form-template]");
-
+const spinnerTemplate = document.querySelector("#spinner");
+const welcomeMessage = document.querySelector(".welcome-message-container");
 
 function toggleViewAllBooks() {
+    runSpinner();
     getBooks(apiUrl);
 }
 
 /** EVENT LISTENERS */
 viewAllBooksIntro.addEventListener("click", toggleViewAllBooksFromIntro);
-toggleButton.addEventListener("click", () => { navbarLinks.classList.toggle("active") });
 searchInput.addEventListener("input", searchBooks);
 viewAllBooksTrigger.addEventListener("click", toggleViewAllBooks);
 addBookTrigger.addEventListener("click", toggleAddBookForm);
 booksContainer.addEventListener('click', processBooks);
 sortByOptions.addEventListener("change", sortBooks);
 
+toggleButton.addEventListener("click", () => {
+    navbarLinks.classList.toggle("active")
+});
+
 booksContainer.addEventListener("reset", (e) => {
     const bookForm = e.target;
     const resultContainer = bookForm.querySelector("#result-container");
     resultContainer.innerHTML = "";
+    resultContainer.className = "";
 })
 
 booksContainer.addEventListener('submit', (e) => {

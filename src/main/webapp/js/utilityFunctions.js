@@ -63,7 +63,18 @@ function clearBookContainer() {
     booksContainer.innerHTML = '';
 }
 
+function runSpinner() {
+    spinner.removeAttribute('hidden');
+    document.documentElement.style.overflow = 'hidden';
+}
+
+function stopSpinner() {
+    spinner.setAttribute('hidden', '');
+    document.documentElement.style.overflow = 'scroll';
+}
+
 function addBooks(books) {
+    stopSpinner();
     clearBookContainer();
     books.forEach(book => {
         const bookCard = bookCardTemplate.content.cloneNode(true).children[0];
@@ -108,12 +119,14 @@ function addBooks(books) {
 
 
 function toggleViewAllBooksFromIntro() {
+    runSpinner();
     searchBarContainer.style.visibility = "visible";
     sortByContainer.style.visibility = "visible";
     navbar.style.visibility = "visible";
     viewAllBooksTrigger.style.visibility = "visible";
     addBookTrigger.style.visibility = "visible";
     aboutTrigger.style.visibility = "visible";
+    welcomeMessage.style.display = "none";
     getBooks(apiUrl);
 }
 
@@ -268,7 +281,9 @@ function toggleUpdateBookForm(bookId) {
     console.log(currentBookId);
 }
 
+
 function addNewBook(formData, bookForm) {
+    runSpinner();
     const bookObj = {};
     formData.forEach((value, key) => {
         if (key == "author") {
@@ -293,8 +308,11 @@ function addNewBook(formData, bookForm) {
         const requestOptions = processPostRequestOptions(bookObj);
         apiUrl = postRequestUrlConstructor(domain.name, ENDPOINTS.books);
         fetch(apiUrl, requestOptions)
-            .then(response => response.text())
-            .then(responseJson => {
+            .then(response => {
+                stopSpinner();
+                response.text()
+            }).then(responseJson => {
+                stopSpinner();
                 console.log(responseJson);
                 const resultContainer = bookForm.querySelector("#result-container");
                 resultContainer.classList.add("oaerror");
@@ -309,15 +327,18 @@ function addNewBook(formData, bookForm) {
                 resultMessage.style.fontFamily = `apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif`;
                 resultMessage.innerHTML = "<strong>Success : </strong>Added a new Book";
                 resultContainer.appendChild(resultMessage);
-            })
-            .catch(error => {
-                responseJson = error;
+            }).catch(error => {
+                stopSpinner();
                 console.log("addNewBook Function => ", error);
+                responseJson = error;
                 const resultContainer = bookForm.querySelector("#result-container");
+                resultContainer.classList.add("oaerror");
+                resultContainer.classList.add("danger");
                 resultContainer.innerHTML = "";
                 resultContainer.innerText = responseJson;
             });
     } else {
+        stopSpinner();
         const errorContainer = bookForm.querySelector("#result-container");
         errorContainer.style.display = "grid";
         errorContainer.style.justifyContent = "space-around";
@@ -327,7 +348,7 @@ function addNewBook(formData, bookForm) {
         errorObjKeys = Object.keys(errorMessagesObj);
         errorObjKeys.forEach((key) => {
             const errorMessage = document.createElement("p");
-            errorMessage.classList.add("result-message-entries")
+            errorMessage.classList.add("result-message-entries");
             errorMessage.style.padding = "0";
             errorMessage.style.margin = "0";
             errorMessage.style.fontFamily = `apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif`;
@@ -338,6 +359,7 @@ function addNewBook(formData, bookForm) {
 }
 
 function updateBookDetails(formData, bookForm) {
+    runSpinner();
     const bookObj = {};
     formData.forEach((value, key) => {
         if (key == "author") {
@@ -367,8 +389,11 @@ function updateBookDetails(formData, bookForm) {
         const requestOptions = processPutRequestOptions(bookObj);
         apiUrl = putRequestUrlConstructor(domain.name, ENDPOINTS.books, currentBookId);
         fetch(apiUrl, requestOptions)
-            .then(response => response.text())
-            .then(responseJson => {
+            .then(response => {
+                stopSpinner();
+                response.text()
+            }).then(responseJson => {
+                stopSpinner();
                 console.log(responseJson);
                 const resultContainer = bookForm.querySelector("#result-container");
                 resultContainer.classList.add("success");
@@ -383,15 +408,18 @@ function updateBookDetails(formData, bookForm) {
                 resultMessage.style.fontFamily = `apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif`;
                 resultMessage.innerHTML = "<strong>Success : </strong>Updated the Book Details";
                 resultContainer.appendChild(resultMessage);
-            })
-            .catch(error => {
+            }).catch(error => {
+                stopSpinner();
                 console.log("updateBookDetails Function => ", error);
                 responseJson = error;
                 const resultContainer = bookForm.querySelector("#result-container");
+                resultContainer.classList.add("oaerror");
+                resultContainer.classList.add("danger");
                 resultContainer.innerHTML = "";
                 resultContainer.innerText = responseJson;
             });
     } else {
+        stopSpinner();
         const errorContainer = bookForm.querySelector("#result-container");
         errorContainer.style.display = "grid";
         errorContainer.style.justifyContent = "space-around";
@@ -412,26 +440,32 @@ function updateBookDetails(formData, bookForm) {
 }
 
 function deleteBook(bookId) {
+    runSpinner();
     console.log(deleteRequestUrlContructor(domain.name, ENDPOINTS.books, bookId));
     fetch(deleteRequestUrlContructor(domain.name, ENDPOINTS.books, bookId), {
         method: "DELETE",
         headers: {
             'Content-type': 'application/json'
         }
-    }).then(res => res.json())
-        .then(data => {
-            console.log(data);
-            apiUrl = getRequestUrlConstructor(domain.name, ENDPOINTS.books, sortOnProperty.default, sortDirection.default);
-            getBooks(apiUrl);
-        })
-        .catch(error => {
-            console.log(error);
-            apiUrl = getRequestUrlConstructor(domain.name, ENDPOINTS.books, sortOnProperty.default, sortDirection.default);
-            getBooks(apiUrl);
-        });
+    }).then(res => {
+        stopSpinner();
+        res.json()
+    }).then(data => {
+        stopSpinner();
+        console.log(data);
+        apiUrl = getRequestUrlConstructor(domain.name, ENDPOINTS.books, sortOnProperty.default, sortDirection.default);
+        getBooks(apiUrl);
+    }).catch(error => {
+        stopSpinner();
+        console.log(error);
+        apiUrl = getRequestUrlConstructor(domain.name, ENDPOINTS.books, sortOnProperty.default, sortDirection.default);
+        getBooks(apiUrl);
+    });
 }
 
 function updateCoverImage(ImagefileInput, bookForm) {
+    runSpinner();
+
     const myHeaders = new Headers();
     myHeaders.append("Cache-Control", "no-store");
 
@@ -448,8 +482,11 @@ function updateCoverImage(ImagefileInput, bookForm) {
     apiUrl = putRequestUrlConstructor(domain.name, ENDPOINTS.images, currentBookId);
 
     fetch(apiUrl, requestOptions)
-        .then(response => response.text())
-        .then(responseJson => {
+        .then(response => {
+            stopSpinner();
+            response.text()
+        }).then(responseJson => {
+            stopSpinner();
             console.log(responseJson);
             const resultContainer = bookForm.querySelector("#result-container");
             resultContainer.classList.add("oaerror");
@@ -462,12 +499,19 @@ function updateCoverImage(ImagefileInput, bookForm) {
             resultMessage.style.padding = "0";
             resultMessage.style.margin = "0";
             resultMessage.style.fontFamily = `apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif`;
-            resultMessage.innerHTML = "<strong>Success : </strong>Added a new Book";
+            resultMessage.innerHTML = "<strong>Success : </strong>Updated the Cover Image";
             resultContainer.appendChild(resultMessage);
-        })
-        .catch(error => {
-            console.log("updateCoverImage Function => ", error);
+        }).catch(error => {
+            stopSpinner();
+            console.log("updateBookDetails Function => ", error);
+            responseJson = error;
+            const resultContainer = bookForm.querySelector("#result-container");
+            resultContainer.classList.add("oaerror");
+            resultContainer.classList.add("danger");
+            resultContainer.innerHTML = "";
+            resultContainer.innerText = responseJson;
         });
+
 }
 
 function processBooks() {
@@ -596,6 +640,7 @@ function processOption(selectedOption) {
 }
 
 function sortBooks() {
+    spinner.removeAttribute('hidden');
     const selectedOption = sortByOptions.value;
     apiUrl = processOption(selectedOption);
     console.log(apiUrl);

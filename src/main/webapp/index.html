@@ -229,7 +229,7 @@
                     <div class="book-details">
                         <div class="cover-image-input-field">
                             <input id="cover-image" name="cover-image" type="file"
-                                accept="image/png, image/jpg, image/jpeg">
+                                accept="image/png, image/jpg, image/jpeg" required>
                         </div>
                     </div>
                     <div id="input-field" class="form-buttons">
@@ -242,8 +242,12 @@
                 </form>
             </div>
         </template>
-
     </div>
+    <!-- this will show our spinner -->
+    <div class="loader">
+        <div hidden class="spinner" id="spinner"></div>
+    </div>
+
 </body>
 
 </html>

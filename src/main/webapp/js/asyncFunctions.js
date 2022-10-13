@@ -37,7 +37,7 @@ async function getBooks(url) {
         books = await response.json();
         addBooks(books);
     } catch (error) {
-        // Catch Error here
+        stopSpinner();
         console.log(error);
         alert("We're sorry, but we encountered an unexpected problem downloading one or more components and can't get the books right now...Please try again later");
     }
