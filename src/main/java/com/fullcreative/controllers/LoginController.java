@@ -34,6 +34,8 @@ public class LoginController extends HttpServlet {
 					oldSession.invalidate();
 				}
 				HttpSession newSession = request.getSession(true);
+				newSession.setAttribute("isLoggedIn", "yes");
+				System.out.println(newSession.getAttribute("isLoggedIn"));
 				newSession.setMaxInactiveInterval(5 * 60);
 			}
 			response.setContentType("application/json");

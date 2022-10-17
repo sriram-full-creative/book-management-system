@@ -24,7 +24,7 @@ const signupHandler = async (event) => {
     if (!response.ok) {
         alert("Error");
     } else {
-        window.location.href = "/books.html";
+        window.location.href = "/books/all";
     }
 }
 

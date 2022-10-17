@@ -1,5 +1,5 @@
 var books = [];
-const imgNotFoundSrc = "./images/image-not-found.svg";
+const imgNotFoundSrc = "./../images/image-not-found.svg";
 const ENDPOINTS = {
     books: "/books",
     images: "/images"

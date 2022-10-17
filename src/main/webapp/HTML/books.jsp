@@ -6,20 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Book Manager</title>
     <link rel="icon" href="./images/book-manager-logo.svg" type="image/svg">
-    <link rel="stylesheet" href="./styles/welcomepage.css">
-    <link rel="stylesheet" href="./styles/sortcontainer.css">
-    <link rel="stylesheet" href="./styles/navbar.css">
-    <link rel="stylesheet" href="./styles/form.css">
-    <link rel="stylesheet" href="./styles/main.css">
-    <script src="./js/utilityFunctions.js" defer></script>
-    <script src="./js/objects.js" defer></script>
-    <script src="./js/asyncFunctions.js" defer></script>
-    <script src="./js/app.js" defer></script>
+    <link rel="stylesheet" href="./../styles/welcomepage.css">
+    <link rel="stylesheet" href="./../styles/sortcontainer.css">
+    <link rel="stylesheet" href="./../styles/navbar.css">
+    <link rel="stylesheet" href="./../styles/form.css">
+    <link rel="stylesheet" href="./../styles/main.css">
+    <script src="./../js/utilityFunctions.js" defer></script>
+    <script src="./../js/objects.js" defer></script>
+    <script src="./../js/asyncFunctions.js" defer></script>
+    <script src="./../js/app.js" defer></script>
 </head>
 
 <body>
     <nav class="navbar">
-        <div class="brand-title"><img src="./images/book-manager-logo.svg" alt="logo" class="brand-logo">&nbsp;Book
+        <div class="brand-title"><img src="./../images/book-manager-logo.svg" alt="logo" class="brand-logo">&nbsp;Book
             Manager
         </div>
         <a href="#" class="toggle-menu-button">
@@ -42,7 +42,7 @@
                             <a href="#" title="Close" class="about-close">Close</a>
                             <h1>Voilaa!</h1>
                             <div>
-                                <img src="./images/book-manager-logo.svg" alt="logo" width="50px">
+                                <img src="./../images/book-manager-logo.svg" alt="logo" width="50px">
                                 <p>This is a Pocket library. Hope you find it helpful.</p>
                                 <p>© Sriram S</p>
                             </div>

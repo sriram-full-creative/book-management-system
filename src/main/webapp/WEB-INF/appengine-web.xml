@@ -2,7 +2,7 @@
 <appengine-web-app xmlns="http://appengine.google.com/ns/1.0">
 
   <threadsafe>true</threadsafe>
-  <sessions-enabled>false</sessions-enabled>
+  <sessions-enabled>true</sessions-enabled>
   <runtime>java8</runtime>
 
   <system-properties>
@@ -10,7 +10,7 @@
   </system-properties>
 
 	<resource-files>
-		<include path="/books.html" />
+		<include path="/HTML/books.jsp"/>
 	</resource-files>
 
 </appengine-web-app>

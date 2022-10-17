@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-@WebFilter("/AuthFilter")
+@WebFilter("/Authfilter")
 public class AuthFilter implements Filter {
 		private ServletContext context;
 
@@ -27,9 +27,10 @@ public class AuthFilter implements Filter {
 		public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 				throws IOException, ServletException {
 			HttpServletRequest req = (HttpServletRequest) request;
+
 			HttpServletResponse res = (HttpServletResponse) response;
 			HttpSession session = req.getSession(false);
-
+			System.out.println(req.getContentType());
 			if (session == null) {
 				this.context.log("Unauthorized access request");
 				res.sendRedirect("/");

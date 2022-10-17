@@ -22,7 +22,7 @@ const loginHandler = async (event) => {
         alert("Invalid Email or Password");
     } else {
         console.log("redirect");
-        window.location.href = "/books.html";
+        window.location.href = "/books/all";
     }
 }
 
