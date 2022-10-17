@@ -7,14 +7,18 @@
     <title>Book Manager</title>
     <link rel="icon" href="./images/book-manager-logo.svg" type="image/svg">
     <link rel="stylesheet" href="./styles/auth.css">
-    <script src="./js/login.js" defer></script>
+    <script src="./js/signup.js" defer></script>
 </head>
 
 <body>
-    <div id="login-container" class="login-container">
-        <form action="" method="" id="login-form" class="login-form">
-            <h2 class="heading">Login</h2>
+    <div id="signup-container" class="signup-container">
+        <form action="" method="" id="signup-form" class="signup-form">
+            <h2 class="heading">Create an Account</h2>
             <div class="book-details">
+                <div class="input-field">
+                    <label for="username">Username:</label>
+                    <input id="username" name="username" type="text" placeholder="john_doe" required>
+                </div>
                 <div class="input-field">
                     <label for="email">Email:</label>
                     <input id="email" name="email" type="email" placeholder="eg. john_doe@gmail.com" required>
@@ -26,10 +30,10 @@
                 </div>
             </div>
             <div id="input-field" class="form-buttons">
-                <button id="login" type="submit">continue</button>
+                <button id="signup" type="submit">continue</button>
                 <button id="form-reset" type="reset">Clear Details</button>
             </div>
-            <p class="alternate-option">Don't Have an Account? &nbsp;<a href="./signup.html">Signup</a></p>
+            <p class="alternate-option">Already Have an Account? &nbsp<a href="./index.html">Login</a></p>
             <div class="text-base text-center text-gray-400" id="result-container">
         </form>
     </div>

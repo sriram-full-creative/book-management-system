@@ -1,4 +1,4 @@
-package com.fullcreative.servlet.dopost;
+package com.fullcreative.servlet.books.dopost;
 
 import static org.junit.Assert.*;
 
@@ -8,7 +8,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.fullcreative.utilities.ServletUtilities;
+import com.fullcreative.utilities.BooksControllerUtilities;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
@@ -35,9 +35,9 @@ public class DoPostServiceTestCases {
 		System.out.println();
 		System.out.println("createNewBook_validBook_Test()");
 		LinkedHashMap<String, Object> testCaseMap = DoPostTestData.testCases.get("validBook");
-		String inputString = ServletUtilities.mapToJsonString(testCaseMap);
+		String inputString = BooksControllerUtilities.mapToJsonString(testCaseMap);
 		System.out.println(inputString);
-		LinkedHashMap<String, Object> actualBookValue = ServletUtilities.createNewBook(inputString);
+		LinkedHashMap<String, Object> actualBookValue = BooksControllerUtilities.createNewBook(inputString);
 		int code = Integer.parseInt(actualBookValue.remove("STATUS_CODE").toString());
 		if (actualBookValue.containsKey("id")) {
 			String key = actualBookValue.remove("id").toString();
@@ -56,9 +56,9 @@ public class DoPostServiceTestCases {
 		System.out.println("createNewBook_authorNameNull_Test()");
 		LinkedHashMap<String, Object> testCaseMap = DoPostTestData.testCases.get("authorNameNull");
 		LinkedHashMap<String, Object> errorMessage = DoPostTestData.errorMessages.get("authorNameNull");
-		String inputString = ServletUtilities.mapToJsonString(testCaseMap);
+		String inputString = BooksControllerUtilities.mapToJsonString(testCaseMap);
 		System.out.println(inputString);
-		LinkedHashMap<String, Object> actualBookValue = ServletUtilities.createNewBook(inputString);
+		LinkedHashMap<String, Object> actualBookValue = BooksControllerUtilities.createNewBook(inputString);
 		int code = Integer.parseInt(actualBookValue.remove("STATUS_CODE").toString());
 		assertEquals(400, code);
 		assertEquals(errorMessage.toString(), actualBookValue.toString());
@@ -74,9 +74,9 @@ public class DoPostServiceTestCases {
 		System.out.println("createNewBook_bookTitleNull_Test()");
 		LinkedHashMap<String, Object> testCaseMap = DoPostTestData.testCases.get("bookTitleNull");
 		LinkedHashMap<String, Object> errorMessage = DoPostTestData.errorMessages.get("bookTitleNull");
-		String inputString = ServletUtilities.mapToJsonString(testCaseMap);
+		String inputString = BooksControllerUtilities.mapToJsonString(testCaseMap);
 		System.out.println(inputString);
-		LinkedHashMap<String, Object> actualBookValue = ServletUtilities.createNewBook(inputString);
+		LinkedHashMap<String, Object> actualBookValue = BooksControllerUtilities.createNewBook(inputString);
 		int code = Integer.parseInt(actualBookValue.remove("STATUS_CODE").toString());
 		assertEquals(400, code);
 		assertEquals(errorMessage.toString(), actualBookValue.toString());
@@ -92,9 +92,9 @@ public class DoPostServiceTestCases {
 		System.out.println("createNewBook_countryNull_Test()");
 		LinkedHashMap<String, Object> testCaseMap = DoPostTestData.testCases.get("countryNull");
 		LinkedHashMap<String, Object> errorMessage = DoPostTestData.errorMessages.get("countryNull");
-		String inputString = ServletUtilities.mapToJsonString(testCaseMap);
+		String inputString = BooksControllerUtilities.mapToJsonString(testCaseMap);
 		System.out.println(inputString);
-		LinkedHashMap<String, Object> actualBookValue = ServletUtilities.createNewBook(inputString);
+		LinkedHashMap<String, Object> actualBookValue = BooksControllerUtilities.createNewBook(inputString);
 		int code = Integer.parseInt(actualBookValue.remove("STATUS_CODE").toString());
 		assertEquals(400, code);
 		assertEquals(errorMessage.toString(), actualBookValue.toString());
@@ -110,9 +110,9 @@ public class DoPostServiceTestCases {
 		System.out.println("createNewBook_countryNameWithNumerics_Test()");
 		LinkedHashMap<String, Object> testCaseMap = DoPostTestData.testCases.get("countryNameWithNumerics");
 		LinkedHashMap<String, Object> errorMessage = DoPostTestData.errorMessages.get("countryNameWithNumerics");
-		String inputString = ServletUtilities.mapToJsonString(testCaseMap);
+		String inputString = BooksControllerUtilities.mapToJsonString(testCaseMap);
 		System.out.println(inputString);
-		LinkedHashMap<String, Object> actualBookValue = ServletUtilities.createNewBook(inputString);
+		LinkedHashMap<String, Object> actualBookValue = BooksControllerUtilities.createNewBook(inputString);
 		int code = Integer.parseInt(actualBookValue.remove("STATUS_CODE").toString());
 		assertEquals(400, code);
 		assertEquals(errorMessage.toString(), actualBookValue.toString());
@@ -128,9 +128,9 @@ public class DoPostServiceTestCases {
 		System.out.println("createNewBook_languageNull_Test()");
 		LinkedHashMap<String, Object> testCaseMap = DoPostTestData.testCases.get("languageNull");
 		LinkedHashMap<String, Object> errorMessage = DoPostTestData.errorMessages.get("languageNull");
-		String inputString = ServletUtilities.mapToJsonString(testCaseMap);
+		String inputString = BooksControllerUtilities.mapToJsonString(testCaseMap);
 		System.out.println(inputString);
-		LinkedHashMap<String, Object> actualBookValue = ServletUtilities.createNewBook(inputString);
+		LinkedHashMap<String, Object> actualBookValue = BooksControllerUtilities.createNewBook(inputString);
 		int code = Integer.parseInt(actualBookValue.remove("STATUS_CODE").toString());
 		assertEquals(400, code);
 		assertEquals(errorMessage.toString(), actualBookValue.toString());
@@ -146,9 +146,9 @@ public class DoPostServiceTestCases {
 		System.out.println("createNewBook_languageNameWithNumerics_Test()");
 		LinkedHashMap<String, Object> testCaseMap = DoPostTestData.testCases.get("languageNameWithNumerics");
 		LinkedHashMap<String, Object> errorMessage = DoPostTestData.errorMessages.get("languageNameWithNumerics");
-		String inputString = ServletUtilities.mapToJsonString(testCaseMap);
+		String inputString = BooksControllerUtilities.mapToJsonString(testCaseMap);
 		System.out.println(inputString);
-		LinkedHashMap<String, Object> actualBookValue = ServletUtilities.createNewBook(inputString);
+		LinkedHashMap<String, Object> actualBookValue = BooksControllerUtilities.createNewBook(inputString);
 		int code = Integer.parseInt(actualBookValue.remove("STATUS_CODE").toString());
 		assertEquals(400, code);
 		assertEquals(errorMessage.toString(), actualBookValue.toString());
@@ -164,9 +164,9 @@ public class DoPostServiceTestCases {
 		System.out.println("createNewBook_negativePages_Test()");
 		LinkedHashMap<String, Object> testCaseMap = DoPostTestData.testCases.get("negativePages");
 		LinkedHashMap<String, Object> errorMessage = DoPostTestData.errorMessages.get("negativePages");
-		String inputString = ServletUtilities.mapToJsonString(testCaseMap);
+		String inputString = BooksControllerUtilities.mapToJsonString(testCaseMap);
 		System.out.println(inputString);
-		LinkedHashMap<String, Object> actualBookValue = ServletUtilities.createNewBook(inputString);
+		LinkedHashMap<String, Object> actualBookValue = BooksControllerUtilities.createNewBook(inputString);
 		int code = Integer.parseInt(actualBookValue.remove("STATUS_CODE").toString());
 		assertEquals(400, code);
 		assertEquals(errorMessage.toString(), actualBookValue.toString());
@@ -182,9 +182,9 @@ public class DoPostServiceTestCases {
 		System.out.println("createNewBook_minPageCount_Test()");
 		LinkedHashMap<String, Object> testCaseMap = DoPostTestData.testCases.get("minPageCount");
 		LinkedHashMap<String, Object> errorMessage = DoPostTestData.errorMessages.get("minPageCount");
-		String inputString = ServletUtilities.mapToJsonString(testCaseMap);
+		String inputString = BooksControllerUtilities.mapToJsonString(testCaseMap);
 		System.out.println(inputString);
-		LinkedHashMap<String, Object> actualBookValue = ServletUtilities.createNewBook(inputString);
+		LinkedHashMap<String, Object> actualBookValue = BooksControllerUtilities.createNewBook(inputString);
 		int code = Integer.parseInt(actualBookValue.remove("STATUS_CODE").toString());
 		assertEquals(400, code);
 		assertEquals(errorMessage.toString(), actualBookValue.toString());
@@ -200,9 +200,9 @@ public class DoPostServiceTestCases {
 		System.out.println("createNewBook_negativeYear_Test()");
 		LinkedHashMap<String, Object> testCaseMap = DoPostTestData.testCases.get("negativeYear");
 		LinkedHashMap<String, Object> errorMessage = DoPostTestData.errorMessages.get("negativeYear");
-		String inputString = ServletUtilities.mapToJsonString(testCaseMap);
+		String inputString = BooksControllerUtilities.mapToJsonString(testCaseMap);
 		System.out.println(inputString);
-		LinkedHashMap<String, Object> actualBookValue = ServletUtilities.createNewBook(inputString);
+		LinkedHashMap<String, Object> actualBookValue = BooksControllerUtilities.createNewBook(inputString);
 		int code = Integer.parseInt(actualBookValue.remove("STATUS_CODE").toString());
 		assertEquals(400, code);
 		assertEquals(errorMessage.toString(), actualBookValue.toString());
@@ -218,9 +218,9 @@ public class DoPostServiceTestCases {
 		System.out.println("createNewBook_futureYearValue_Test()");
 		LinkedHashMap<String, Object> testCaseMap = DoPostTestData.testCases.get("futureYearValue");
 		LinkedHashMap<String, Object> errorMessage = DoPostTestData.errorMessages.get("futureYearValue");
-		String inputString = ServletUtilities.mapToJsonString(testCaseMap);
+		String inputString = BooksControllerUtilities.mapToJsonString(testCaseMap);
 		System.out.println(inputString);
-		LinkedHashMap<String, Object> actualBookValue = ServletUtilities.createNewBook(inputString);
+		LinkedHashMap<String, Object> actualBookValue = BooksControllerUtilities.createNewBook(inputString);
 		int code = Integer.parseInt(actualBookValue.remove("STATUS_CODE").toString());
 		assertEquals(400, code);
 		assertEquals(errorMessage.toString(), actualBookValue.toString());
@@ -236,9 +236,9 @@ public class DoPostServiceTestCases {
 		System.out.println("createNewBook_ratingsOutOfRange_Test()");
 		LinkedHashMap<String, Object> testCaseMap = DoPostTestData.testCases.get("ratingsOutOfRange");
 		LinkedHashMap<String, Object> errorMessage = DoPostTestData.errorMessages.get("ratingsOutOfRange");
-		String inputString = ServletUtilities.mapToJsonString(testCaseMap);
+		String inputString = BooksControllerUtilities.mapToJsonString(testCaseMap);
 		System.out.println(inputString);
-		LinkedHashMap<String, Object> actualBookValue = ServletUtilities.createNewBook(inputString);
+		LinkedHashMap<String, Object> actualBookValue = BooksControllerUtilities.createNewBook(inputString);
 		int code = Integer.parseInt(actualBookValue.remove("STATUS_CODE").toString());
 		assertEquals(400, code);
 		assertEquals(errorMessage.toString(), actualBookValue.toString());

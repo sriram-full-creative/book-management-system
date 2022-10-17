@@ -1,0 +1,255 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+#signup-container,
+#login-container {
+    display: grid;
+    top: 0;
+    margin: 0;
+    padding: 0;
+    background: #333;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='0.18'%3E%3Cpath d='M0 38.59l2.83-2.83 1.41 1.41L1.41 40H0v-1.41zM0 1.4l2.83 2.83 1.41-1.41L1.41 0H0v1.41zM38.59 40l-2.83-2.83 1.41-1.41L40 38.59V40h-1.41zM40 1.41l-2.83 2.83-1.41-1.41L38.59 0H40v1.41zM20 18.6l2.83-2.83 1.41 1.41L21.41 20l2.83 2.83-1.41 1.41L20 21.41l-2.83 2.83-1.41-1.41L18.59 20l-2.83-2.83 1.41-1.41L20 18.59z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    font-family: apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    height: 100%;
+    width: 100%;
+    justify-content: space-around;
+    align-content: space-around;
+}
+
+
+.oaerror {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #eee;
+    border-left-width: 5px;
+    border-radius: 3px;
+    margin: 10px auto;
+    font-family: apple-system, BlinkMacSystemFont, "inter", "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    font-size: 20px;
+    margin-top: 25px;
+}
+
+.danger {
+    font-family: apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif !important;
+    /* Left side border color */
+    border-left-color: #f8140c;
+    background-color: #111;
+
+}
+
+.danger strong {
+    color: #ec150e;
+    font-size: 1rem;
+    letter-spacing: 0.6px;
+}
+
+.result-message-entries {
+    font-size: 0.8rem;
+    color: antiquewhite;
+    font-family: 'inter';
+}
+
+.success {
+    font-family: apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif !important;
+    /* Left side border color */
+    border-left-color: #0b9442;
+    background-color: #111;
+}
+
+.success strong {
+    color: #0b9442;
+    font-size: 1rem;
+    letter-spacing: 0.6px;
+}
+
+
+.heading {
+    text-transform: uppercase;
+    color: whitesmoke;
+    text-align: center;
+    font-size: 1.5rem;
+    font-family: apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+
+form {
+    display: block;
+    position: relati;
+    background-color: black;
+    padding: 1.5rem 1.5rem;
+    border: 1px solid gray;
+    border-radius: 1.2rem;
+    color: #fff;
+    font-size: 1.1rem;
+    max-height: min-content;
+    width: 500px;
+    padding-left: 25px;
+    padding-right: 25px;
+}
+
+.alternate-option {
+    display: flex;
+    color: gray;
+    flex-direction: row;
+    justify-content: center;
+    font-size: 1rem;
+    font-family: apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+
+
+a:link {
+    font-weight: bold;
+    color: rgba(221, 106, 12, 0.925);
+}
+
+
+a:visited {
+    font-weight: bold;
+    color: rgba(221, 106, 12, 0.925);
+}
+
+
+a:hover {
+    color: rgb(165, 45, 45);
+}
+
+a:active {
+    color: gray;
+}
+
+.input-field {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.input-field>input {
+    width: 60%;
+    color: white;
+}
+
+
+#login,
+#signup,
+#form-reset {
+    margin: 5px;
+    padding: 2px 12px 2px 12px;
+    align-content: space-around;
+    background-color: #111;
+    color: wheat;
+}
+
+
+#login:hover,
+#signup:hover,
+#form-reset:hover {
+    margin: 5px;
+    align-content: space-around;
+    background-color: wheat;
+    color: black;
+}
+
+label {
+    font-family: apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    letter-spacing: .1rem;
+    font-weight: bold;
+    font-size: 0.79rem;
+    text-transform: uppercase;
+    color: antiquewhite;
+    text-shadow: 0 0 10px rgba(90, 82, 82, 0.4);
+}
+
+#username,
+#email,
+#password {
+    padding: 0.3rem;
+    border: 1px solid #111;
+    border-radius: .3rem;
+    background-color: #222;
+    transition: 100ms linear;
+    color: wheat;
+}
+
+
+input {
+    width: fit-content;
+    margin: 5px;
+    font-size: 0.79rem;
+}
+
+.form-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding-top: 25px;
+    justify-items: center;
+}
+
+.form-buttons>button {
+    height: 100%;
+    display: grid;
+    font-weight: bold;
+    border-radius: .3rem;
+    text-transform: uppercase;
+    color: white;
+    background-color: #222;
+    cursor: pointer;
+    font-size: 0.8rem;
+    height: 100%;
+}
+
+#username:hover,
+#email:hover,
+#password:hover,
+#login:hover,
+#signup:hover,
+#form-reset:hover {
+    background-color: antiquewhite;
+    color: #111;
+}
+
+@media(max-width: 800px) {
+
+    .heading {
+        color: whitesmoke;
+        text-align: center;
+        margin-bottom: 1rem;
+        font-family: apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    }
+
+    .form-buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        padding-top: 25px;
+        justify-items: center;
+    }
+
+    .form-buttons>button {
+        height: 100%;
+        display: grid;
+        font-weight: bold;
+        border-radius: .3rem;
+        text-transform: uppercase;
+        cursor: pointer;
+        font-size: 0.8rem;
+        height: 100%;
+    }
+
+    #signup-container,
+    #login-container {
+        top: 0;
+        margin: 0;
+        font-family: 'inter';
+    }
+
+    form {
+        display: grid;
+        background-color: black;
+        border: 1px solid gray;
+        border-radius: 1.2rem;
+        color: white;
+        font-size: 10px;
+        max-width: 400px;
+    }
+}

@@ -170,7 +170,7 @@ function isEmpty(object) {
 
 function bookFormValidator(jsonObject) {
     const errorMessages = {};
-    var hasNumber = /\d/;
+    const hasNumber = /\d/;
     if (jsonObject["title"] == "") {
         errorMessages["TITLE_FIELD_EMPTY"] = "Title Can't be Empty";
     }
@@ -645,4 +645,10 @@ function sortBooks() {
     apiUrl = processOption(selectedOption);
     console.log(apiUrl);
     getBooks(apiUrl);
+}
+
+
+function logout() {
+    console.log('logout');
+    window.location.href = "/users/logout";
 }

@@ -28,9 +28,9 @@
   justify-content: baseline;
 }
 
-.navbar-links {
-  visibility: hidden;
-}
+/* .navbar-links { */
+/* visibility: hidden; */
+/* } */
 
 .navbar-links ul {
   margin: 0;
@@ -44,7 +44,7 @@
 
 .navbar-links li a {
   text-decoration: none;
-  color: wheat;
+  color: antiquewhite;
   padding: 1rem;
   display: block;
 }
@@ -53,6 +53,7 @@
   background-color: wheat;
   color: #111;
 }
+
 
 
 .toggle-menu-button {
