@@ -1,4 +1,4 @@
-package com.fullcreative.servlet.dodelete;
+package com.fullcreative.servlet.books.dodelete;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;

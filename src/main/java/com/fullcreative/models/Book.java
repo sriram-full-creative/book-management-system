@@ -1,4 +1,4 @@
-package com.fullcreative.pojo;
+package com.fullcreative.models;
 
 import java.util.LinkedList;
 

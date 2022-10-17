@@ -1,4 +1,4 @@
-package com.fullcreative.servlet.dodelete;
+package com.fullcreative.servlet.books.dodelete;
 
 import static org.junit.Assert.*;
 
@@ -8,7 +8,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.fullcreative.utilities.ServletUtilities;
+import com.fullcreative.utilities.BooksControllerUtilities;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
@@ -34,8 +34,8 @@ public class DoDeleteServiceTest {
 
 	private LinkedHashMap<String, Object> createBookInTestEnv(LinkedHashMap<String, Object> ValidTestCaseMap)
 			throws EntityNotFoundException {
-		String inputString = ServletUtilities.mapToJsonString(ValidTestCaseMap);
-		LinkedHashMap<String, Object> createdBook = ServletUtilities.createNewBook(inputString);
+		String inputString = BooksControllerUtilities.mapToJsonString(ValidTestCaseMap);
+		LinkedHashMap<String, Object> createdBook = BooksControllerUtilities.createNewBook(inputString);
 		return createdBook;
 	}
 
@@ -66,11 +66,11 @@ public class DoDeleteServiceTest {
 		String bookIDBeforeDelete = strippedMapBeforeDelete.get("id").toString();
 		int codeBeforeDelete = Integer.parseInt(strippedMapBeforeDelete.get("STATUS_CODE").toString());
 
-		String createdBookStringBeforeDelete = ServletUtilities.mapToJsonString(createdBookBeforeDelete);
+		String createdBookStringBeforeDelete = BooksControllerUtilities.mapToJsonString(createdBookBeforeDelete);
 
-		LinkedHashMap<String, Object> actualBookMapBeforeDelete = ServletUtilities.getOneBook(bookIDBeforeDelete);
+		LinkedHashMap<String, Object> actualBookMapBeforeDelete = BooksControllerUtilities.getOneBook(bookIDBeforeDelete);
 		actualBookMapBeforeDelete.remove("id");
-		String actualBookStringBeforeDelete = ServletUtilities.mapToJsonString(actualBookMapBeforeDelete);
+		String actualBookStringBeforeDelete = BooksControllerUtilities.mapToJsonString(actualBookMapBeforeDelete);
 
 		assertEquals(200, codeBeforeDelete);
 		assertEquals(createdBookStringBeforeDelete, actualBookStringBeforeDelete);
@@ -79,7 +79,7 @@ public class DoDeleteServiceTest {
 		LinkedHashMap<String, Object> expectedResponseMapAfterDelete = DoDeleteServiceTestCases.testCases
 				.get("responseAfterSuccessfullDelete");
 		// Calling deleteBook
-		LinkedHashMap<String, Object> actualResponseMapAfterDelete = ServletUtilities
+		LinkedHashMap<String, Object> actualResponseMapAfterDelete = BooksControllerUtilities
 				.deleteBookWithoutImage(strippedMapBeforeDelete.get("id").toString());
 		System.out.println(actualResponseMapAfterDelete);
 		System.out.println(expectedResponseMapAfterDelete);
@@ -106,11 +106,11 @@ public class DoDeleteServiceTest {
 		String bookIDBeforeDelete = strippedMapBeforeDelete.get("id").toString();
 		int codeBeforeDelete = Integer.parseInt(strippedMapBeforeDelete.get("STATUS_CODE").toString());
 
-		String createdBookStringBeforeDelete = ServletUtilities.mapToJsonString(createdBookBeforeDelete);
+		String createdBookStringBeforeDelete = BooksControllerUtilities.mapToJsonString(createdBookBeforeDelete);
 
-		LinkedHashMap<String, Object> actualBookMapBeforeDelete = ServletUtilities.getOneBook(bookIDBeforeDelete);
+		LinkedHashMap<String, Object> actualBookMapBeforeDelete = BooksControllerUtilities.getOneBook(bookIDBeforeDelete);
 		actualBookMapBeforeDelete.remove("id");
-		String actualBookStringBeforeDelete = ServletUtilities.mapToJsonString(actualBookMapBeforeDelete);
+		String actualBookStringBeforeDelete = BooksControllerUtilities.mapToJsonString(actualBookMapBeforeDelete);
 
 		assertEquals(200, codeBeforeDelete);
 		assertEquals(createdBookStringBeforeDelete, actualBookStringBeforeDelete);
@@ -120,7 +120,7 @@ public class DoDeleteServiceTest {
 				.get("noBookResponse");
 		String wrongBookId = DoDeleteServiceTestCases.bookID.get("INVALID_BOOK_ID");
 		// Calling deleteBook
-		LinkedHashMap<String, Object> actualResponseMapAfterDelete = ServletUtilities
+		LinkedHashMap<String, Object> actualResponseMapAfterDelete = BooksControllerUtilities
 				.deleteBookWithoutImage(wrongBookId);
 		System.out.println(actualResponseMapAfterDelete);
 		System.out.println(expectedResponseMapAfterDelete);

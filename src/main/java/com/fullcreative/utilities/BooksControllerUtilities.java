@@ -19,8 +19,7 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
-
-import com.fullcreative.pojo.Book;
+import com.fullcreative.models.Book;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -43,7 +42,7 @@ import com.google.gson.GsonBuilder;
  * @author Sriram
  *
  */
-public class ServletUtilities {
+public class BooksControllerUtilities {
 
 	/** Utility Methods for HttpServletRequest Processing and Validation **/
 
@@ -870,7 +869,7 @@ public class ServletUtilities {
 		} else {
 			String bookID = UUID.randomUUID().toString();
 			// Upload the file and get its URL
-			String uploadedFileUrl = ServletUtilities.uploadToCloudStorage(bookID, imageFormat, fileInputStream);
+			String uploadedFileUrl = BooksControllerUtilities.uploadToCloudStorage(bookID, imageFormat, fileInputStream);
 			newBook.setCoverImage(uploadedFileUrl);
 			System.out.println(uploadedFileUrl);
 			Entity entity = entityFromBook(newBook, bookID);
@@ -908,7 +907,7 @@ public class ServletUtilities {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		Query query = new Query("Books").addSort("CreatedOrUpdated", SortDirection.DESCENDING);
 		List<Entity> bookEntities = datastore.prepare(query).asList(FetchOptions.Builder.withDefaults());
-		List<Book> booksFromEntities = ServletUtilities.booksFromEntities(bookEntities);
+		List<Book> booksFromEntities = BooksControllerUtilities.booksFromEntities(bookEntities);
 		LinkedList<String> books = new LinkedList<>();
 		for (Book book : booksFromEntities) {
 			books.add(mapToJsonString(mapFromBook(book, bookAsMap)));
@@ -953,7 +952,7 @@ public class ServletUtilities {
 			query = new Query("Books").addSort(property, SortDirection.ASCENDING);
 		}
 		List<Entity> bookEntities = datastore.prepare(query).asList(FetchOptions.Builder.withDefaults());
-		List<Book> booksFromEntities = ServletUtilities.booksFromEntities(bookEntities);
+		List<Book> booksFromEntities = BooksControllerUtilities.booksFromEntities(bookEntities);
 		LinkedList<String> books = new LinkedList<>();
 		for (Book book : booksFromEntities) {
 			books.add(mapToJsonString(mapFromBook(book, bookAsMap)));
@@ -976,7 +975,7 @@ public class ServletUtilities {
 		LinkedHashMap<String, Object> responseMap = new LinkedHashMap<>();
 		try {
 			Entity responseEntity = datastore.get(bookKey);
-			Book responseBookData = ServletUtilities.bookFromEntity(responseEntity);
+			Book responseBookData = BooksControllerUtilities.bookFromEntity(responseEntity);
 			responseMap = mapFromBook(responseBookData, responseMap);
 			responseMap.put("STATUS_CODE", 200);
 		} catch (Exception e) {
@@ -1067,7 +1066,7 @@ public class ServletUtilities {
 				return responseMap;
 			} else {
 				// Updating the image in the GCS
-				String uploadedFileUrl = ServletUtilities.uploadToCloudStorage(bookID, imageFormat, fileInputStream);
+				String uploadedFileUrl = BooksControllerUtilities.uploadToCloudStorage(bookID, imageFormat, fileInputStream);
 				// Creating a entity from the updated POJO to update in Datastore.
 				entity = entityFromBookForUpdate(datastoreEntity, newBook, bookID, uploadedFileUrl);
 				Key keyObj = datastore.put(entity);
@@ -1127,7 +1126,7 @@ public class ServletUtilities {
 			} else {
 
 				// Updating the image in the GCS
-				String uploadedFileUrl = ServletUtilities.uploadToCloudStorage(bookID, imageFormat, fileInputStream);
+				String uploadedFileUrl = BooksControllerUtilities.uploadToCloudStorage(bookID, imageFormat, fileInputStream);
 				// Creating a entity from the updated POJO to update in Datastore.
 				entity = entityFromBookForUpdate(datastoreEntity, newBook, bookID, uploadedFileUrl);
 				Key keyObj = datastore.put(entity);

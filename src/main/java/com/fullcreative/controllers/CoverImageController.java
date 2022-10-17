@@ -1,4 +1,4 @@
-package com.fullcreative.servlets;
+package com.fullcreative.controllers;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
-import com.fullcreative.utilities.ServletUtilities;
+import com.fullcreative.utilities.BooksControllerUtilities;
 import com.google.gson.Gson;
 
 /**
@@ -22,17 +22,17 @@ import com.google.gson.Gson;
  */
 @WebServlet(name = "coverImage", urlPatterns = { "/images/*" })
 @MultipartConfig(maxFileSize = 1024 * 1024 * 2 /* 2 MB */, maxRequestSize = 1024 * 1024 * 3 /* 3 MB */)
-public class CoverImage extends HttpServlet {
+public class CoverImageController extends HttpServlet {
 	private static final long serialVersionUID = 3468208303755887709L;
 	@Override
 	protected void doPut(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		try {
 			Map<String, Object> responseMap = new LinkedHashMap<>();
-			if (ServletUtilities.hasBookID(request.getRequestURI()) == true
-					&& ServletUtilities.isValidEndPoint(request.getRequestURI())) {
+			if (BooksControllerUtilities.hasBookID(request.getRequestURI()) == true
+					&& BooksControllerUtilities.isValidEndPoint(request.getRequestURI())) {
 				System.out.println(request.getContentType());
-				String bookID = ServletUtilities.getBookIDFromUri(request);
+				String bookID = BooksControllerUtilities.getBookIDFromUri(request);
 				Part filePart = request.getPart("coverImage");
 
 				// Request is empty
@@ -46,7 +46,7 @@ public class CoverImage extends HttpServlet {
 					// Get the file chosen by the user
 					String imageFormat = filePart.getContentType().replace("image/", "").trim();
 					InputStream fileInputStream = filePart.getInputStream();
-					responseMap = ServletUtilities.updateBook(fileInputStream, imageFormat, bookID);
+					responseMap = BooksControllerUtilities.updateBook(fileInputStream, imageFormat, bookID);
 				}
 				int statusCode = Integer.parseInt(responseMap.remove("STATUS_CODE").toString());
 				String responseAsJson = new Gson().toJson(responseMap);
@@ -54,7 +54,7 @@ public class CoverImage extends HttpServlet {
 				response.getWriter().print(responseAsJson);
 				response.setStatus(statusCode);
 			} else {
-				responseMap = ServletUtilities.invalidRequestEndpointResponse(responseMap);
+				responseMap = BooksControllerUtilities.invalidRequestEndpointResponse(responseMap);
 				int code = Integer.parseInt(responseMap.remove("STATUS_CODE").toString());
 				String responseAsJson = new Gson().toJson(responseMap);
 				response.setContentType("application/json");
