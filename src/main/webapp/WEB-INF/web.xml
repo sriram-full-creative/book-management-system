@@ -17,7 +17,8 @@
  	<url-pattern>/books/all</url-pattern>
  </servlet-mapping>
  
- <filter>
+<!-- 
+<filter>
  	<filter-name>AuthenticationFilter</filter-name>
  	<filter-class>com.fullcreative.filters.AuthFilter</filter-class>
  </filter>
@@ -27,5 +28,7 @@
  	<url-pattern>/books</url-pattern>
  	<url-pattern>/books/*</url-pattern>
  </filter-mapping>
+ 
+   -->
   
 </web-app>

@@ -14,12 +14,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fullcreative.models.Book;
 import com.fullcreative.utilities.BooksControllerUtilities;
+import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 
 /**
  * @author Sriram
- *
+ * 
  */
 @WebServlet(name = "bookServlet", urlPatterns = { "/books", "/books/*" })
 public class BooksController extends HttpServlet {
@@ -39,50 +41,22 @@ public class BooksController extends HttpServlet {
 				if (BooksControllerUtilities.hasBookID(request.getRequestURI())) {
 					String bookID = BooksControllerUtilities.getBookIDFromUri(request);
 					responseMap = BooksControllerUtilities.getOneBook(bookID);
-					int code = Integer.parseInt(responseMap.remove("STATUS_CODE").toString());
-					String responseAsJson = new GsonBuilder().setPrettyPrinting().create().toJson(responseMap);
-					response.setContentType("application/json");
-					response.getWriter().println(responseAsJson);
-					response.setStatus(code);
+					BooksControllerUtilities.sendPrettyJsonResponse(response, responseMap);
 				} else {
-					LinkedList<String> arrayOfBooks = null;
-					if (queryParameters != null) {
-						arrayOfBooks = BooksControllerUtilities.getAllBooks(queryParameters);
-						System.out.println(queryParameters);
-					} else {
-						arrayOfBooks = BooksControllerUtilities.getAllBooks();
-					}
-					Gson gson = new Gson().newBuilder().setPrettyPrinting().create();
-					ListIterator<String> iterator = arrayOfBooks.listIterator();
-					while (iterator.hasNext()) {
-						Book book = gson.fromJson(iterator.next(), Book.class);
-						iterator.set(gson.toJson(book));
-					}
-					response.setContentType("application/json");
-					response.getWriter().println(arrayOfBooks);
-					response.setStatus(200);
+					LinkedList<String> arrayOfBooks = BooksControllerUtilities.processGetAllRequest(queryParameters);
+					BooksControllerUtilities.sendGetAllJsonResponse(response, arrayOfBooks);
 				}
 			} else {
 				responseMap = BooksControllerUtilities.invalidRequestEndpointResponse(responseMap);
-				int code = Integer.parseInt(responseMap.remove("STATUS_CODE").toString());
-				String responseAsJson = new Gson().toJson(responseMap);
-				response.setContentType("application/json");
-				response.getWriter().print(responseAsJson);
-				response.setStatus(code);
+				BooksControllerUtilities.sendJsonResponse(response, responseMap);
 			}
 		} catch (Exception e) {
 			System.out.println("Caught in doGet servlet service method");
-			e.printStackTrace();
-			Map<String, String> internalServerErrorMap = new LinkedHashMap<String, String>();
-			response.setContentType("application/json");
-			internalServerErrorMap.put("500", "Something went wrong");
-			String internalServerError = new Gson().toJson(internalServerErrorMap);
-			response.getWriter().println(internalServerError);
-			response.setStatus(500);
+			BooksControllerUtilities.sendInternalServerErrorResponse(response, e);
 		}
 	}
 
-//	@SuppressWarnings("unused")
+
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -90,47 +64,20 @@ public class BooksController extends HttpServlet {
 			Map<String, Object> responseMap = new LinkedHashMap<>();
 			if (BooksControllerUtilities.hasBookID(request.getRequestURI()) == false
 					&& BooksControllerUtilities.isValidEndPoint(request.getRequestURI())) {
-
 				// Getting JSON request body and image Part
 				String jsonRequestString = BooksControllerUtilities.payloadFromRequest(request);
-
-				// Request is empty
-				if (jsonRequestString.length() == 0
-						|| jsonRequestString.substring(1).replaceAll("}", "").length() == 0) {
-					throw new NullPointerException();
-				}
-				// Request has only book details to be updated
-				else if (jsonRequestString != null) {
-					System.out.println("Request Has JSON Body");
-					System.out.println("Request JSON Body: " + jsonRequestString);
-					responseMap = BooksControllerUtilities.createNewBook(jsonRequestString);
-				}
-				int statusCode = Integer.parseInt(responseMap.remove("STATUS_CODE").toString());
-				String responseAsJson = new Gson().toJson(responseMap);
-				response.setContentType("application/json");
-				response.getWriter().print(responseAsJson);
-				response.setStatus(statusCode);
+				responseMap = BooksControllerUtilities.processCreateRequest(responseMap, jsonRequestString);
+				BooksControllerUtilities.sendJsonResponse(response, responseMap);
 			} else {
 				responseMap = BooksControllerUtilities.invalidRequestEndpointResponse(responseMap);
-				int code = Integer.parseInt(responseMap.remove("STATUS_CODE").toString());
-				String responseAsJson = new Gson().toJson(responseMap);
-				response.setContentType("application/json");
-				response.getWriter().print(responseAsJson);
-				response.setStatus(code);
+				BooksControllerUtilities.sendJsonResponse(response, responseMap);
 			}
 		} catch (Exception e) {
-			// Thrown when a file is sent but with a different parameter name.
 			e.printStackTrace();
-			Map<String, String> requestErrorMap = new LinkedHashMap<String, String>();
-			response.setContentType("application/json");
-			requestErrorMap.put("EMPTY_REQUEST_ERROR", "Request should contain json body");
-			String requestError = new Gson().toJson(requestErrorMap);
-			response.getWriter().println(requestError);
-			response.setStatus(400);
+			BooksControllerUtilities.sendEmptyRequestErrorResponse(response);
 		}
 	}
 
-//	@SuppressWarnings("unused")
 	@Override
 	protected void doPut(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -139,54 +86,24 @@ public class BooksController extends HttpServlet {
 			if (BooksControllerUtilities.hasBookID(request.getRequestURI()) == true
 					&& BooksControllerUtilities.isValidEndPoint(request.getRequestURI())) {
 				String bookID = BooksControllerUtilities.getBookIDFromUri(request);
-
 				// Getting JSON request body
 				String jsonRequestString = BooksControllerUtilities.payloadFromRequest(request);
+				responseMap = BooksControllerUtilities.processUpdateRequest(responseMap, bookID, jsonRequestString);
+				BooksControllerUtilities.sendJsonResponse(response, responseMap);
 
-				// Request is empty
-				if (jsonRequestString.length() == 0
-						|| jsonRequestString.substring(1).replaceAll("}", "").length() == 0) {
-					throw new NullPointerException();
-				}
-				// Request has only book details to be updated
-				else {
-					System.out.println("Request Has JSON Body");
-					System.out.println("Request JSON Body: " + jsonRequestString);
-					responseMap = BooksControllerUtilities.updateBook(jsonRequestString, bookID);
-				}
-				int statusCode = Integer.parseInt(responseMap.remove("STATUS_CODE").toString());
-				String responseAsJson = new Gson().toJson(responseMap);
-				response.setContentType("application/json");
-				response.getWriter().print(responseAsJson);
-				response.setStatus(statusCode);
 			} else {
 				responseMap = BooksControllerUtilities.invalidRequestEndpointResponse(responseMap);
-				int code = Integer.parseInt(responseMap.remove("STATUS_CODE").toString());
-				String responseAsJson = new Gson().toJson(responseMap);
-				response.setContentType("application/json");
-				response.getWriter().print(responseAsJson);
-				response.setStatus(code);
+				BooksControllerUtilities.sendJsonResponse(response, responseMap);
 			}
 		} catch (NullPointerException e) {
-			// Thrown when a file is sent but with a different parameter name.
 			e.printStackTrace();
-			Map<String, String> requestErrorMap = new LinkedHashMap<String, String>();
-			response.setContentType("application/json");
-			requestErrorMap.put("EMPTY_REQUEST_ERROR", "Request should contain json body");
-			String requestError = new Gson().toJson(requestErrorMap);
-			response.getWriter().println(requestError);
-			response.setStatus(400);
+			BooksControllerUtilities.sendEmptyRequestErrorResponse(response);
 		} catch (Exception e) {
 			System.out.println("Caught in doPut servlet service method");
-			e.printStackTrace();
-			Map<String, String> internalServerErrorMap = new LinkedHashMap<String, String>();
-			response.setContentType("application/json");
-			internalServerErrorMap.put("500", "Something went wrong");
-			String internalServerError = new Gson().toJson(internalServerErrorMap);
-			response.getWriter().println(internalServerError);
-			response.setStatus(500);
+			BooksControllerUtilities.sendInternalServerErrorResponse(response, e);
 		}
 	}
+
 
 	@Override
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response)
@@ -197,28 +114,14 @@ public class BooksController extends HttpServlet {
 					&& BooksControllerUtilities.isValidEndPoint(request.getRequestURI())) {
 				String bookID = BooksControllerUtilities.getBookIDFromUri(request);
 				responseMap = BooksControllerUtilities.deleteBookWithImage(bookID);
-				int code = Integer.parseInt(responseMap.remove("STATUS_CODE").toString());
-				String responseAsJson = new Gson().toJson(responseMap);
-				response.setContentType("application/json");
-				response.getWriter().print(responseAsJson);
-				response.setStatus(code);
+				BooksControllerUtilities.sendJsonResponse(response, responseMap);
 			} else {
 				responseMap = BooksControllerUtilities.invalidRequestEndpointResponse(responseMap);
-				int code = Integer.parseInt(responseMap.remove("STATUS_CODE").toString());
-				String responseAsJson = new Gson().toJson(responseMap);
-				response.setContentType("application/json");
-				response.getWriter().print(responseAsJson);
-				response.setStatus(code);
+				BooksControllerUtilities.sendJsonResponse(response, responseMap);
 			}
 		} catch (Exception e) {
 			System.out.println("Caught in doDelete servlet service method");
-			e.printStackTrace();
-			Map<String, String> internalServerErrorMap = new LinkedHashMap<String, String>();
-			response.setContentType("application/json");
-			internalServerErrorMap.put("500", "Something went wrong");
-			String internalServerError = new Gson().toJson(internalServerErrorMap);
-			response.getWriter().println(internalServerError);
-			response.setStatus(500);
+			BooksControllerUtilities.sendInternalServerErrorResponse(response, e);
 		}
 	}
 }
