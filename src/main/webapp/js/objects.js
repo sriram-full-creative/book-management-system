@@ -21,6 +21,7 @@ const ENDPOINTS = {
     signup: "/users/signup",
     login: "/users/login",
     logout: "/users/logout",
+    taskQueue: "/taskqueues/enqueue",
     main: "/books/all"
 }
 

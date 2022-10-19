@@ -1421,7 +1421,7 @@ public class BooksControllerUtilities {
 	 * @param jsonData
 	 * @throws IOException
 	 */
-	public static void sendGetAllBooksResponse(HttpServletResponse response, String jsonData) throws IOException {
+	public static void sendJsonResponse(HttpServletResponse response, String jsonData) throws IOException {
 		response.setContentType("application/json");
 		response.getWriter().println(jsonData);
 		response.setStatus(200);

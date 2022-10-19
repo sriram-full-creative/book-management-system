@@ -553,6 +553,20 @@ function deleteBook(bookId) {
         });
 }
 
+function deleteAllBooks() {
+    console.log("delete all books triggered");
+    var requestOptions = {
+        method: 'POST',
+        redirect: 'follow'
+    };
+    const deleteAllBooksUrl = domain.name + ENDPOINTS.taskQueue;
+    fetch(deleteAllBooksUrl, requestOptions)
+        .then(response => response.json())
+        .then(result => console.log(result))
+        .catch(error => console.log('error', error));
+}
+
+
 function updateCoverImage(ImagefileInput, bookForm) {
     runSpinner();
 

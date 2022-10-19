@@ -44,12 +44,13 @@
                             <div>
                                 <img src="./../images/book-manager-logo.svg" alt="logo" width="50px">
                                 <p>This is a Pocket library. Hope you find it helpful.</p>
-                                <p>Â© Sriram S</p>
+                                <p>© Sriram S</p>
                             </div>
                             <br>
                         </div>
                     </div>
                 </li>
+                <li class="delete-all-books"><a href="#books">Delete All</a></li>
             </ul>
         </div>
     </nav>

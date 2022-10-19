@@ -44,7 +44,7 @@ public class BooksController extends HttpServlet {
 					BooksControllerUtilities.sendPrettyJsonResponse(response, responseMap);
 				} else {
 					String jsonData = BooksControllerUtilities.processGetAllRequest(queryParameters);
-					BooksControllerUtilities.sendGetAllBooksResponse(response, jsonData);
+					BooksControllerUtilities.sendJsonResponse(response, jsonData);
 				}
 			} else {
 				responseMap = BooksControllerUtilities.invalidRequestEndpointResponse(responseMap);
