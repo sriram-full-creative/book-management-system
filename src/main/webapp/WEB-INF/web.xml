@@ -30,7 +30,6 @@
  	<url-pattern>/images</url-pattern>
  	<url-pattern>/images/*</url-pattern>
  	<url-pattern>/users</url-pattern>
- 	<url-pattern>/users/*</url-pattern>
  </filter-mapping>
 
   
