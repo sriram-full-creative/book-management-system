@@ -34,7 +34,9 @@ async function processImageArea(url, img) {
 async function getBooks(url) {
     try {
         const response = await fetch(url);
-        books = await response.json();
+        resultsFromServer = await response.json();
+        books = resultsFromServer.books;
+        nextCursor.cursor = resultsFromServer.cursor;
         addBooks(books);
     } catch (error) {
         stopSpinner();

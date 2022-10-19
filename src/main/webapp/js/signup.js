@@ -14,7 +14,7 @@ const signupHandler = async (event) => {
     console.log("redirect1");
     const result = signupFormDataToJSON(signupFormData);
     console.log(result);
-    const response = await fetch("/users/signup", {
+    const response = await fetch(ENDPOINTS.signup, {
         method: 'POST',
         body: JSON.stringify(result)
     })
@@ -24,7 +24,7 @@ const signupHandler = async (event) => {
     if (!response.ok) {
         alert("Error");
     } else {
-        window.location.href = "/books/all";
+        window.location.href = ENDPOINTS.main;
     }
 }
 

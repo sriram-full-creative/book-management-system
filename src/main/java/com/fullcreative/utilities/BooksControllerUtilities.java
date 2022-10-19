@@ -13,13 +13,16 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.UUID;
 
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import com.fullcreative.models.Book;
+import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -29,6 +32,7 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.datastore.QueryResultList;
 import com.google.cloud.storage.Acl;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
@@ -37,6 +41,7 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 
 /**
  * @author Sriram
@@ -149,6 +154,7 @@ public class BooksControllerUtilities {
 		Map<String, String> queryParameters = new LinkedHashMap<>();
 		String property;
 		String direction;
+
 		if (incomingParameters.containsKey("sortOnProperty")) {
 			property = incomingParameters.get("sortOnProperty")[0];
 			if (property.equalsIgnoreCase("author")) {
@@ -179,6 +185,10 @@ public class BooksControllerUtilities {
 			}
 		} else {
 			queryParameters.put("sortDirection", "descending");
+		}
+
+		if (incomingParameters.containsKey("cursor")) {
+			queryParameters.put("cursor", incomingParameters.get("cursor")[0]);
 		}
 		return queryParameters;
 	}
@@ -915,6 +925,24 @@ public class BooksControllerUtilities {
 		return books;
 	}
 
+	public static LinkedList<String> getAllBooks(String startCursor) {
+		int PAGE_SIZE = 3;
+		LinkedHashMap<String, Object> bookAsMap = new LinkedHashMap<String, Object>();
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		FetchOptions fetchOptions = FetchOptions.Builder.withLimit(PAGE_SIZE);
+		if (startCursor != null) {
+			fetchOptions.startCursor(Cursor.fromWebSafeString(startCursor));
+		}
+		Query query = new Query("Books").addSort("CreatedOrUpdated", SortDirection.DESCENDING);
+		List<Entity> bookEntities = datastore.prepare(query).asQueryResultList(fetchOptions);
+		List<Book> booksFromEntities = BooksControllerUtilities.booksFromEntities(bookEntities);
+		LinkedList<String> books = new LinkedList<>();
+		for (Book book : booksFromEntities) {
+			books.add(mapToJsonString(mapFromBook(book, bookAsMap)));
+		}
+		return books;
+	}
+
 	/**
 	 * <p>
 	 * Fetches all the Books from the Datastore.
@@ -952,12 +980,36 @@ public class BooksControllerUtilities {
 			query = new Query("Books").addSort(property, SortDirection.ASCENDING);
 		}
 		List<Entity> bookEntities = datastore.prepare(query).asList(FetchOptions.Builder.withDefaults());
+		System.out.println(bookEntities);
 		List<Book> booksFromEntities = BooksControllerUtilities.booksFromEntities(bookEntities);
 		LinkedList<String> books = new LinkedList<>();
 		for (Book book : booksFromEntities) {
 			books.add(mapToJsonString(mapFromBook(book, bookAsMap)));
 		}
 		return books;
+	}
+
+	public static LinkedHashMap<String, Object> getAllBooks(Map<String, String> queryParameters, String startCursor) {
+		LinkedHashMap<String, Object> results = new LinkedHashMap<String, Object>();
+		int PAGE_SIZE = 5;
+		LinkedHashMap<String, Object> bookAsMap = new LinkedHashMap<String, Object>();
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		FetchOptions fetchOptions = FetchOptions.Builder.withLimit(PAGE_SIZE);
+		if (startCursor != null) {
+			fetchOptions.startCursor(Cursor.fromWebSafeString(startCursor));
+		}
+		String property = queryParameters.get("sortOnProperty");
+		String direction = queryParameters.get("sortDirection");
+		Query query = new Query("Books").addSort(property, SortDirection.DESCENDING);
+		if (direction.equalsIgnoreCase("ascending")) {
+			query = new Query("Books").addSort(property, SortDirection.ASCENDING);
+		}
+		QueryResultList<Entity> bookEntities = datastore.prepare(query).asQueryResultList(fetchOptions);
+		String cursorString = bookEntities.getCursor().toWebSafeString();
+		List<Book> booksFromEntities = BooksControllerUtilities.booksFromEntities(bookEntities);
+		results.put("books", booksFromEntities);
+		results.put("cursor", cursorString);
+		return results;
 	}
 
 	/**
@@ -1206,7 +1258,6 @@ public class BooksControllerUtilities {
 		return responseMap;
 	}
 
-
 	/** Google Cloud Storage Methods **/
 
 	/**
@@ -1303,5 +1354,150 @@ public class BooksControllerUtilities {
 		return false;
 	}
 
+	/**
+	 * Servlet Methods
+	 */
+
+	/**
+	 * @param response
+	 * @param responseMap
+	 * @throws NumberFormatException
+	 * @throws IOException
+	 */
+	public static void sendPrettyJsonResponse(HttpServletResponse response, Map<String, Object> responseMap)
+			throws NumberFormatException, IOException {
+		int code = Integer.parseInt(responseMap.remove("STATUS_CODE").toString());
+		String responseAsJson = new GsonBuilder().setPrettyPrinting().create().toJson(responseMap);
+		response.setContentType("application/json");
+		response.getWriter().println(responseAsJson);
+		response.setStatus(code);
+	}
+
+	/**
+	 * @param response
+	 * @param responseMap
+	 * @throws NumberFormatException
+	 * @throws IOException
+	 */
+	public static void sendJsonResponse(HttpServletResponse response, Map<String, Object> responseMap)
+			throws NumberFormatException, IOException {
+		int code = Integer.parseInt(responseMap.remove("STATUS_CODE").toString());
+		String responseAsJson = new Gson().toJson(responseMap);
+		response.setContentType("application/json");
+		response.getWriter().print(responseAsJson);
+		response.setStatus(code);
+	}
+
+	/**
+	 * @param response
+	 * @param arrayOfBooks
+	 * @throws IOException
+	 */
+	public static void sendGetAllJsonResponse(HttpServletResponse response, LinkedList<String> arrayOfBooks)
+			throws IOException {
+		response.setContentType("application/json");
+		response.getWriter().println(arrayOfBooks);
+		response.setStatus(200);
+	}
+
+	/**
+	 * @param response
+	 * @param jsonData
+	 * @throws IOException
+	 */
+	public static void sendGetAllBooksResponse(HttpServletResponse response, String jsonData) throws IOException {
+		response.setContentType("application/json");
+		response.getWriter().println(jsonData);
+		response.setStatus(200);
+	}
+
+	/**
+	 * @param response
+	 * @param e
+	 * @throws IOException
+	 */
+	public static void sendInternalServerErrorResponse(HttpServletResponse response, Exception e) throws IOException {
+		e.printStackTrace();
+		Map<String, String> internalServerErrorMap = new LinkedHashMap<String, String>();
+		response.setContentType("application/json");
+		internalServerErrorMap.put("500", "Something went wrong");
+		String internalServerError = new Gson().toJson(internalServerErrorMap);
+		response.getWriter().println(internalServerError);
+		response.setStatus(500);
+	}
+
+	/**
+	 * @param response
+	 * @throws IOException
+	 */
+	public static void sendEmptyRequestErrorResponse(HttpServletResponse response) throws IOException {
+		Map<String, String> requestErrorMap = new LinkedHashMap<String, String>();
+		response.setContentType("application/json");
+		requestErrorMap.put("EMPTY_REQUEST_ERROR", "Request should contain json body");
+		String requestError = new Gson().toJson(requestErrorMap);
+		response.getWriter().println(requestError);
+		response.setStatus(400);
+	}
+
+	/**
+	 * @param queryParameters
+	 * @return
+	 * @throws JsonSyntaxException
+	 */
+	public static String processGetAllRequest(Map<String, String> queryParameters)
+			throws JsonSyntaxException {
+		LinkedHashMap<String, Object> results = new LinkedHashMap<String, Object>();
+		LinkedList<String> arrayOfBooks = null;
+		String startCursor = queryParameters.get("cursor");
+		results = BooksControllerUtilities.getAllBooks(queryParameters, startCursor);
+		String result = new Gson().newBuilder().setPrettyPrinting().create().toJson(results, LinkedHashMap.class)
+				.toString();
+		return result;
+	}
+
+	/**
+	 * @param responseMap
+	 * @param jsonRequestString
+	 * @return
+	 * @throws NullPointerException
+	 * @throws EntityNotFoundException
+	 */
+	public static Map<String, Object> processCreateRequest(Map<String, Object> responseMap, String jsonRequestString)
+			throws NullPointerException, EntityNotFoundException {
+		// Request is empty
+		if (jsonRequestString.length() == 0 || jsonRequestString.substring(1).replaceAll("}", "").length() == 0) {
+			throw new NullPointerException();
+		}
+		// Request has only book details to be updated
+		else if (jsonRequestString != null) {
+			System.out.println("Request Has JSON Body");
+			System.out.println("Request JSON Body: " + jsonRequestString);
+			responseMap = BooksControllerUtilities.createNewBook(jsonRequestString);
+		}
+		return responseMap;
+	}
+
+	/**
+	 * @param responseMap
+	 * @param bookID
+	 * @param jsonRequestString
+	 * @return
+	 * @throws NullPointerException
+	 * @throws EntityNotFoundException
+	 */
+	public static Map<String, Object> processUpdateRequest(Map<String, Object> responseMap, String bookID,
+			String jsonRequestString) throws NullPointerException, EntityNotFoundException {
+		// Request is empty
+		if (jsonRequestString.length() == 0 || jsonRequestString.substring(1).replaceAll("}", "").length() == 0) {
+			throw new NullPointerException();
+		}
+		// Request has only book details to be updated
+		else {
+			System.out.println("Request Has JSON Body");
+			System.out.println("Request JSON Body: " + jsonRequestString);
+			responseMap = BooksControllerUtilities.updateBook(jsonRequestString, bookID);
+		}
+		return responseMap;
+	}
 
 }

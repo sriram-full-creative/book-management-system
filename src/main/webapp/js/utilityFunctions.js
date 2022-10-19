@@ -43,8 +43,13 @@ function processPutRequestOptions(bookObj) {
     return putRequestOptions;
 }
 
+
 function getRequestUrlConstructor(domainName, endPoint, firstQueryParameter, secondQueryParameter) {
     return domainName + endPoint + "?" + firstQueryParameter + "&" + secondQueryParameter;
+}
+
+function paginationRequestUrlContructor(domainName, endPoint, firstQueryParameter, secondQueryParameter, cursor) {
+    return domainName + endPoint + "?" + firstQueryParameter + "&" + secondQueryParameter + "&" + "cursor=" + cursor;
 }
 
 function postRequestUrlConstructor(domainName, endPoint) {
@@ -74,9 +79,57 @@ function stopSpinner() {
 }
 
 function addBooks(books) {
+    shouldLoad = true;
     stopSpinner();
-    clearBookContainer();
     books.forEach(book => {
+        allBooks.set(book.id, book);
+        const bookCard = bookCardTemplate.content.cloneNode(true).children[0];
+        const img = bookCard.getElementsByClassName("cover-image")[0];
+        const updateImageButton = bookCard.getElementsByClassName("cover-image-button")[0];
+        const bookName = bookCard.getElementsByClassName("book-title")[0];
+        const authorName = bookCard.getElementsByClassName("author-name")[0];
+        const publication = bookCard.getElementsByClassName("publication-name")[0];
+        const language = bookCard.getElementsByClassName("language")[0];
+        const releaseYear = bookCard.getElementsByClassName("release-year")[0];
+        const pages = bookCard.getElementsByClassName("pages")[0];
+        const country = bookCard.getElementsByClassName("country")[0];
+        const rating = bookCard.getElementsByClassName("rating")[0];
+        const updateButton = bookCard.getElementsByClassName("update-book-button")[0];
+        const deleteButton = bookCard.getElementsByClassName("delete-book-button")[0];
+        bookCard.id = book.id;
+        if (book.coverImage.length > 0) {
+            processImageArea(book.coverImage, img);
+        } else if (book.coverImage.length === 0) {
+            setAttribute(img, {
+                src: imgNotFoundSrc,
+                class: "img-not-found"
+            });
+        }
+        updateImageButton.textContent = "Update Cover Image";
+        updateImageButton.dataset.updateCoverImageButtonId = book.id;
+        bookName.textContent = "Title: " + book.title;
+        authorName.textContent = book.author.length === 1 ? "Author: " + book.author : "Authors: " + book.author;
+        publication.textContent = book.publication.length === 1 ? "Publisher: " + book.publication : "Publishers: " + book.publication;
+        language.textContent = "Language: " + book.language;
+        releaseYear.textContent = "Release Year: " + book.releaseYear;
+        pages.textContent = "Pages: " + book.pages;
+        country.textContent = "Country: " + book.country;
+        rating.textContent = "Rating: " + book.rating;
+        updateButton.textContent = "Update";
+        updateButton.dataset.updateBookButtonId = book.id;
+        deleteButton.textContent = "Delete Book";
+        deleteButton.dataset.deleteBookButtonId = book.id;
+        booksContainer.appendChild(bookCard);
+    });
+}
+
+
+function addCachedBooks(books) {
+    shouldLoad = true;
+    console.log(books);
+    stopSpinner();
+    books.forEach(book => {
+        allBooks.set(book.id, book);
         const bookCard = bookCardTemplate.content.cloneNode(true).children[0];
         const img = bookCard.getElementsByClassName("cover-image")[0];
         const updateImageButton = bookCard.getElementsByClassName("cover-image-button")[0];
@@ -138,6 +191,7 @@ function clearFormDetails(modalForm) {
 }
 
 function toggleAddBookForm() {
+    shouldLoad = false;
     const addBookFormContainer = addBookFormTemplate.content.cloneNode(true).children[0];
     const modalForm = addBookFormContainer.querySelector("#book-form");
     clearBookContainer();
@@ -148,7 +202,7 @@ function toggleAddBookForm() {
     sortByContainer.style.visibility = "hidden";
 }
 
-function closeModel() {
+function closeUpdateFormModel() {
     const modalForm = document.querySelector("#book-form");
     modalForm.style.display = "none";
     modalForm.classList.remove("add-book-form");
@@ -157,8 +211,43 @@ function closeModel() {
     document.body.scroll = 'yes';
     sortByContainer.style.visibility = "visible";
     currentBookId = "";
-    apiUrl = getRequestUrlConstructor(domain.name, ENDPOINTS.books, sortOnProperty.default, sortDirection.default);
-    getBooks(apiUrl);
+
+    if (isbookUpdated) {
+        sortByOptions.selectedIndex = "0";
+        currentProperty = "";
+        currentDirection = "";
+        apiUrl = "";
+        allBooks.clear();
+        getBooks(defaultApiUrl);
+        isbookUpdated = false;
+    } else {
+        addCachedBooks(Array.from(allBooks.values()));
+    }
+
+}
+
+function closeAddFormModel() {
+    const modalForm = document.querySelector("#book-form");
+    modalForm.style.display = "none";
+    modalForm.classList.remove("add-book-form");
+    modalForm.classList.remove("update-book-form");
+    document.documentElement.style.overflow = 'scroll';
+    document.body.scroll = 'yes';
+    sortByContainer.style.visibility = "visible";
+    currentBookId = "";
+
+    if (isbookAdded) {
+        sortByOptions.selectedIndex = "0";
+        currentProperty = "";
+        currentDirection = "";
+        apiUrl = "";
+        allBooks.clear();
+        getBooks(defaultApiUrl);
+        isbookAdded = false;
+    } else {
+        addCachedBooks(Array.from(allBooks.values()));
+    }
+
 }
 
 function isEmpty(object) {
@@ -254,6 +343,7 @@ function poulateFormWithBookDetails(detailsForUpdate, modalForm) {
 
 
 function toggleUpdateCoverImageForm(bookId) {
+    shouldLoad = false;
     console.log(document.getElementById(bookId));
     const updateCoverImageFormContainer = updateCoverImageFormTemplate.content.cloneNode(true).children[0];
     const modalForm = updateCoverImageFormContainer.querySelector("#book-form");
@@ -268,6 +358,7 @@ function toggleUpdateCoverImageForm(bookId) {
 }
 
 function toggleUpdateBookForm(bookId) {
+    shouldLoad = false;
     const detailsForUpdate = document.getElementById(bookId);
     const updateBookFormContainer = updateBookFormTemplate.content.cloneNode(true).children[0];
     const modalForm = updateBookFormContainer.querySelector("#book-form");
@@ -280,7 +371,6 @@ function toggleUpdateBookForm(bookId) {
     currentBookId = bookId;
     console.log(currentBookId);
 }
-
 
 function addNewBook(formData, bookForm) {
     runSpinner();
@@ -308,12 +398,13 @@ function addNewBook(formData, bookForm) {
         const requestOptions = processPostRequestOptions(bookObj);
         apiUrl = postRequestUrlConstructor(domain.name, ENDPOINTS.books);
         fetch(apiUrl, requestOptions)
-            .then(response => {
+            .then(response => response.json())
+            .then(responseJson => {
                 stopSpinner();
-                response.text()
-            }).then(responseJson => {
-                stopSpinner();
+                isbookAdded = true;
                 console.log(responseJson);
+                console.log(responseJson.id);
+                allBooks.set(responseJson.id, responseJson);
                 const resultContainer = bookForm.querySelector("#result-container");
                 resultContainer.classList.add("oaerror");
                 resultContainer.classList.add("success");
@@ -389,12 +480,12 @@ function updateBookDetails(formData, bookForm) {
         const requestOptions = processPutRequestOptions(bookObj);
         apiUrl = putRequestUrlConstructor(domain.name, ENDPOINTS.books, currentBookId);
         fetch(apiUrl, requestOptions)
-            .then(response => {
+            .then(response => response.json())
+            .then(responseJson => {
                 stopSpinner();
-                response.text()
-            }).then(responseJson => {
-                stopSpinner();
+                isbookUpdated = true;
                 console.log(responseJson);
+                allBooks.set(currentBookId, responseJson);
                 const resultContainer = bookForm.querySelector("#result-container");
                 resultContainer.classList.add("success");
                 resultContainer.classList.add("oaerror");
@@ -447,20 +538,19 @@ function deleteBook(bookId) {
         headers: {
             'Content-type': 'application/json'
         }
-    }).then(res => {
-        stopSpinner();
-        res.json()
-    }).then(data => {
-        stopSpinner();
-        console.log(data);
-        apiUrl = getRequestUrlConstructor(domain.name, ENDPOINTS.books, sortOnProperty.default, sortDirection.default);
-        getBooks(apiUrl);
-    }).catch(error => {
-        stopSpinner();
-        console.log(error);
-        apiUrl = getRequestUrlConstructor(domain.name, ENDPOINTS.books, sortOnProperty.default, sortDirection.default);
-        getBooks(apiUrl);
-    });
+    }).then(response => response.json())
+        .then(responseAsJson => {
+            stopSpinner();
+            console.log(responseAsJson);
+            allBooks.delete(bookId);
+            clearBookContainer();
+            addCachedBooks(Array.from(allBooks.values()));
+        }).catch(error => {
+            stopSpinner();
+            console.log(error);
+            apiUrl = getRequestUrlConstructor(domain.name, ENDPOINTS.books, sortOnProperty.default, sortDirection.default);
+            getBooks(apiUrl);
+        });
 }
 
 function updateCoverImage(ImagefileInput, bookForm) {
@@ -482,12 +572,10 @@ function updateCoverImage(ImagefileInput, bookForm) {
     apiUrl = putRequestUrlConstructor(domain.name, ENDPOINTS.images, currentBookId);
 
     fetch(apiUrl, requestOptions)
-        .then(response => {
+        .then(response => response.json())
+        .then(responseAsJson => {
             stopSpinner();
-            response.text()
-        }).then(responseJson => {
-            stopSpinner();
-            console.log(responseJson);
+            console.log(responseAsJson);
             const resultContainer = bookForm.querySelector("#result-container");
             resultContainer.classList.add("oaerror");
             resultContainer.classList.add("success");
@@ -503,7 +591,7 @@ function updateCoverImage(ImagefileInput, bookForm) {
             resultContainer.appendChild(resultMessage);
         }).catch(error => {
             stopSpinner();
-            console.log("updateBookDetails Function => ", error);
+            console.log("updateCoverImage Function => ", error);
             responseJson = error;
             const resultContainer = bookForm.querySelector("#result-container");
             resultContainer.classList.add("oaerror");
@@ -525,114 +613,160 @@ function processBooks() {
 }
 
 function searchBooks() {
+    shouldLoad = false;
     const value = event.target.value.toLowerCase()
-    books.forEach(book => {
+    Array.from(allBooks.values()).forEach(book => {
         const hiddenElement = document.getElementById(book.id);
         let authors = book.author.toString();
         const isVisible = !(book.title.toLowerCase().includes(value) || authors.toLowerCase().includes(value));
         hiddenElement.classList.toggle("hide", isVisible);
     });
+    if (!value) {
+        shouldLoad = true;
+    }
 }
 
 function processOption(selectedOption) {
     switch (selectedOption) {
         case "time-descending":
-            return getRequestUrlConstructor(
+            currentProperty = sortOnProperty.default;
+            currentDirection = sortDirection.default;
+            return paginationRequestUrlContructor(
                 domain.name,
                 ENDPOINTS.books,
                 sortOnProperty.default,
-                sortDirection.default
+                sortDirection.default,
+                nextCursor.default
             )
         case "time-ascending":
-            return getRequestUrlConstructor(
+            currentProperty = sortOnProperty.default;
+            currentDirection = sortDirection.ascending;
+            return paginationRequestUrlContructor(
                 domain.name,
                 ENDPOINTS.books,
                 sortOnProperty.default,
-                sortDirection.ascending
+                sortDirection.ascending,
+                nextCursor.default
             )
         case "author-descending":
-            return getRequestUrlConstructor(
+            currentProperty = sortOnProperty.author;
+            currentDirection = sortDirection.default;
+            return paginationRequestUrlContructor(
                 domain.name,
                 ENDPOINTS.books,
                 sortOnProperty.author,
-                sortDirection.default
+                sortDirection.default,
+                nextCursor.default
             )
         case "author-ascending":
-            return getRequestUrlConstructor(
+            currentProperty = sortOnProperty.author;
+            currentDirection = sortDirection.ascending;
+            return paginationRequestUrlContructor(
                 domain.name,
                 ENDPOINTS.books,
                 sortOnProperty.author,
-                sortDirection.ascending
+                sortDirection.ascending,
+                nextCursor.default
             )
         case "publication-descending":
-            return getRequestUrlConstructor(
+            currentProperty = sortOnProperty.publication;
+            currentDirection = sortDirection.default;
+            return paginationRequestUrlContructor(
                 domain.name,
                 ENDPOINTS.books,
                 sortOnProperty.publication,
-                sortDirection.default
+                sortDirection.default,
+                nextCursor.default
             )
         case "publication-ascending":
-            return getRequestUrlConstructor(
+            currentProperty = sortOnProperty.publication;
+            currentDirection = sortDirection.ascending;
+            return paginationRequestUrlContructor(
                 domain.name,
                 ENDPOINTS.books,
                 sortOnProperty.publication,
-                sortDirection.ascending
+                sortDirection.ascending,
+                nextCursor.default
             )
         case "title-descending":
-            return getRequestUrlConstructor(
+            currentProperty = sortOnProperty.title;
+            currentDirection = sortDirection.default;
+            return paginationRequestUrlContructor(
                 domain.name,
                 ENDPOINTS.books,
                 sortOnProperty.title,
-                sortDirection.default
+                sortDirection.default,
+                nextCursor.default
             )
         case "title-ascending":
-            return getRequestUrlConstructor(
+            currentProperty = sortOnProperty.title;
+            currentDirection = sortDirection.ascending;
+            return paginationRequestUrlContructor(
                 domain.name,
                 ENDPOINTS.books,
                 sortOnProperty.title,
-                sortDirection.ascending
+                sortDirection.ascending,
+                nextCursor.default
             )
         case "pages-descending":
-            return getRequestUrlConstructor(
+            currentProperty = sortOnProperty.pages;
+            currentDirection = sortDirection.default;
+            return paginationRequestUrlContructor(
                 domain.name,
                 ENDPOINTS.books,
                 sortOnProperty.pages,
-                sortDirection.default
+                sortDirection.default,
+                nextCursor.default
             )
         case "pages-ascending":
-            return getRequestUrlConstructor(
+            currentProperty = sortOnProperty.pages;
+            currentDirection = sortDirection.ascending;
+            return paginationRequestUrlContructor(
                 domain.name,
                 ENDPOINTS.books,
                 sortOnProperty.pages,
-                sortDirection.ascending
+                sortDirection.ascending,
+                nextCursor.default
             )
         case "release-year-descending":
-            return getRequestUrlConstructor(
+            currentProperty = sortOnProperty.releaseYear;
+            currentDirection = sortDirection.default;
+            return paginationRequestUrlContructor(
                 domain.name,
                 ENDPOINTS.books,
                 sortOnProperty.releaseYear,
-                sortDirection.default
+                sortDirection.default,
+                nextCursor.default
             )
         case "release-year-ascending":
-            return getRequestUrlConstructor(
+            currentProperty = sortOnProperty.releaseYear;
+            currentDirection = sortDirection.ascending;
+            return paginationRequestUrlContructor(
                 domain.name,
                 ENDPOINTS.books,
                 sortOnProperty.releaseYear,
-                sortDirection.ascending
+                sortDirection.ascending,
+                nextCursor.default
             )
         case "rating-descending":
-            return getRequestUrlConstructor(
+            currentProperty = sortOnProperty.rating;
+            currentDirection = sortDirection.default;
+            return paginationRequestUrlContructor(
                 domain.name,
                 ENDPOINTS.books,
                 sortOnProperty.rating,
-                sortDirection.default
+                sortDirection.default,
+                nextCursor.default
             )
         case "rating-ascending":
-            return getRequestUrlConstructor(
+            currentProperty = sortOnProperty.rating;
+            currentDirection = sortDirection.ascending;
+            return paginationRequestUrlContructor(
                 domain.name,
                 ENDPOINTS.books,
                 sortOnProperty.rating,
-                sortDirection.ascending
+                sortDirection.ascending,
+                nextCursor.default
             )
         default:
             break;
@@ -643,12 +777,14 @@ function sortBooks() {
     spinner.removeAttribute('hidden');
     const selectedOption = sortByOptions.value;
     apiUrl = processOption(selectedOption);
+    allBooks.clear();
     console.log(apiUrl);
+    clearBookContainer();
     getBooks(apiUrl);
 }
 
 
 function logout() {
     console.log('logout');
-    window.location.href = "/users/logout";
+    window.location.href = ENDPOINTS.logout;
 }

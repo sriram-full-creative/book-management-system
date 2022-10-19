@@ -12,7 +12,7 @@ const loginFormDataToJSON = (FormElement) => {
 const loginHandler = async (event) => {
     event.preventDefault();
     const result = loginFormDataToJSON(loginFormData);
-    const response = await fetch("/users/login", {
+    const response = await fetch(ENDPOINTS.login, {
         method: 'POST',
         body: JSON.stringify(result)
     })
@@ -22,7 +22,7 @@ const loginHandler = async (event) => {
         alert("Invalid Email or Password");
     } else {
         console.log("redirect");
-        window.location.href = "/books/all";
+        window.location.href = ENDPOINTS.main;
     }
 }
 
