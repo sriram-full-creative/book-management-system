@@ -1007,11 +1007,7 @@ public class BooksControllerUtilities {
 		QueryResultList<Entity> bookEntities = datastore.prepare(query).asQueryResultList(fetchOptions);
 		String cursorString = bookEntities.getCursor().toWebSafeString();
 		List<Book> booksFromEntities = BooksControllerUtilities.booksFromEntities(bookEntities);
-		LinkedList<String> books = new LinkedList<>();
-		for (Book book : booksFromEntities) {
-			books.add(mapToJsonString(mapFromBook(book, bookAsMap)));
-		}
-		results.put("arrayOfBooks", books);
+		results.put("books", booksFromEntities);
 		results.put("cursor", cursorString);
 		return results;
 	}
@@ -1262,7 +1258,6 @@ public class BooksControllerUtilities {
 		return responseMap;
 	}
 
-
 	/** Google Cloud Storage Methods **/
 
 	/**
@@ -1407,6 +1402,17 @@ public class BooksControllerUtilities {
 
 	/**
 	 * @param response
+	 * @param jsonData
+	 * @throws IOException
+	 */
+	public static void sendGetAllBooksResponse(HttpServletResponse response, String jsonData) throws IOException {
+		response.setContentType("application/json");
+		response.getWriter().println(jsonData);
+		response.setStatus(200);
+	}
+
+	/**
+	 * @param response
 	 * @param e
 	 * @throws IOException
 	 */
@@ -1438,22 +1444,15 @@ public class BooksControllerUtilities {
 	 * @return
 	 * @throws JsonSyntaxException
 	 */
-	public static LinkedList<String> processGetAllRequest(Map<String, String> queryParameters)
+	public static String processGetAllRequest(Map<String, String> queryParameters)
 			throws JsonSyntaxException {
 		LinkedHashMap<String, Object> results = new LinkedHashMap<String, Object>();
 		LinkedList<String> arrayOfBooks = null;
 		String startCursor = queryParameters.get("cursor");
 		results = BooksControllerUtilities.getAllBooks(queryParameters, startCursor);
-		arrayOfBooks = (LinkedList<String>) results.get("arrayOfBooks");
-		Gson gson = new Gson().newBuilder().setPrettyPrinting().create();
-		ListIterator<String> iterator = arrayOfBooks.listIterator();
-		while (iterator.hasNext()) {
-			Book book = gson.fromJson(iterator.next(), Book.class);
-			iterator.set(gson.toJson(book));
-		}
-		String nextCursor = "{ \"cursor\":" + "\"" + results.get("cursor") + "\"" + "}";
-		arrayOfBooks.add(nextCursor);
-		return arrayOfBooks;
+		String result = new Gson().newBuilder().setPrettyPrinting().create().toJson(results, LinkedHashMap.class)
+				.toString();
+		return result;
 	}
 
 	/**

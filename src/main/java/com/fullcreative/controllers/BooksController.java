@@ -43,8 +43,8 @@ public class BooksController extends HttpServlet {
 					responseMap = BooksControllerUtilities.getOneBook(bookID);
 					BooksControllerUtilities.sendPrettyJsonResponse(response, responseMap);
 				} else {
-					LinkedList<String> arrayOfBooks = BooksControllerUtilities.processGetAllRequest(queryParameters);
-					BooksControllerUtilities.sendGetAllJsonResponse(response, arrayOfBooks);
+					String jsonData = BooksControllerUtilities.processGetAllRequest(queryParameters);
+					BooksControllerUtilities.sendGetAllBooksResponse(response, jsonData);
 				}
 			} else {
 				responseMap = BooksControllerUtilities.invalidRequestEndpointResponse(responseMap);
