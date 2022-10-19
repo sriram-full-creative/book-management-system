@@ -1,4 +1,4 @@
-package com.fullcreative.models;
+package com.fullcreative.bms.models;
 
 public class User {
 	private String username;

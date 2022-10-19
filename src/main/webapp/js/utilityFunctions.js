@@ -212,7 +212,7 @@ function closeUpdateFormModel() {
     sortByContainer.style.visibility = "visible";
     currentBookId = "";
 
-    if (isbookUpdated) {
+    if (isbookUpdated || isCoverImageUpdated) {
         sortByOptions.selectedIndex = "0";
         currentProperty = "";
         currentDirection = "";
@@ -220,6 +220,7 @@ function closeUpdateFormModel() {
         allBooks.clear();
         getBooks(defaultApiUrl);
         isbookUpdated = false;
+        isCoverImageUpdated = false;
     } else {
         addCachedBooks(Array.from(allBooks.values()));
     }
@@ -553,6 +554,20 @@ function deleteBook(bookId) {
         });
 }
 
+function deleteAllBooks() {
+    console.log("delete all books triggered");
+    var requestOptions = {
+        method: 'POST',
+        redirect: 'follow'
+    };
+    const deleteAllBooksUrl = domain.name + ENDPOINTS.taskQueue;
+    fetch(deleteAllBooksUrl, requestOptions)
+        .then(response => response.json())
+        .then(result => console.log(result))
+        .catch(error => console.log('error', error));
+}
+
+
 function updateCoverImage(ImagefileInput, bookForm) {
     runSpinner();
 
@@ -575,6 +590,7 @@ function updateCoverImage(ImagefileInput, bookForm) {
         .then(response => response.json())
         .then(responseAsJson => {
             stopSpinner();
+            isCoverImageUpdated = true;
             console.log(responseAsJson);
             const resultContainer = bookForm.querySelector("#result-container");
             resultContainer.classList.add("oaerror");

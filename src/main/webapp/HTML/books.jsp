@@ -40,16 +40,17 @@
                     <div id="open-about" class="about-window">
                         <div>
                             <a href="#" title="Close" class="about-close">Close</a>
-                            <h1>Voilaa!</h1>
+                            <h1>Book Manager</h1>
                             <div>
                                 <img src="./../images/book-manager-logo.svg" alt="logo" width="50px">
-                                <p>This is a Pocket library. Hope you find it helpful.</p>
-                                <p>Â© Sriram S</p>
+                                <p>Voilaa! This is a Pocket library. Hope you find it helpful.</p>
+                                <p>© Sriram S</p>
                             </div>
                             <br>
                         </div>
                     </div>
                 </li>
+                <li class="delete-all-books"><a href="#books">Delete All</a></li>
             </ul>
         </div>
     </nav>
@@ -119,7 +120,7 @@
         <template data-add-book-form-template>
             <div id="add-book-form-container" class="add-book-form-container">
                 <form action="" method="" id="book-form" class="book-form">
-                    <div class="close-button-container"><a href="#" onclick="closeModel()" title="Close"
+                    <div class="close-button-container"><a href="#" onclick="closeAddFormModel()" title="Close"
                             class="close-button"></a>
                     </div>
                     <h2 class="heading">Enter Book Details</h2>
@@ -170,7 +171,7 @@
         <template data-update-book-form-template>
             <div id="update-book-form-container" class="update-book-form-container">
                 <form action="" method="" id="book-form" class="book-form">
-                    <div class="close-button-container"><a href="#" onclick="closeModel()" title="Close"
+                    <div class="close-button-container"><a href="#" onclick="closeUpdateFormModel()" title="Close"
                             class="close-button"></a>
                     </div>
                     <h2 class="heading">Enter Book Details</h2>
@@ -223,7 +224,7 @@
         <template data-update-cover-image-form-template>
             <div id="update-book-form-container" class="update-cover-image-form-container">
                 <form action="" method="" id="book-form" class="book-form" enctype="multipart/form-data">
-                    <div class="close-button-container"><a href="#" onclick="closeModel()" title="Close"
+                    <div class="close-button-container"><a href="#" onclick="closeUpdateFormModel()" title="Close"
                             class="close-button"></a>
                     </div>
                     <h2 class="heading">Choose An Image</h2>

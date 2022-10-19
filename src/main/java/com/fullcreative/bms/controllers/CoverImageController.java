@@ -1,4 +1,4 @@
-package com.fullcreative.controllers;
+package com.fullcreative.bms.controllers;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
-import com.fullcreative.utilities.BooksControllerUtilities;
+import com.fullcreative.bms.utilities.BooksControllerUtilities;
 import com.google.gson.Gson;
 
 /**

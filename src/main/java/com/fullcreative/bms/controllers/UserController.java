@@ -1,4 +1,4 @@
-package com.fullcreative.controllers;
+package com.fullcreative.bms.controllers;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.fullcreative.utilities.UserControllerUtilities;
+import com.fullcreative.bms.utilities.UserControllerUtilities;
 import com.google.gson.Gson;
 
 @WebServlet(urlPatterns = { "/users", "/users/*" })
