@@ -47,6 +47,10 @@
   color: antiquewhite;
   padding: 1rem;
   display: block;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .navbar-links li a:hover {
@@ -130,6 +134,7 @@ a {
   text-align: center;
   top: 0;
   width: 70px;
+  height: min-content !important;
   color: grey !important;
 }
 

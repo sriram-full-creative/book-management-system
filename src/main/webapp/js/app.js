@@ -4,8 +4,6 @@ const navbarLinks = document.getElementsByClassName("navbar-links")[0];
 const booksContainer = document.getElementById("books-container");
 const bookCardTemplate = document.querySelector("[data-book-template]");
 const searchInput = document.querySelector("[data-search]")
-
-/** Navbar Buttons */
 const viewAllBooksTrigger = document.querySelector(".view-all-books");
 const addBookTrigger = document.querySelector(".add-book");
 const aboutTrigger = document.querySelector(".about-container");
@@ -21,12 +19,22 @@ const welcomeMessage = document.querySelector(".welcome-message-container");
 
 function toggleViewAllBooks() {
     runSpinner();
-    getBooks(apiUrl);
+    allBooks.clear();
+    clearBookContainer();
+    sortByOptions.selectedIndex = "0";
+    currentProperty = "";
+    currentDirection = "";
+    apiUrl = "";
+    setTimeout(() => {
+        getBooks(defaultApiUrl);
+    }, 2000);
 }
 
 /** EVENT LISTENERS */
 viewAllBooksIntro.addEventListener("click", toggleViewAllBooksFromIntro);
-searchInput.addEventListener("input", searchBooks);
+searchInput.addEventListener("input", () => {
+    searchBooks();
+});
 viewAllBooksTrigger.addEventListener("click", toggleViewAllBooks);
 addBookTrigger.addEventListener("click", toggleAddBookForm);
 booksContainer.addEventListener('click', processBooks);
@@ -62,3 +70,14 @@ booksContainer.addEventListener('submit', (e) => {
         console.log(currentBookId);
     }
 });
+
+window.addEventListener('scroll', () => {
+    if (window.scrollY + window.innerHeight >=
+        document.documentElement.scrollHeight && shouldLoad) {
+        shouldLoad = false;
+        let newApiUrl = paginationRequestUrlContructor(domain.name, ENDPOINTS.books, currentProperty, currentDirection, nextCursor.cursor);
+        console.log(newApiUrl);
+        getBooks(newApiUrl);
+        console.log("We Have Reached the End of the Page");
+    }
+})

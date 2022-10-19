@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Book Manager</title>
-    <link rel="icon" href="./images/book-manager-logo.svg" type="image/svg">
+    <link rel="icon" href="./../images/book-manager-logo.svg" type="image/svg">
     <link rel="stylesheet" href="./../styles/welcomepage.css">
     <link rel="stylesheet" href="./../styles/sortcontainer.css">
     <link rel="stylesheet" href="./../styles/navbar.css">
@@ -119,7 +119,7 @@
         <template data-add-book-form-template>
             <div id="add-book-form-container" class="add-book-form-container">
                 <form action="" method="" id="book-form" class="book-form">
-                    <div class="close-button-container"><a href="#" onclick="closeModel()" title="Close"
+                    <div class="close-button-container"><a href="#" onclick="closeAddFormModel()" title="Close"
                             class="close-button"></a>
                     </div>
                     <h2 class="heading">Enter Book Details</h2>
@@ -170,7 +170,7 @@
         <template data-update-book-form-template>
             <div id="update-book-form-container" class="update-book-form-container">
                 <form action="" method="" id="book-form" class="book-form">
-                    <div class="close-button-container"><a href="#" onclick="closeModel()" title="Close"
+                    <div class="close-button-container"><a href="#" onclick="closeUpdateFormModel()" title="Close"
                             class="close-button"></a>
                     </div>
                     <h2 class="heading">Enter Book Details</h2>
@@ -223,7 +223,7 @@
         <template data-update-cover-image-form-template>
             <div id="update-book-form-container" class="update-cover-image-form-container">
                 <form action="" method="" id="book-form" class="book-form" enctype="multipart/form-data">
-                    <div class="close-button-container"><a href="#" onclick="closeModel()" title="Close"
+                    <div class="close-button-container"><a href="#" onclick="closeUpdateFormModel()" title="Close"
                             class="close-button"></a>
                     </div>
                     <h2 class="heading">Choose An Image</h2>
