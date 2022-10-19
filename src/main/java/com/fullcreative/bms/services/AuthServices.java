@@ -1,9 +1,8 @@
-package com.fullcreative.services;
+package com.fullcreative.bms.services;
 
 import java.util.*;
 
-
-import com.fullcreative.utilities.UserControllerUtilities;
+import com.fullcreative.bms.utilities.UserControllerUtilities;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 
 

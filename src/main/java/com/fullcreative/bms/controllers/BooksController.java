@@ -1,9 +1,7 @@
-package com.fullcreative.controllers;
+package com.fullcreative.bms.controllers;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.ListIterator;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -12,12 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.fullcreative.models.Book;
-import com.fullcreative.utilities.BooksControllerUtilities;
-import com.google.appengine.api.datastore.EntityNotFoundException;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonSyntaxException;
+import com.fullcreative.bms.utilities.BooksControllerUtilities;
 
 /**
  * @author Sriram
@@ -44,7 +37,7 @@ public class BooksController extends HttpServlet {
 					BooksControllerUtilities.sendPrettyJsonResponse(response, responseMap);
 				} else {
 					String jsonData = BooksControllerUtilities.processGetAllRequest(queryParameters);
-					BooksControllerUtilities.sendGetAllBooksResponse(response, jsonData);
+					BooksControllerUtilities.sendJsonResponse(response, jsonData);
 				}
 			} else {
 				responseMap = BooksControllerUtilities.invalidRequestEndpointResponse(responseMap);

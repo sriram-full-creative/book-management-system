@@ -1,4 +1,4 @@
-package com.fullcreative.controllers;
+package com.fullcreative.bms.controllers;
 
 import java.io.IOException;
 
@@ -9,8 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.fullcreative.services.AuthServices;
-import com.fullcreative.utilities.UserControllerUtilities;
+import com.fullcreative.bms.services.AuthServices;
+import com.fullcreative.bms.utilities.UserControllerUtilities;
 import com.google.gson.Gson;
 
 import java.util.*;
@@ -36,7 +36,7 @@ public class SignupController extends HttpServlet {
 				HttpSession newSession = request.getSession(true);
 				newSession.setAttribute("isLoggedIn", "yes");
 				System.out.println(newSession.getAttribute("isLoggedIn"));
-				newSession.setMaxInactiveInterval(5 * 60);
+				newSession.setMaxInactiveInterval(60 * 60);
 			}
 			response.getWriter().print(responseAsJson);
 		} catch (Exception e) {

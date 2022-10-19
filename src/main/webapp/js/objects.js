@@ -21,6 +21,7 @@ const ENDPOINTS = {
     signup: "/users/signup",
     login: "/users/login",
     logout: "/users/logout",
+    taskQueue: "/taskqueues/enqueue",
     main: "/books/all"
 }
 
@@ -41,7 +42,7 @@ const sortDirection = {
 
 const domain = {
     name: "http://localhost:10000"
-    // name: "https://book-management-system-362310.uc.r.appspot.com"
+    //name: "https://book-management-system-362310.uc.r.appspot.com"
 }
 
 let apiUrl = getRequestUrlConstructor(domain.name, ENDPOINTS.books, sortOnProperty.default, sortDirection.default);

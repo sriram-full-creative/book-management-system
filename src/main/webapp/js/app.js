@@ -16,6 +16,7 @@ const updateBookFormTemplate = document.querySelector("[data-update-book-form-te
 const updateCoverImageFormTemplate = document.querySelector("[data-update-cover-image-form-template]");
 const spinnerTemplate = document.querySelector("#spinner");
 const welcomeMessage = document.querySelector(".welcome-message-container");
+const deleteAllBooksTrigger = document.querySelector(".delete-all-books");
 
 function toggleViewAllBooks() {
     runSpinner();
@@ -37,6 +38,7 @@ searchInput.addEventListener("input", () => {
 });
 viewAllBooksTrigger.addEventListener("click", toggleViewAllBooks);
 addBookTrigger.addEventListener("click", toggleAddBookForm);
+deleteAllBooksTrigger.addEventListener("click", deleteAllBooks);
 booksContainer.addEventListener('click', processBooks);
 sortByOptions.addEventListener("change", sortBooks);
 

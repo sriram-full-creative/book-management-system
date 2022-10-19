@@ -1,4 +1,4 @@
-package com.fullcreative.utilities;
+package com.fullcreative.bms.utilities;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,6 +21,8 @@ import javax.crypto.spec.PBEKeySpec;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
 
+import com.fullcreative.bms.models.Login;
+import com.fullcreative.bms.models.User;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -31,8 +33,6 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.gson.Gson;
 
-import com.fullcreative.models.Login;
-import com.fullcreative.models.User;
 import java.util.regex.*;
 import java.math.BigInteger;
 import com.google.appengine.api.datastore.Query;

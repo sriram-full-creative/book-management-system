@@ -1,4 +1,4 @@
-package com.fullcreative.utilities;
+package com.fullcreative.bms.utilities;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -21,7 +21,7 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.fullcreative.models.Book;
+import com.fullcreative.bms.models.Book;
 import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -1405,7 +1405,7 @@ public class BooksControllerUtilities {
 	 * @param jsonData
 	 * @throws IOException
 	 */
-	public static void sendGetAllBooksResponse(HttpServletResponse response, String jsonData) throws IOException {
+	public static void sendJsonResponse(HttpServletResponse response, String jsonData) throws IOException {
 		response.setContentType("application/json");
 		response.getWriter().println(jsonData);
 		response.setStatus(200);
@@ -1437,6 +1437,27 @@ public class BooksControllerUtilities {
 		String requestError = new Gson().toJson(requestErrorMap);
 		response.getWriter().println(requestError);
 		response.setStatus(400);
+	}
+
+	/**
+	 * <p>
+	 * Used in TaskQueue
+	 * </p>
+	 */
+	public static void deleteAllBooks() {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		Query query = new Query("Books").addSort("CreatedOrUpdated", SortDirection.DESCENDING);
+		List<Entity> bookEntities = datastore.prepare(query).asList(FetchOptions.Builder.withDefaults());
+		for (Entity entity : bookEntities) {
+			String bookId = entity.getKey().getName();
+			System.out.println(bookId);
+			try {
+				deleteBookWithImage(bookId);
+			} catch (EntityNotFoundException e) {
+				e.printStackTrace();
+				System.out.println("Caught when Deleting the book => " + bookId);
+			}
+		}
 	}
 
 	/**

@@ -5,7 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-public class DoGetServiceTestData {
+public class DoGetTestData {
 	public static Map<String, LinkedHashMap<String, Object>> testCases = new LinkedHashMap<>();
 	public static Map<String, String> bookID = new LinkedHashMap<>();
 	public static Map<String, LinkedHashMap<String, String>> queryParametersTestCases = new LinkedHashMap<>();

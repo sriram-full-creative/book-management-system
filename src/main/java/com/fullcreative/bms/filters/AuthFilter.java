@@ -1,4 +1,4 @@
-package com.fullcreative.filters;
+package com.fullcreative.bms.filters;
 
 import java.io.IOException;
 import javax.servlet.Filter;

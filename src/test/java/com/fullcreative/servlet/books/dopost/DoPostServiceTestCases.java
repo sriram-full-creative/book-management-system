@@ -8,7 +8,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.fullcreative.utilities.BooksControllerUtilities;
+import com.fullcreative.bms.utilities.BooksControllerUtilities;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;

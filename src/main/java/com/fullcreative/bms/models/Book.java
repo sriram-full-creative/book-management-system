@@ -1,4 +1,4 @@
-package com.fullcreative.models;
+package com.fullcreative.bms.models;
 
 import java.util.LinkedList;
 
