@@ -10,11 +10,12 @@ import javax.servlet.http.HttpServletResponse;
 import com.fullcreative.bms.utilities.BooksControllerUtilities;
 
 /**
- * Servlet implementation class PushQueueHandler. This is the worker for the
- * Push Queue. It will complete the tasks added to the Task Queues.
+ * Servlet implementation class DeleteAllBooksTaskHandler. This is a worker for
+ * the Push Queue. It will complete the appropriate tasks added to the Task
+ * Queues.
  */
-@WebServlet(name = "PushQueueHandler", urlPatterns = { "/taskqueues/worker" })
-public class PushQueueTaskHandler extends HttpServlet {
+@WebServlet(name = "DeleteAllBooksTaskHandler", urlPatterns = { "/taskqueues/deletebooks/all" })
+public class DeleteAllBooksTaskHandler extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

@@ -120,7 +120,7 @@
         <template data-add-book-form-template>
             <div id="add-book-form-container" class="add-book-form-container">
                 <form action="" method="" id="book-form" class="book-form">
-                    <div class="close-button-container"><a href="#" onclick="closeAddFormModel()" title="Close"
+                    <div class="close-button-container"><a href="#" onclick="closeFormModal()" title="Close"
                             class="close-button"></a>
                     </div>
                     <h2 class="heading">Enter Book Details</h2>
@@ -171,7 +171,7 @@
         <template data-update-book-form-template>
             <div id="update-book-form-container" class="update-book-form-container">
                 <form action="" method="" id="book-form" class="book-form">
-                    <div class="close-button-container"><a href="#" onclick="closeUpdateFormModel()" title="Close"
+                    <div class="close-button-container"><a href="#" onclick="closeFormModal()" title="Close"
                             class="close-button"></a>
                     </div>
                     <h2 class="heading">Enter Book Details</h2>
@@ -224,7 +224,7 @@
         <template data-update-cover-image-form-template>
             <div id="update-book-form-container" class="update-cover-image-form-container">
                 <form action="" method="" id="book-form" class="book-form" enctype="multipart/form-data">
-                    <div class="close-button-container"><a href="#" onclick="closeUpdateFormModel()" title="Close"
+                    <div class="close-button-container"><a href="#" onclick="closeFormModal()" title="Close"
                             class="close-button"></a>
                     </div>
                     <h2 class="heading">Choose An Image</h2>

@@ -1186,7 +1186,6 @@ public class BooksControllerUtilities {
 				Book responseBookData = new Book();
 				responseBookData = bookFromEntity(responseEntity);
 				responseMap = mapFromBook(responseBookData, responseMap);
-				// responseMap.put("BOOK_ID", keyObj.getName());
 				responseMap.put("STATUS_CODE", 200);
 			}
 		} catch (Exception e) {

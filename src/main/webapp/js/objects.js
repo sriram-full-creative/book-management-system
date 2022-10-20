@@ -1,20 +1,31 @@
-var allBooks = new Map();
+var allCachedBooks = new Map();
 var books = [];
+
+
 var resultsFromServer = {
     books: "",
     cursor: ""
 };
+var currentBookId = "";
 var currentProperty = "";
 var currentDirection = "";
 var nextCursor = {
     default: "",
     cursor: ""
 };
+
+
 var shouldLoad = false;
 var isbookUpdated = false;
 var isbookAdded = false;
 var isCoverImageUpdated = false;
-const imgNotFoundSrc = "./../images/image-not-found.svg";
+
+
+const BASE_URL = {
+    url: "http://localhost:10000"
+    //url: "https://book-management-system-362310.uc.r.appspot.com"
+}
+
 const ENDPOINTS = {
     books: "/books",
     images: "/images",
@@ -25,25 +36,28 @@ const ENDPOINTS = {
     main: "/books/all"
 }
 
-const sortOnProperty = {
-    default: "",
-    author: "sortOnProperty=author",
-    publication: "sortOnProperty=publication",
-    title: "sortOnProperty=title",
-    pages: "sortOnProperty=pages",
-    releaseYear: "sortOnProperty=releaseYear",
-    rating: "sortOnProperty=rating"
+const QUERY_PARAMETERS = {
+    sortOnProperty: {
+        default: "",
+        author: "sortOnProperty=author",
+        publication: "sortOnProperty=publication",
+        title: "sortOnProperty=title",
+        pages: "sortOnProperty=pages",
+        releaseYear: "sortOnProperty=releaseYear",
+        rating: "sortOnProperty=rating"
+    },
+    sortDirection: {
+        ascending: "sortDirection=ascending",
+        default: "sortDirection=descending",
+    },
+    deleteBooks: {
+        deleteAll: "delete=all",
+        deleteSelected: "delete=selected"
+    }
 }
 
-const sortDirection = {
-    ascending: "sortDirection=ascending",
-    default: "sortDirection=descending",
-}
 
-const domain = {
-    name: "http://localhost:10000"
-    //name: "https://book-management-system-362310.uc.r.appspot.com"
-}
+const imgNotFoundSrc = "./../images/image-not-found.svg";
 
-let apiUrl = getRequestUrlConstructor(domain.name, ENDPOINTS.books, sortOnProperty.default, sortDirection.default);
-const defaultApiUrl = getRequestUrlConstructor(domain.name, ENDPOINTS.books, sortOnProperty.default, sortDirection.default);
+let apiUrl = getRequestUrlConstructor(BASE_URL.url, ENDPOINTS.books, QUERY_PARAMETERS.sortOnProperty.default, QUERY_PARAMETERS.sortDirection.default);
+const defaultApiUrl = getRequestUrlConstructor(BASE_URL.url, ENDPOINTS.books, QUERY_PARAMETERS.sortOnProperty.default, QUERY_PARAMETERS.sortDirection.default);
