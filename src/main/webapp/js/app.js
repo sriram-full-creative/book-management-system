@@ -1,26 +1,57 @@
+/**
+ * Elements in the Welcome Page.
+ */
 const viewAllBooksIntro = document.querySelector(".welcome-view-books-button");
-const toggleButton = document.getElementsByClassName("toggle-menu-button")[0];
+const welcomeMessage = document.querySelector(".welcome-message-container");
+
+/**
+ * Elements in the Nav Bar.
+ */
+const navbar = document.querySelector(".navbar");
+
+/**
+ * Elements in the Search Input Area.
+ */
+const searchBarContainer = document.querySelector(".search-wrapper");
+const searchInput = document.querySelector("[data-search]");
+
+/**
+ * Elements in the Nav Bar Links/Buttons.
+ */
 const navbarLinks = document.getElementsByClassName("navbar-links")[0];
-const booksContainer = document.getElementById("books-container");
-const bookCardTemplate = document.querySelector("[data-book-template]");
-const searchInput = document.querySelector("[data-search]")
 const viewAllBooksTrigger = document.querySelector(".view-all-books");
 const addBookTrigger = document.querySelector(".add-book");
 const aboutTrigger = document.querySelector(".about-container");
-const searchBarContainer = document.querySelector(".search-wrapper");
+const deleteAllBooksTrigger = document.querySelector(".delete-all-books");
+const toggleButton = document.getElementsByClassName("toggle-menu-button")[0];
+
+/**
+ * Elements in the Sort By Dropdown Container Area.
+ */
 const sortByContainer = document.querySelector(".sort-container");
 const sortByOptions = document.querySelector("#sort-books");
-const navbar = document.querySelector(".navbar");
+const deleteSelectedButton = document.querySelector("#delete-selected-button");
+
+/**
+ * Elements in the books container area.
+ */
+const booksContainer = document.getElementById("books-container");
+const bookCardTemplate = document.querySelector("[data-book-template]");
 const addBookFormTemplate = document.querySelector("[data-add-book-form-template]");
 const updateBookFormTemplate = document.querySelector("[data-update-book-form-template]");
 const updateCoverImageFormTemplate = document.querySelector("[data-update-cover-image-form-template]");
-const spinnerTemplate = document.querySelector("#spinner");
-const welcomeMessage = document.querySelector(".welcome-message-container");
-const deleteAllBooksTrigger = document.querySelector(".delete-all-books");
 
+/**
+ * Spinner Element to show the loading effect.
+ */
+const spinnerTemplate = document.querySelector("#spinner");
+
+/**
+ * Description - A helper function to render books initially from the welcome page.
+ */
 function toggleViewAllBooks() {
     runSpinner();
-    allBooks.clear();
+    allCachedBooks.clear();
     clearBookContainer();
     sortByOptions.selectedIndex = "0";
     currentProperty = "";
@@ -29,29 +60,33 @@ function toggleViewAllBooks() {
     setTimeout(() => {
         getBooks(defaultApiUrl);
     }, 2000);
+    uncheckAllCheckboxes();
 }
 
-/** EVENT LISTENERS */
+
+/** 
+ * EVENT LISTENERS for all the elements.
+ * */
 viewAllBooksIntro.addEventListener("click", toggleViewAllBooksFromIntro);
+
 searchInput.addEventListener("input", () => {
     searchBooks();
 });
+
 viewAllBooksTrigger.addEventListener("click", toggleViewAllBooks);
+
 addBookTrigger.addEventListener("click", toggleAddBookForm);
+
 deleteAllBooksTrigger.addEventListener("click", deleteAllBooks);
-booksContainer.addEventListener('click', processBooks);
+deleteSelectedButton.addEventListener("click", () => { deleteSelectedBooks(selectedBooks) });
+
+booksContainer.addEventListener('click', processBooksOperation);
+
 sortByOptions.addEventListener("change", sortBooks);
 
 toggleButton.addEventListener("click", () => {
     navbarLinks.classList.toggle("active")
 });
-
-booksContainer.addEventListener("reset", (e) => {
-    const bookForm = e.target;
-    const resultContainer = bookForm.querySelector("#result-container");
-    resultContainer.innerHTML = "";
-    resultContainer.className = "";
-})
 
 booksContainer.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -73,11 +108,19 @@ booksContainer.addEventListener('submit', (e) => {
     }
 });
 
+booksContainer.addEventListener("reset", (e) => {
+    const bookForm = e.target;
+    const resultContainer = bookForm.querySelector("#result-container");
+    resultContainer.innerHTML = "";
+    resultContainer.className = "";
+})
+
+
 window.addEventListener('scroll', () => {
     if (window.scrollY + window.innerHeight >=
         document.documentElement.scrollHeight && shouldLoad) {
         shouldLoad = false;
-        let newApiUrl = paginationRequestUrlContructor(domain.name, ENDPOINTS.books, currentProperty, currentDirection, nextCursor.cursor);
+        let newApiUrl = paginationRequestUrlContructor(BASE_URL.url, ENDPOINTS.books, currentProperty, currentDirection, nextCursor.cursor);
         console.log(newApiUrl);
         getBooks(newApiUrl);
         console.log("We Have Reached the End of the Page");

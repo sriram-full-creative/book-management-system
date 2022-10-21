@@ -25,12 +25,20 @@ public class PushQueueController extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		System.out.println("Received the request in TaskQueue");
+		String requestParameter = request.getParameter("delete");
+		LinkedHashMap<String, String> responseMap = new LinkedHashMap<>();
+
 		// Add the task to the default queue.
 		Queue queue = QueueFactory.getDefaultQueue();
-		queue.add(TaskOptions.Builder.withUrl("/taskqueues/worker"));
+		if (requestParameter.equals("all")) {
+			queue.add(TaskOptions.Builder.withUrl("/taskqueues/deletebooks/all"));
+		} else if (requestParameter.equals("selected")) {
+			String contentType = request.getContentType();
+			String jsonString = BooksControllerUtilities.payloadFromRequest(request);
+			queue.add(TaskOptions.Builder.withUrl("/taskqueues/deletebooks/selected").header("Content-Type",
+					contentType).payload(jsonString));
+		}
 		System.out.println("Task is Added to the Queue Successfully");
-
-		LinkedHashMap<String, String> responseMap = new LinkedHashMap<>();
 		responseMap.put("Message", "Task is Added and will be completed");
 		String responseJson = new Gson().newBuilder().setPrettyPrinting().create().toJson(responseMap,
 				LinkedHashMap.class);

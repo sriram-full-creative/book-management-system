@@ -1,3 +1,58 @@
+.sort-container-block {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.sort-container-block>.delete-selected {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-top: 20px;
+    padding-right: 30px;
+    padding-left: 50px;
+}
+
+
+
+#delete-selected-button {
+    visibility: hidden;
+}
+
+
+.sort-container-block button:disabled {
+    font-family: apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    font-size: 12px;
+    height: 35px;
+    border-radius: 10px;
+    border: 1px solid rgb(17, 17, 17);
+    color: rgba(85, 85, 85, 0.541);
+    background-color: rgba(17, 17, 17, 0.507);
+}
+
+.sort-container-block button:enabled {
+    font-family: apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    right: 30px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    height: 35px;
+    border-radius: 10px;
+    border: #000;
+    color: rgb(0, 0, 0);
+    box-shadow: 3px 3px 0px 0px rgba(10, 10, 10, 0.993);
+    background-color: rgb(221, 51, 51);
+    cursor: pointer;
+}
+
+.sort-container-block button:active {
+    transform: translate(0.1rem, 0.1rem);
+    box-shadow: 0 0.1rem rgba(10, 10, 10, 0.993);
+    filter: brightness(115%);
+}
+
+
 .sort-container,
 .sort-container * {
     margin: 0;

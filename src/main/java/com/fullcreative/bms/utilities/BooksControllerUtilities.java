@@ -13,13 +13,14 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.UUID;
 
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import com.fullcreative.bms.models.Book;
 import com.google.appengine.api.datastore.Cursor;
@@ -39,6 +40,7 @@ import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
+import com.google.common.collect.Iterators;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
@@ -904,14 +906,19 @@ public class BooksControllerUtilities {
 
 	/**
 	 * <p>
-	 * Fetches all the Books from the Datastore.
-	 * </p>
+	 * Fetches <strong>all</strong> the Books from the Datastore.
 	 * <p>
 	 * By default the recently updated or created books will be served first.
 	 * </p>
 	 * 
 	 * @return LinkedList<String>
+	 * @deprecated - <strong>DON'T USE</strong> THIS AS IT WILL CAUSE <strong> HEAP
+	 *             SPACE ERROR.</strong>This isn't the right way as it fetches all
+	 *             the books at once and that will cause major server issues when
+	 *             scaled.
+	 *             </p>
 	 */
+	@Deprecated
 	public static LinkedList<String> getAllBooks() {
 		LinkedHashMap<String, Object> bookAsMap = new LinkedHashMap<String, Object>();
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -925,28 +932,9 @@ public class BooksControllerUtilities {
 		return books;
 	}
 
-	public static LinkedList<String> getAllBooks(String startCursor) {
-		int PAGE_SIZE = 3;
-		LinkedHashMap<String, Object> bookAsMap = new LinkedHashMap<String, Object>();
-		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-		FetchOptions fetchOptions = FetchOptions.Builder.withLimit(PAGE_SIZE);
-		if (startCursor != null) {
-			fetchOptions.startCursor(Cursor.fromWebSafeString(startCursor));
-		}
-		Query query = new Query("Books").addSort("CreatedOrUpdated", SortDirection.DESCENDING);
-		List<Entity> bookEntities = datastore.prepare(query).asQueryResultList(fetchOptions);
-		List<Book> booksFromEntities = BooksControllerUtilities.booksFromEntities(bookEntities);
-		LinkedList<String> books = new LinkedList<>();
-		for (Book book : booksFromEntities) {
-			books.add(mapToJsonString(mapFromBook(book, bookAsMap)));
-		}
-		return books;
-	}
-
 	/**
 	 * <p>
-	 * Fetches all the Books from the Datastore.
-	 * </p>
+	 * Fetches <strong>all</strong> the Books from the Datastore.
 	 * 
 	 * <p>
 	 * By default the recently updated or created books will be served first. User
@@ -969,7 +957,13 @@ public class BooksControllerUtilities {
 	 * 
 	 * @param queryParameters
 	 * @return LinkedList<String>
+	 * @deprecated - <strong>DON'T USE</strong> THIS AS IT WILL CAUSE <strong> HEAP
+	 *             SPACE ERROR.</strong>This isn't the right way as it fetches all
+	 *             the books at once and that will cause major server issues when
+	 *             scaled.
+	 *             </p>
 	 */
+	@Deprecated
 	public static LinkedList<String> getAllBooks(Map<String, String> queryParameters) {
 		LinkedHashMap<String, Object> bookAsMap = new LinkedHashMap<String, Object>();
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -989,10 +983,27 @@ public class BooksControllerUtilities {
 		return books;
 	}
 
+	public static LinkedList<String> getAllBooks(String startCursor) {
+		int PAGE_SIZE = 15;
+		LinkedHashMap<String, Object> bookAsMap = new LinkedHashMap<String, Object>();
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		FetchOptions fetchOptions = FetchOptions.Builder.withLimit(PAGE_SIZE);
+		if (startCursor != null) {
+			fetchOptions.startCursor(Cursor.fromWebSafeString(startCursor));
+		}
+		Query query = new Query("Books").addSort("CreatedOrUpdated", SortDirection.DESCENDING);
+		List<Entity> bookEntities = datastore.prepare(query).asQueryResultList(fetchOptions);
+		List<Book> booksFromEntities = BooksControllerUtilities.booksFromEntities(bookEntities);
+		LinkedList<String> books = new LinkedList<>();
+		for (Book book : booksFromEntities) {
+			books.add(mapToJsonString(mapFromBook(book, bookAsMap)));
+		}
+		return books;
+	}
+
 	public static LinkedHashMap<String, Object> getAllBooks(Map<String, String> queryParameters, String startCursor) {
 		LinkedHashMap<String, Object> results = new LinkedHashMap<String, Object>();
-		int PAGE_SIZE = 5;
-		LinkedHashMap<String, Object> bookAsMap = new LinkedHashMap<String, Object>();
+		int PAGE_SIZE = 10;
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		FetchOptions fetchOptions = FetchOptions.Builder.withLimit(PAGE_SIZE);
 		if (startCursor != null) {
@@ -1186,7 +1197,6 @@ public class BooksControllerUtilities {
 				Book responseBookData = new Book();
 				responseBookData = bookFromEntity(responseEntity);
 				responseMap = mapFromBook(responseBookData, responseMap);
-				// responseMap.put("BOOK_ID", keyObj.getName());
 				responseMap.put("STATUS_CODE", 200);
 			}
 		} catch (Exception e) {
@@ -1439,26 +1449,6 @@ public class BooksControllerUtilities {
 		response.setStatus(400);
 	}
 
-	/**
-	 * <p>
-	 * Used in TaskQueue
-	 * </p>
-	 */
-	public static void deleteAllBooks() {
-		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-		Query query = new Query("Books").addSort("CreatedOrUpdated", SortDirection.DESCENDING);
-		List<Entity> bookEntities = datastore.prepare(query).asList(FetchOptions.Builder.withDefaults());
-		for (Entity entity : bookEntities) {
-			String bookId = entity.getKey().getName();
-			System.out.println(bookId);
-			try {
-				deleteBookWithImage(bookId);
-			} catch (EntityNotFoundException e) {
-				e.printStackTrace();
-				System.out.println("Caught when Deleting the book => " + bookId);
-			}
-		}
-	}
 
 	/**
 	 * @param queryParameters
@@ -1468,7 +1458,6 @@ public class BooksControllerUtilities {
 	public static String processGetAllRequest(Map<String, String> queryParameters)
 			throws JsonSyntaxException {
 		LinkedHashMap<String, Object> results = new LinkedHashMap<String, Object>();
-		LinkedList<String> arrayOfBooks = null;
 		String startCursor = queryParameters.get("cursor");
 		results = BooksControllerUtilities.getAllBooks(queryParameters, startCursor);
 		String result = new Gson().newBuilder().setPrettyPrinting().create().toJson(results, LinkedHashMap.class)
