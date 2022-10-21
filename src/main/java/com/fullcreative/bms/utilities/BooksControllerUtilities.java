@@ -20,7 +20,6 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 import com.fullcreative.bms.models.Book;
 import com.google.appengine.api.datastore.Cursor;
@@ -34,13 +33,6 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.QueryResultList;
-import com.google.cloud.storage.Acl;
-import com.google.cloud.storage.Blob;
-import com.google.cloud.storage.BlobId;
-import com.google.cloud.storage.BlobInfo;
-import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.StorageOptions;
-import com.google.common.collect.Iterators;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
@@ -479,6 +471,170 @@ public class BooksControllerUtilities {
 	}
 
 	/**
+	 * Controller Methods
+	 */
+	/**
+	 * @param response
+	 * @param responseMap
+	 * @throws NumberFormatException
+	 * @throws IOException
+	 */
+	public static void sendPrettyJsonResponse(HttpServletResponse response, Map<String, Object> responseMap)
+			throws NumberFormatException, IOException {
+		int code = Integer.parseInt(responseMap.remove("STATUS_CODE").toString());
+		String responseAsJson = new GsonBuilder().setPrettyPrinting().create().toJson(responseMap);
+		response.setContentType("application/json");
+		response.getWriter().println(responseAsJson);
+		response.setStatus(code);
+	}
+
+	/**
+	 * @param response
+	 * @param responseMap
+	 * @throws NumberFormatException
+	 * @throws IOException
+	 */
+	public static void sendJsonResponse(HttpServletResponse response, Map<String, Object> responseMap)
+			throws NumberFormatException, IOException {
+		int code = Integer.parseInt(responseMap.remove("STATUS_CODE").toString());
+		String responseAsJson = new Gson().toJson(responseMap);
+		response.setContentType("application/json");
+		response.getWriter().print(responseAsJson);
+		response.setStatus(code);
+	}
+
+	/**
+	 * @param response
+	 * @param arrayOfBooks
+	 * @throws IOException
+	 */
+	public static void sendGetAllJsonResponse(HttpServletResponse response, LinkedList<String> arrayOfBooks)
+			throws IOException {
+		response.setContentType("application/json");
+		response.getWriter().println(arrayOfBooks);
+		response.setStatus(200);
+	}
+
+	/**
+	 * @param response
+	 * @param jsonData
+	 * @throws IOException
+	 */
+	public static void sendJsonResponse(HttpServletResponse response, String jsonData) throws IOException {
+		response.setContentType("application/json");
+		response.getWriter().println(jsonData);
+		response.setStatus(200);
+	}
+
+	/**
+	 * @param response
+	 * @param e
+	 * @throws IOException
+	 */
+	public static void sendInternalServerErrorResponse(HttpServletResponse response, Exception e) throws IOException {
+		e.printStackTrace();
+		Map<String, String> internalServerErrorMap = new LinkedHashMap<String, String>();
+		response.setContentType("application/json");
+		internalServerErrorMap.put("500", "Something went wrong");
+		String internalServerError = new Gson().toJson(internalServerErrorMap);
+		response.getWriter().println(internalServerError);
+		response.setStatus(500);
+	}
+
+	/**
+	 * @param response
+	 * @throws IOException
+	 */
+	public static void sendEmptyRequestErrorResponse(HttpServletResponse response) throws IOException {
+		Map<String, String> requestErrorMap = new LinkedHashMap<String, String>();
+		response.setContentType("application/json");
+		requestErrorMap.put("EMPTY_REQUEST_ERROR", "Request should contain json body");
+		String requestError = new Gson().toJson(requestErrorMap);
+		response.getWriter().println(requestError);
+		response.setStatus(400);
+	}
+
+	/**
+	 * @param queryParameters
+	 * @return
+	 * @throws JsonSyntaxException
+	 */
+	public static String processGetAllRequest(Map<String, String> queryParameters) throws JsonSyntaxException {
+		LinkedHashMap<String, Object> results = new LinkedHashMap<String, Object>();
+		String startCursor = queryParameters.get("cursor");
+		results = BooksControllerUtilities.getAllBooks(queryParameters, startCursor);
+		String result = new Gson().newBuilder().setPrettyPrinting().create().toJson(results, LinkedHashMap.class)
+				.toString();
+		return result;
+	}
+
+	/**
+	 * @param responseMap
+	 * @param jsonRequestString
+	 * @return
+	 * @throws NullPointerException
+	 * @throws EntityNotFoundException
+	 */
+	public static Map<String, Object> processCreateRequest(Map<String, Object> responseMap, String jsonRequestString)
+			throws NullPointerException, EntityNotFoundException {
+		// Request is empty
+		if (jsonRequestString.length() == 0 || jsonRequestString.substring(1).replaceAll("}", "").length() == 0) {
+			throw new NullPointerException();
+		}
+		// Request has only book details to be updated
+		else if (jsonRequestString != null) {
+			System.out.println("Request Has JSON Body");
+			System.out.println("Request JSON Body: " + jsonRequestString);
+			responseMap = BooksControllerUtilities.createNewBook(jsonRequestString);
+		}
+		return responseMap;
+	}
+
+	/**
+	 * @param responseMap
+	 * @param bookID
+	 * @param jsonRequestString
+	 * @return
+	 * @throws NullPointerException
+	 * @throws EntityNotFoundException
+	 */
+	public static Map<String, Object> processUpdateRequest(Map<String, Object> responseMap, String bookID,
+			String jsonRequestString) throws NullPointerException, EntityNotFoundException {
+		// Request is empty
+		if (jsonRequestString.length() == 0 || jsonRequestString.substring(1).replaceAll("}", "").length() == 0) {
+			throw new NullPointerException();
+		}
+		// Request has only book details to be updated
+		else {
+			System.out.println("Request Has JSON Body");
+			System.out.println("Request JSON Body: " + jsonRequestString);
+			responseMap = BooksControllerUtilities.updateBook(jsonRequestString, bookID);
+		}
+		return responseMap;
+	}
+
+	/**
+	 * @param bookID
+	 * @return
+	 */
+	public static LinkedHashMap<String, Object> processGetOneBookRequest(String bookID) {
+		LinkedHashMap<String, Object> responseMap = new LinkedHashMap<>();
+		try {
+			if (MemcacheUtilities.hasBookInCache(bookID) == false) {
+				responseMap = BooksControllerUtilities.getOneBook(bookID);
+			} else {
+				responseMap = MemcacheUtilities.getBookFromCache(bookID);
+				responseMap.put("STATUS_CODE", 200);
+			}
+		} catch (EntityNotFoundException e) {
+			e.printStackTrace();
+			responseMap.put("ERROR", "Book not Found. Invalid Key");
+			responseMap.put("STATUS_CODE", 404);
+		}
+		return responseMap;
+	}
+
+	/**
 	 * Utility Methods used to Perform Validations on data sent in
 	 * HttpServletRequest.
 	 **/
@@ -881,7 +1037,8 @@ public class BooksControllerUtilities {
 		} else {
 			String bookID = UUID.randomUUID().toString();
 			// Upload the file and get its URL
-			String uploadedFileUrl = BooksControllerUtilities.uploadToCloudStorage(bookID, imageFormat, fileInputStream);
+			String uploadedFileUrl = GoogleCloudStorageUtilities.uploadToCloudStorage(bookID, imageFormat,
+					fileInputStream);
 			newBook.setCoverImage(uploadedFileUrl);
 			System.out.println(uploadedFileUrl);
 			Entity entity = entityFromBook(newBook, bookID);
@@ -915,7 +1072,7 @@ public class BooksControllerUtilities {
 	 * @deprecated - <strong>DON'T USE</strong> THIS AS IT WILL CAUSE <strong> HEAP
 	 *             SPACE ERROR.</strong>This isn't the right way as it fetches all
 	 *             the books at once and that will cause major server issues when
-	 *             scaled.
+	 *             scaled. Only use when Testing.
 	 *             </p>
 	 */
 	@Deprecated
@@ -983,6 +1140,10 @@ public class BooksControllerUtilities {
 		return books;
 	}
 
+	/**
+	 * @param startCursor
+	 * @return
+	 */
 	public static LinkedList<String> getAllBooks(String startCursor) {
 		int PAGE_SIZE = 15;
 		LinkedHashMap<String, Object> bookAsMap = new LinkedHashMap<String, Object>();
@@ -1001,6 +1162,11 @@ public class BooksControllerUtilities {
 		return books;
 	}
 
+	/**
+	 * @param queryParameters
+	 * @param startCursor
+	 * @return
+	 */
 	public static LinkedHashMap<String, Object> getAllBooks(Map<String, String> queryParameters, String startCursor) {
 		LinkedHashMap<String, Object> results = new LinkedHashMap<String, Object>();
 		int PAGE_SIZE = 10;
@@ -1040,6 +1206,7 @@ public class BooksControllerUtilities {
 			Entity responseEntity = datastore.get(bookKey);
 			Book responseBookData = BooksControllerUtilities.bookFromEntity(responseEntity);
 			responseMap = mapFromBook(responseBookData, responseMap);
+			MemcacheUtilities.addBookDataInCache(bookID, responseMap);
 			responseMap.put("STATUS_CODE", 200);
 		} catch (Exception e) {
 			System.out.println("Caught in getOneBook method");
@@ -1085,6 +1252,7 @@ public class BooksControllerUtilities {
 				Book responseBookData = new Book();
 				responseBookData = bookFromEntity(responseEntity);
 				responseMap = mapFromBook(responseBookData, responseMap);
+				MemcacheUtilities.addBookDataInCache(bookID, responseMap);
 				responseMap.put("STATUS_CODE", 200);
 			}
 		} catch (Exception e) {
@@ -1129,7 +1297,8 @@ public class BooksControllerUtilities {
 				return responseMap;
 			} else {
 				// Updating the image in the GCS
-				String uploadedFileUrl = BooksControllerUtilities.uploadToCloudStorage(bookID, imageFormat, fileInputStream);
+				String uploadedFileUrl = GoogleCloudStorageUtilities.uploadToCloudStorage(bookID, imageFormat,
+						fileInputStream);
 				// Creating a entity from the updated POJO to update in Datastore.
 				entity = entityFromBookForUpdate(datastoreEntity, newBook, bookID, uploadedFileUrl);
 				Key keyObj = datastore.put(entity);
@@ -1137,6 +1306,7 @@ public class BooksControllerUtilities {
 				Book responseBookData = new Book();
 				responseBookData = bookFromEntity(responseEntity);
 				responseMap = mapFromBook(responseBookData, responseMap);
+				MemcacheUtilities.addBookDataInCache(bookID, responseMap);
 				responseMap.put("STATUS_CODE", 200);
 			}
 		} catch (Exception e) {
@@ -1189,7 +1359,8 @@ public class BooksControllerUtilities {
 			} else {
 
 				// Updating the image in the GCS
-				String uploadedFileUrl = BooksControllerUtilities.uploadToCloudStorage(bookID, imageFormat, fileInputStream);
+				String uploadedFileUrl = GoogleCloudStorageUtilities.uploadToCloudStorage(bookID, imageFormat,
+						fileInputStream);
 				// Creating a entity from the updated POJO to update in Datastore.
 				entity = entityFromBookForUpdate(datastoreEntity, newBook, bookID, uploadedFileUrl);
 				Key keyObj = datastore.put(entity);
@@ -1256,7 +1427,8 @@ public class BooksControllerUtilities {
 		try {
 			datastore.get(entityKey);
 			datastore.delete(entityKey);
-			boolean deleted = deleteImageInCloudStorage(bookID);
+			boolean deleted = GoogleCloudStorageUtilities.deleteImageInCloudStorage(bookID);
+			MemcacheUtilities.deleteBookDataInCache(bookID);
 			responseMap.put("SUCCESS", "Book was deleted");
 			responseMap.put("STATUS_CODE", 200);
 		} catch (Exception e) {
@@ -1267,247 +1439,4 @@ public class BooksControllerUtilities {
 		}
 		return responseMap;
 	}
-
-	/** Google Cloud Storage Methods **/
-
-	/**
-	 * <p>
-	 * Uploads a file to Cloud Storage and returns the uploaded file's URL.
-	 * </p>
-	 * 
-	 * @param fileName
-	 * @param fileInputStream
-	 * @return String
-	 */
-	public static String uploadToCloudStorage(String fileName, String fileFormat, InputStream fileInputStream) {
-		String projectId = "book-management-system-362310";
-		String bucketName = "book-management-system-362310.appspot.com";
-		String publicUrl = "https://storage.googleapis.com/" + bucketName + "/" + fileName;
-		Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-		BlobId blobId = BlobId.of(bucketName, fileName);
-		BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("image/" + fileFormat)
-				.setCacheControl("no-store")
-				.setAcl(new ArrayList<>(Arrays.asList(Acl.of(Acl.User.ofAllUsers(), Acl.Role.READER),
-						Acl.of(new Acl.Project(Acl.Project.ProjectRole.OWNERS, projectId), Acl.Role.OWNER))))
-				.build();
-		@SuppressWarnings({ "deprecation", "unused" })
-		Blob blob = storage.create(blobInfo, fileInputStream);
-		return publicUrl;
-	}
-
-	/**
-	 * <p>
-	 * Uploads a file to Cloud Storage and returns the uploaded file's URL.
-	 * </p>
-	 * 
-	 * @param fileName
-	 * @param fileInputStream
-	 * @return String
-	 */
-	@SuppressWarnings("deprecation")
-	public static String updateImageInCloudStorage(String fileName, String fileFormat, InputStream fileInputStream) {
-		String projectId = "book-management-system-362310";
-		String bucketName = "book-management-system-362310.appspot.com";
-		String publicUrl = "https://storage.googleapis.com/" + bucketName + "/" + fileName;
-		Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-		BlobId blobId = BlobId.of(bucketName, fileName);
-		Blob blob = storage.get(blobId);
-		blob = storage.get(blobId);
-		if (blob != null) {
-			storage.delete(bucketName, fileName);
-			BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("image/" + fileFormat)
-					.setCacheControl("no-store")
-					.setAcl(new ArrayList<>(Arrays.asList(Acl.of(Acl.User.ofAllUsers(), Acl.Role.READER),
-							Acl.of(new Acl.Project(Acl.Project.ProjectRole.OWNERS, projectId), Acl.Role.OWNER))))
-					.build();
-			blob = storage.create(blobInfo, fileInputStream);
-			return publicUrl;
-		} else {
-			BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("image/" + fileFormat)
-					.setCacheControl("no-store")
-					.setAcl(new ArrayList<>(Arrays.asList(Acl.of(Acl.User.ofAllUsers(), Acl.Role.READER),
-							Acl.of(new Acl.Project(Acl.Project.ProjectRole.OWNERS, projectId), Acl.Role.OWNER))))
-					.build();
-			blob = storage.create(blobInfo, fileInputStream);
-			return publicUrl;
-		}
-	}
-
-	/**
-	 * <p>
-	 * Deletes the coverImage of the book when the book is deleted.
-	 * </p>
-	 * 
-	 * @param fileName
-	 * @return boolean
-	 */
-	@SuppressWarnings("unused")
-	public static boolean deleteImageInCloudStorage(String fileName) {
-		String projectId = "book-management-system-362310";
-		String bucketName = "book-management-system-362310.appspot.com";
-		Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-		BlobId blobId = BlobId.of(bucketName, fileName);
-		try {
-			Blob blob = storage.get(blobId);
-			blob = storage.get(blobId);
-			if (blob != null) {
-				storage.delete(bucketName, fileName);
-				return true;
-			} else if (blob == null) {
-				return true;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("Caught in deleteImageInCloudStorage Method");
-			return false;
-		}
-		return false;
-	}
-
-	/**
-	 * Servlet Methods
-	 */
-
-	/**
-	 * @param response
-	 * @param responseMap
-	 * @throws NumberFormatException
-	 * @throws IOException
-	 */
-	public static void sendPrettyJsonResponse(HttpServletResponse response, Map<String, Object> responseMap)
-			throws NumberFormatException, IOException {
-		int code = Integer.parseInt(responseMap.remove("STATUS_CODE").toString());
-		String responseAsJson = new GsonBuilder().setPrettyPrinting().create().toJson(responseMap);
-		response.setContentType("application/json");
-		response.getWriter().println(responseAsJson);
-		response.setStatus(code);
-	}
-
-	/**
-	 * @param response
-	 * @param responseMap
-	 * @throws NumberFormatException
-	 * @throws IOException
-	 */
-	public static void sendJsonResponse(HttpServletResponse response, Map<String, Object> responseMap)
-			throws NumberFormatException, IOException {
-		int code = Integer.parseInt(responseMap.remove("STATUS_CODE").toString());
-		String responseAsJson = new Gson().toJson(responseMap);
-		response.setContentType("application/json");
-		response.getWriter().print(responseAsJson);
-		response.setStatus(code);
-	}
-
-	/**
-	 * @param response
-	 * @param arrayOfBooks
-	 * @throws IOException
-	 */
-	public static void sendGetAllJsonResponse(HttpServletResponse response, LinkedList<String> arrayOfBooks)
-			throws IOException {
-		response.setContentType("application/json");
-		response.getWriter().println(arrayOfBooks);
-		response.setStatus(200);
-	}
-
-	/**
-	 * @param response
-	 * @param jsonData
-	 * @throws IOException
-	 */
-	public static void sendJsonResponse(HttpServletResponse response, String jsonData) throws IOException {
-		response.setContentType("application/json");
-		response.getWriter().println(jsonData);
-		response.setStatus(200);
-	}
-
-	/**
-	 * @param response
-	 * @param e
-	 * @throws IOException
-	 */
-	public static void sendInternalServerErrorResponse(HttpServletResponse response, Exception e) throws IOException {
-		e.printStackTrace();
-		Map<String, String> internalServerErrorMap = new LinkedHashMap<String, String>();
-		response.setContentType("application/json");
-		internalServerErrorMap.put("500", "Something went wrong");
-		String internalServerError = new Gson().toJson(internalServerErrorMap);
-		response.getWriter().println(internalServerError);
-		response.setStatus(500);
-	}
-
-	/**
-	 * @param response
-	 * @throws IOException
-	 */
-	public static void sendEmptyRequestErrorResponse(HttpServletResponse response) throws IOException {
-		Map<String, String> requestErrorMap = new LinkedHashMap<String, String>();
-		response.setContentType("application/json");
-		requestErrorMap.put("EMPTY_REQUEST_ERROR", "Request should contain json body");
-		String requestError = new Gson().toJson(requestErrorMap);
-		response.getWriter().println(requestError);
-		response.setStatus(400);
-	}
-
-
-	/**
-	 * @param queryParameters
-	 * @return
-	 * @throws JsonSyntaxException
-	 */
-	public static String processGetAllRequest(Map<String, String> queryParameters)
-			throws JsonSyntaxException {
-		LinkedHashMap<String, Object> results = new LinkedHashMap<String, Object>();
-		String startCursor = queryParameters.get("cursor");
-		results = BooksControllerUtilities.getAllBooks(queryParameters, startCursor);
-		String result = new Gson().newBuilder().setPrettyPrinting().create().toJson(results, LinkedHashMap.class)
-				.toString();
-		return result;
-	}
-
-	/**
-	 * @param responseMap
-	 * @param jsonRequestString
-	 * @return
-	 * @throws NullPointerException
-	 * @throws EntityNotFoundException
-	 */
-	public static Map<String, Object> processCreateRequest(Map<String, Object> responseMap, String jsonRequestString)
-			throws NullPointerException, EntityNotFoundException {
-		// Request is empty
-		if (jsonRequestString.length() == 0 || jsonRequestString.substring(1).replaceAll("}", "").length() == 0) {
-			throw new NullPointerException();
-		}
-		// Request has only book details to be updated
-		else if (jsonRequestString != null) {
-			System.out.println("Request Has JSON Body");
-			System.out.println("Request JSON Body: " + jsonRequestString);
-			responseMap = BooksControllerUtilities.createNewBook(jsonRequestString);
-		}
-		return responseMap;
-	}
-
-	/**
-	 * @param responseMap
-	 * @param bookID
-	 * @param jsonRequestString
-	 * @return
-	 * @throws NullPointerException
-	 * @throws EntityNotFoundException
-	 */
-	public static Map<String, Object> processUpdateRequest(Map<String, Object> responseMap, String bookID,
-			String jsonRequestString) throws NullPointerException, EntityNotFoundException {
-		// Request is empty
-		if (jsonRequestString.length() == 0 || jsonRequestString.substring(1).replaceAll("}", "").length() == 0) {
-			throw new NullPointerException();
-		}
-		// Request has only book details to be updated
-		else {
-			System.out.println("Request Has JSON Body");
-			System.out.println("Request JSON Body: " + jsonRequestString);
-			responseMap = BooksControllerUtilities.updateBook(jsonRequestString, bookID);
-		}
-		return responseMap;
-	}
-
 }

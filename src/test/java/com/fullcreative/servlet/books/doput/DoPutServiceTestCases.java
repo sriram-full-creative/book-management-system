@@ -30,517 +30,283 @@ public class DoPutServiceTestCases {
 	 * Tests for PUT Methods
 	 * Updating everything at once
 	 */
-
 	@Test
-	public void updateBook_validBook_Test() throws EntityNotFoundException {
+	public void updateBookValidBookTest() throws EntityNotFoundException {
 		System.out.println();
-		System.out.println("updateBook_validBook_Test()");
-
+		System.out.println("updateBookValidBookTest()");
 		// Creating a book with wrong details which are to be updated
 		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestData.testCases.get("validBookBeforeUpdate");
-		String inputStringBeforeUpdate = BooksControllerUtilities.mapToJsonString(testCaseMapBeforeUpdate);
-		System.out.println("inputStringBeforeUpdate => " + inputStringBeforeUpdate);
-		LinkedHashMap<String, Object> actualBookValueBeforeUpdate = BooksControllerUtilities
-				.createNewBook(inputStringBeforeUpdate);
-		int codeBeforeUpdate = Integer.parseInt(actualBookValueBeforeUpdate.remove("STATUS_CODE").toString());
-		String keyBeforeUpdate = null;
-		if (actualBookValueBeforeUpdate.containsKey("id")) {
-			keyBeforeUpdate = actualBookValueBeforeUpdate.remove("id").toString();
-		}
-		// Checking if the book is created with the sent data
-		assertEquals(200, codeBeforeUpdate);
-		assertEquals(testCaseMapBeforeUpdate.toString(), actualBookValueBeforeUpdate.toString());
-
-		// Updating the Book
-		LinkedHashMap<String, Object> testCaseMapAfterUpdate = DoPutTestData.testCases.get("validBookAfterUpdate");
+		LinkedHashMap<String, Object> actualBookValueBeforeUpdate = DoPutServiceTestCaseUtilities
+				.proccessInputStringBeforeUpdateInTestCase(
+				testCaseMapBeforeUpdate);
+		String keyBeforeUpdate = DoPutServiceTestCaseUtilities.assertCreatedBookInDoPutTestCase(testCaseMapBeforeUpdate,
+				actualBookValueBeforeUpdate);
+		String testDataAfterUpdate = "validBookAfterUpdate";
+		LinkedHashMap<String, Object> testCaseMapAfterUpdate = DoPutTestData.testCases.get(testDataAfterUpdate);
 		String inputStringAfterUpdate = BooksControllerUtilities.mapToJsonString(testCaseMapAfterUpdate);
 		System.out.println("inputStringAfterUpdate => " + inputStringAfterUpdate);
-
-		// Updating the book by passing the bookID received from creating the book.
-		LinkedHashMap<String, Object> actualBookValueAfterUpdate = BooksControllerUtilities
-				.updateBook(inputStringAfterUpdate, keyBeforeUpdate);
-		int code = Integer.parseInt(actualBookValueAfterUpdate.remove("STATUS_CODE").toString());
-		String keyAfterUpdate = null;
-		if (actualBookValueAfterUpdate.containsKey("id")) {
-			keyAfterUpdate = actualBookValueAfterUpdate.remove("id").toString();
-		}
-		assertEquals(200, code);
-		assertEquals(testCaseMapAfterUpdate.toString(), actualBookValueAfterUpdate.toString());
-
-		// Asserting if we updated the same book by checking the returned key
-		assertEquals(keyBeforeUpdate, keyAfterUpdate);
-
+		DoPutServiceTestCaseUtilities.assertInDoPutTestCase(keyBeforeUpdate, testCaseMapAfterUpdate,
+				inputStringAfterUpdate);
 	}
+
 
 	/**
 	 * Updating Single Entities - author
 	 */
-
 	@Test
-	public void updateBook_authorName_Test() throws EntityNotFoundException {
+	public void updateBookAuthorNameTest() throws EntityNotFoundException {
 		System.out.println();
-		System.out.println("updateBook_authorName_Test()");
-
+		System.out.println("updateBookAuthorNameTest()");
 		// Creating a book with wrong details which are to be updated
 		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestData.testCases
 				.get("validBookBeforeAuthorUpdate");
-		String inputStringBeforeUpdate = BooksControllerUtilities.mapToJsonString(testCaseMapBeforeUpdate);
-		System.out.println("inputStringBeforeUpdate => " + inputStringBeforeUpdate);
-		LinkedHashMap<String, Object> actualBookValueBeforeUpdate = BooksControllerUtilities
-				.createNewBook(inputStringBeforeUpdate);
-		int codeBeforeUpdate = Integer.parseInt(actualBookValueBeforeUpdate.remove("STATUS_CODE").toString());
-		String keyBeforeUpdate = null;
-		if (actualBookValueBeforeUpdate.containsKey("id")) {
-			keyBeforeUpdate = actualBookValueBeforeUpdate.remove("id").toString();
-		}
-		// Checking if the book is created with the sent data
-		assertEquals(200, codeBeforeUpdate);
-		assertEquals(testCaseMapBeforeUpdate.toString(), actualBookValueBeforeUpdate.toString());
-
+		LinkedHashMap<String, Object> actualBookValueBeforeUpdate = DoPutServiceTestCaseUtilities
+				.proccessInputStringBeforeUpdateInTestCase(
+				testCaseMapBeforeUpdate);
+		String keyBeforeUpdate = DoPutServiceTestCaseUtilities.assertCreatedBookInDoPutTestCase(testCaseMapBeforeUpdate,
+				actualBookValueBeforeUpdate);
+		String testDataForUpdate = "validBookForAuthorUpdate";
+		String testDataAfterUpdate = "validBookAfterAuthorUpdate";
 		// Updating the Book
-		LinkedHashMap<String, Object> testCaseMapForUpdate = DoPutTestData.testCases.get("validBookForAuthorUpdate");
+		String inputStringForUpdate = DoPutServiceTestCaseUtilities.updateBookInDoPutTestCase(testDataForUpdate);
 		LinkedHashMap<String, Object> testCaseMapAfterUpdate = DoPutTestData.testCases
-				.get("validBookAfterAuthorUpdate");
-		String inputStringForrUpdate = BooksControllerUtilities.mapToJsonString(testCaseMapForUpdate);
+				.get(testDataAfterUpdate);
 		String inputStringAfterUpdate = BooksControllerUtilities.mapToJsonString(testCaseMapAfterUpdate);
 		System.out.println("inputStringAfterUpdate => " + inputStringAfterUpdate);
-
-		// Updating the book by passing the bookID received from creating the book.
-		LinkedHashMap<String, Object> actualBookValueAfterUpdate = BooksControllerUtilities.updateBook(inputStringForrUpdate,
-				keyBeforeUpdate);
-		int code = Integer.parseInt(actualBookValueAfterUpdate.remove("STATUS_CODE").toString());
-		String keyAfterUpdate = null;
-		if (actualBookValueAfterUpdate.containsKey("id")) {
-			keyAfterUpdate = actualBookValueAfterUpdate.remove("id").toString();
-		}
-		assertEquals(200, code);
-		assertEquals(testCaseMapAfterUpdate.toString(), actualBookValueAfterUpdate.toString());
-
-		// Asserting if we updated the same book by checking the returned key
-		assertEquals(keyBeforeUpdate, keyAfterUpdate);
+		DoPutServiceTestCaseUtilities.assertInDoPutTestCase(keyBeforeUpdate, testCaseMapAfterUpdate,
+				inputStringForUpdate);
 	}
+
+
+
 
 	/**
 	 * Updating Single Entities - publication
 	 */
-
 	@Test
-	public void updateBook_publication_Test() throws EntityNotFoundException {
+	public void updateBookPublicationTest() throws EntityNotFoundException {
 		System.out.println();
-		System.out.println("updateBook_publication_Test()");
-
+		System.out.println("updateBookPublicationTest()");
 		// Creating a book with wrong details which are to be updated
 		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestData.testCases
 				.get("validBookBeforePublicationUpdate");
-		String inputStringBeforeUpdate = BooksControllerUtilities.mapToJsonString(testCaseMapBeforeUpdate);
-		System.out.println("inputStringBeforeUpdate => " + inputStringBeforeUpdate);
-		LinkedHashMap<String, Object> actualBookValueBeforeUpdate = BooksControllerUtilities
-				.createNewBook(inputStringBeforeUpdate);
-		int codeBeforeUpdate = Integer.parseInt(actualBookValueBeforeUpdate.remove("STATUS_CODE").toString());
-		String keyBeforeUpdate = null;
-		if (actualBookValueBeforeUpdate.containsKey("id")) {
-			keyBeforeUpdate = actualBookValueBeforeUpdate.remove("id").toString();
-		}
-		// Checking if the book is created with the sent data
-		assertEquals(200, codeBeforeUpdate);
-		assertEquals(testCaseMapBeforeUpdate.toString(), actualBookValueBeforeUpdate.toString());
-
-		// Updating the Book
-		LinkedHashMap<String, Object> testCaseMapForUpdate = DoPutTestData.testCases
-				.get("validBookForPublicationUpdate");
+		LinkedHashMap<String, Object> actualBookValueBeforeUpdate = DoPutServiceTestCaseUtilities
+				.proccessInputStringBeforeUpdateInTestCase(
+				testCaseMapBeforeUpdate);
+		String keyBeforeUpdate = DoPutServiceTestCaseUtilities.assertCreatedBookInDoPutTestCase(testCaseMapBeforeUpdate,
+				actualBookValueBeforeUpdate);
+		String testDataForUpdate = "validBookForPublicationUpdate";
+		String testDataAfterUpdate = "validBookAfterPublicationUpdate";
+		String inputStringForUpdate = DoPutServiceTestCaseUtilities.updateBookInDoPutTestCase(testDataForUpdate);
 		LinkedHashMap<String, Object> testCaseMapAfterUpdate = DoPutTestData.testCases
-				.get("validBookAfterPublicationUpdate");
-		String inputStringForrUpdate = BooksControllerUtilities.mapToJsonString(testCaseMapForUpdate);
+				.get(testDataAfterUpdate);
 		String inputStringAfterUpdate = BooksControllerUtilities.mapToJsonString(testCaseMapAfterUpdate);
 		System.out.println("inputStringAfterUpdate => " + inputStringAfterUpdate);
-
-		// Updating the book by passing the bookID received from creating the book.
-		LinkedHashMap<String, Object> actualBookValueAfterUpdate = BooksControllerUtilities.updateBook(inputStringForrUpdate,
-				keyBeforeUpdate);
-		int code = Integer.parseInt(actualBookValueAfterUpdate.remove("STATUS_CODE").toString());
-		String keyAfterUpdate = null;
-		if (actualBookValueAfterUpdate.containsKey("id")) {
-			keyAfterUpdate = actualBookValueAfterUpdate.remove("id").toString();
-		}
-		assertEquals(200, code);
-		assertEquals(testCaseMapAfterUpdate.toString(), actualBookValueAfterUpdate.toString());
-
-		// Asserting if we updated the same book by checking the returned key
-		assertEquals(keyBeforeUpdate, keyAfterUpdate);
-
+		DoPutServiceTestCaseUtilities.assertInDoPutTestCase(keyBeforeUpdate, testCaseMapAfterUpdate,
+				inputStringForUpdate);
 	}
 
 	/**
 	 * Updating Single Entities - title
 	 */
-
 	@Test
-	public void updateBook_title_Test() throws EntityNotFoundException {
+	public void updateBookTitleTest() throws EntityNotFoundException {
 		System.out.println();
-		System.out.println("updateBook_title_Test()");
-
+		System.out.println("updateBookTitleTest()");
 		// Creating a book with wrong details which are to be updated
 		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestData.testCases
 				.get("validBookBeforeTitleUpdate");
-		String inputStringBeforeUpdate = BooksControllerUtilities.mapToJsonString(testCaseMapBeforeUpdate);
-		System.out.println("inputStringBeforeUpdate => " + inputStringBeforeUpdate);
-		LinkedHashMap<String, Object> actualBookValueBeforeUpdate = BooksControllerUtilities
-				.createNewBook(inputStringBeforeUpdate);
-		int codeBeforeUpdate = Integer.parseInt(actualBookValueBeforeUpdate.remove("STATUS_CODE").toString());
-		String keyBeforeUpdate = null;
-		if (actualBookValueBeforeUpdate.containsKey("id")) {
-			keyBeforeUpdate = actualBookValueBeforeUpdate.remove("id").toString();
-		}
-		// Checking if the book is created with the sent data
-		assertEquals(200, codeBeforeUpdate);
-		assertEquals(testCaseMapBeforeUpdate.toString(), actualBookValueBeforeUpdate.toString());
-
-		// Updating the Book
-		LinkedHashMap<String, Object> testCaseMapForUpdate = DoPutTestData.testCases.get("validBookForTitleUpdate");
+		LinkedHashMap<String, Object> actualBookValueBeforeUpdate = DoPutServiceTestCaseUtilities
+				.proccessInputStringBeforeUpdateInTestCase(
+				testCaseMapBeforeUpdate);
+		String keyBeforeUpdate = DoPutServiceTestCaseUtilities.assertCreatedBookInDoPutTestCase(testCaseMapBeforeUpdate,
+				actualBookValueBeforeUpdate);
+		String testDataForUpdate = "validBookForTitleUpdate";
+		String testDataAfterUpdate = "validBookAfterTitleUpdate";
+		String inputStringForUpdate = DoPutServiceTestCaseUtilities.updateBookInDoPutTestCase(testDataForUpdate);
 		LinkedHashMap<String, Object> testCaseMapAfterUpdate = DoPutTestData.testCases
-				.get("validBookAfterTitleUpdate");
-		String inputStringForrUpdate = BooksControllerUtilities.mapToJsonString(testCaseMapForUpdate);
+				.get(testDataAfterUpdate);
 		String inputStringAfterUpdate = BooksControllerUtilities.mapToJsonString(testCaseMapAfterUpdate);
 		System.out.println("inputStringAfterUpdate => " + inputStringAfterUpdate);
-
-		// Updating the book by passing the bookID received from creating the book.
-		LinkedHashMap<String, Object> actualBookValueAfterUpdate = BooksControllerUtilities.updateBook(inputStringForrUpdate,
-				keyBeforeUpdate);
-		int code = Integer.parseInt(actualBookValueAfterUpdate.remove("STATUS_CODE").toString());
-		String keyAfterUpdate = null;
-		if (actualBookValueAfterUpdate.containsKey("id")) {
-			keyAfterUpdate = actualBookValueAfterUpdate.remove("id").toString();
-		}
-		assertEquals(200, code);
-		assertEquals(testCaseMapAfterUpdate.toString(), actualBookValueAfterUpdate.toString());
-
-		// Asserting if we updated the same book by checking the returned key
-		assertEquals(keyBeforeUpdate, keyAfterUpdate);
-
+		DoPutServiceTestCaseUtilities.assertInDoPutTestCase(keyBeforeUpdate, testCaseMapAfterUpdate,
+				inputStringForUpdate);
 	}
 
 	/**
 	 * Updating Single Entities - language
 	 */
-
 	@Test
-	public void updateBook_language_Test() throws EntityNotFoundException {
+	public void updateBookLanguageTest() throws EntityNotFoundException {
 		System.out.println();
-		System.out.println("updateBook_language_Test()");
-
+		System.out.println("updateBookLanguageTest()");
 		// Creating a book with wrong details which are to be updated
 		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestData.testCases
 				.get("validBookBeforeLanguageUpdate");
-		String inputStringBeforeUpdate = BooksControllerUtilities.mapToJsonString(testCaseMapBeforeUpdate);
-		System.out.println("inputStringBeforeUpdate => " + inputStringBeforeUpdate);
-		LinkedHashMap<String, Object> actualBookValueBeforeUpdate = BooksControllerUtilities
-				.createNewBook(inputStringBeforeUpdate);
-		int codeBeforeUpdate = Integer.parseInt(actualBookValueBeforeUpdate.remove("STATUS_CODE").toString());
-		String keyBeforeUpdate = null;
-		if (actualBookValueBeforeUpdate.containsKey("id")) {
-			keyBeforeUpdate = actualBookValueBeforeUpdate.remove("id").toString();
-		}
-		// Checking if the book is created with the sent data
-		assertEquals(200, codeBeforeUpdate);
-		assertEquals(testCaseMapBeforeUpdate.toString(), actualBookValueBeforeUpdate.toString());
-
-		// Updating the Book
-		LinkedHashMap<String, Object> testCaseMapForUpdate = DoPutTestData.testCases.get("validBookForLanguageUpdate");
+		LinkedHashMap<String, Object> actualBookValueBeforeUpdate = DoPutServiceTestCaseUtilities
+				.proccessInputStringBeforeUpdateInTestCase(
+				testCaseMapBeforeUpdate);
+		String keyBeforeUpdate = DoPutServiceTestCaseUtilities.assertCreatedBookInDoPutTestCase(testCaseMapBeforeUpdate,
+				actualBookValueBeforeUpdate);
+		String testDataForUpdate = "validBookForLanguageUpdate";
+		String testDataAfterUpdate = "validBookAfterLanguageUpdate";
+		String inputStringForUpdate = DoPutServiceTestCaseUtilities.updateBookInDoPutTestCase(testDataForUpdate);
 		LinkedHashMap<String, Object> testCaseMapAfterUpdate = DoPutTestData.testCases
-				.get("validBookAfterLanguageUpdate");
-		String inputStringForrUpdate = BooksControllerUtilities.mapToJsonString(testCaseMapForUpdate);
+				.get(testDataAfterUpdate);
 		String inputStringAfterUpdate = BooksControllerUtilities.mapToJsonString(testCaseMapAfterUpdate);
 		System.out.println("inputStringAfterUpdate => " + inputStringAfterUpdate);
-
-		// Updating the book by passing the bookID received from creating the book.
-		LinkedHashMap<String, Object> actualBookValueAfterUpdate = BooksControllerUtilities.updateBook(inputStringForrUpdate,
-				keyBeforeUpdate);
-		int code = Integer.parseInt(actualBookValueAfterUpdate.remove("STATUS_CODE").toString());
-		String keyAfterUpdate = null;
-		if (actualBookValueAfterUpdate.containsKey("id")) {
-			keyAfterUpdate = actualBookValueAfterUpdate.remove("id").toString();
-		}
-		assertEquals(200, code);
-		assertEquals(testCaseMapAfterUpdate.toString(), actualBookValueAfterUpdate.toString());
-
-		// Asserting if we updated the same book by checking the returned key
-		assertEquals(keyBeforeUpdate, keyAfterUpdate);
-
+		DoPutServiceTestCaseUtilities.assertInDoPutTestCase(keyBeforeUpdate, testCaseMapAfterUpdate,
+				inputStringForUpdate);
 	}
+
 
 	/**
 	 * Updating Single Entities - pages
 	 */
-
 	@Test
-	public void updateBook_pages_Test() throws EntityNotFoundException {
+	public void updateBookPagesTest() throws EntityNotFoundException {
 		System.out.println();
-		System.out.println("updateBook_pages_Test()");
-
+		System.out.println("updateBookPagesTest()");
 		// Creating a book with wrong details which are to be updated
 		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestData.testCases
 				.get("validBookBeforePagesUpdate");
-		String inputStringBeforeUpdate = BooksControllerUtilities.mapToJsonString(testCaseMapBeforeUpdate);
-		System.out.println("inputStringBeforeUpdate => " + inputStringBeforeUpdate);
-		LinkedHashMap<String, Object> actualBookValueBeforeUpdate = BooksControllerUtilities
-				.createNewBook(inputStringBeforeUpdate);
-		int codeBeforeUpdate = Integer.parseInt(actualBookValueBeforeUpdate.remove("STATUS_CODE").toString());
-		String keyBeforeUpdate = null;
-		if (actualBookValueBeforeUpdate.containsKey("id")) {
-			keyBeforeUpdate = actualBookValueBeforeUpdate.remove("id").toString();
-		}
-		// Checking if the book is created with the sent data
-		assertEquals(200, codeBeforeUpdate);
-		assertEquals(testCaseMapBeforeUpdate.toString(), actualBookValueBeforeUpdate.toString());
-
-		// Updating the Book
-		LinkedHashMap<String, Object> testCaseMapForUpdate = DoPutTestData.testCases.get("validBookForPagesUpdate");
+		LinkedHashMap<String, Object> actualBookValueBeforeUpdate = DoPutServiceTestCaseUtilities
+				.proccessInputStringBeforeUpdateInTestCase(
+				testCaseMapBeforeUpdate);
+		String keyBeforeUpdate = DoPutServiceTestCaseUtilities.assertCreatedBookInDoPutTestCase(testCaseMapBeforeUpdate,
+				actualBookValueBeforeUpdate);
+		String testDataForUpdate = "validBookForPagesUpdate";
+		String testDataAfterUpdate = "validBookAfterPagesUpdate";
+		String inputStringForUpdate = DoPutServiceTestCaseUtilities.updateBookInDoPutTestCase(testDataForUpdate);
 		LinkedHashMap<String, Object> testCaseMapAfterUpdate = DoPutTestData.testCases
-				.get("validBookAfterPagesUpdate");
-		String inputStringForrUpdate = BooksControllerUtilities.mapToJsonString(testCaseMapForUpdate);
+				.get(testDataAfterUpdate);
 		String inputStringAfterUpdate = BooksControllerUtilities.mapToJsonString(testCaseMapAfterUpdate);
 		System.out.println("inputStringAfterUpdate => " + inputStringAfterUpdate);
-
-		// Updating the book by passing the bookID received from creating the book.
-		LinkedHashMap<String, Object> actualBookValueAfterUpdate = BooksControllerUtilities.updateBook(inputStringForrUpdate,
-				keyBeforeUpdate);
-		int code = Integer.parseInt(actualBookValueAfterUpdate.remove("STATUS_CODE").toString());
-		String keyAfterUpdate = null;
-		if (actualBookValueAfterUpdate.containsKey("id")) {
-			keyAfterUpdate = actualBookValueAfterUpdate.remove("id").toString();
-		}
-		assertEquals(200, code);
-		assertEquals(testCaseMapAfterUpdate.toString(), actualBookValueAfterUpdate.toString());
-
-		// Asserting if we updated the same book by checking the returned key
-		assertEquals(keyBeforeUpdate, keyAfterUpdate);
-
+		DoPutServiceTestCaseUtilities.assertInDoPutTestCase(keyBeforeUpdate, testCaseMapAfterUpdate,
+				inputStringForUpdate);
 	}
 
 	/**
 	 * Updating Single Entities - releaseYear
 	 */
-
 	@Test
-	public void updateBook_releaseYear_Test() throws EntityNotFoundException {
+	public void updateBookReleaseYearTest() throws EntityNotFoundException {
 		System.out.println();
-		System.out.println("updateBook_releaseYear_Test()");
-
+		System.out.println("updateBookReleaseYearTest()");
 		// Creating a book with wrong details which are to be updated
 		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestData.testCases
 				.get("validBookBeforeReleaseYearUpdate");
-		String inputStringBeforeUpdate = BooksControllerUtilities.mapToJsonString(testCaseMapBeforeUpdate);
-		System.out.println("inputStringBeforeUpdate => " + inputStringBeforeUpdate);
-		LinkedHashMap<String, Object> actualBookValueBeforeUpdate = BooksControllerUtilities
-				.createNewBook(inputStringBeforeUpdate);
-		int codeBeforeUpdate = Integer.parseInt(actualBookValueBeforeUpdate.remove("STATUS_CODE").toString());
-		String keyBeforeUpdate = null;
-		if (actualBookValueBeforeUpdate.containsKey("id")) {
-			keyBeforeUpdate = actualBookValueBeforeUpdate.remove("id").toString();
-		}
-		// Checking if the book is created with the sent data
-		assertEquals(200, codeBeforeUpdate);
-		assertEquals(testCaseMapBeforeUpdate.toString(), actualBookValueBeforeUpdate.toString());
-
-		// Updating the Book
-		LinkedHashMap<String, Object> testCaseMapForUpdate = DoPutTestData.testCases
-				.get("validBookForReleaseYearUpdate");
+		LinkedHashMap<String, Object> actualBookValueBeforeUpdate = DoPutServiceTestCaseUtilities
+				.proccessInputStringBeforeUpdateInTestCase(
+				testCaseMapBeforeUpdate);
+		String keyBeforeUpdate = DoPutServiceTestCaseUtilities.assertCreatedBookInDoPutTestCase(testCaseMapBeforeUpdate,
+				actualBookValueBeforeUpdate);
+		String testDataForUpdate = "validBookForReleaseYearUpdate";
+		String testDataAfterUpdate = "validBookAfterReleaseYearUpdate";
+		String inputStringForUpdate = DoPutServiceTestCaseUtilities.updateBookInDoPutTestCase(testDataForUpdate);
 		LinkedHashMap<String, Object> testCaseMapAfterUpdate = DoPutTestData.testCases
-				.get("validBookAfterReleaseYearUpdate");
-		String inputStringForrUpdate = BooksControllerUtilities.mapToJsonString(testCaseMapForUpdate);
+				.get(testDataAfterUpdate);
 		String inputStringAfterUpdate = BooksControllerUtilities.mapToJsonString(testCaseMapAfterUpdate);
 		System.out.println("inputStringAfterUpdate => " + inputStringAfterUpdate);
-
-		// Updating the book by passing the bookID received from creating the book.
-		LinkedHashMap<String, Object> actualBookValueAfterUpdate = BooksControllerUtilities.updateBook(inputStringForrUpdate,
-				keyBeforeUpdate);
-		int code = Integer.parseInt(actualBookValueAfterUpdate.remove("STATUS_CODE").toString());
-		String keyAfterUpdate = null;
-		if (actualBookValueAfterUpdate.containsKey("id")) {
-			keyAfterUpdate = actualBookValueAfterUpdate.remove("id").toString();
-		}
-		assertEquals(200, code);
-		assertEquals(testCaseMapAfterUpdate.toString(), actualBookValueAfterUpdate.toString());
-
-		// Asserting if we updated the same book by checking the returned key
-		assertEquals(keyBeforeUpdate, keyAfterUpdate);
-
+		DoPutServiceTestCaseUtilities.assertInDoPutTestCase(keyBeforeUpdate, testCaseMapAfterUpdate,
+				inputStringForUpdate);
 	}
+
 
 	/**
 	 * Updating Single Entities - country
 	 */
-
 	@Test
-	public void updateBook_country_Test() throws EntityNotFoundException {
+	public void updateBookCountryTest() throws EntityNotFoundException {
 		System.out.println();
-		System.out.println("updateBook_country_Test()");
-
+		System.out.println("updateBookCountryTest()");
 		// Creating a book with wrong details which are to be updated
 		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestData.testCases
 				.get("validBookBeforeCountryUpdate");
-		String inputStringBeforeUpdate = BooksControllerUtilities.mapToJsonString(testCaseMapBeforeUpdate);
-		System.out.println("inputStringBeforeUpdate => " + inputStringBeforeUpdate);
-		LinkedHashMap<String, Object> actualBookValueBeforeUpdate = BooksControllerUtilities
-				.createNewBook(inputStringBeforeUpdate);
-		int codeBeforeUpdate = Integer.parseInt(actualBookValueBeforeUpdate.remove("STATUS_CODE").toString());
-		String keyBeforeUpdate = null;
-		if (actualBookValueBeforeUpdate.containsKey("id")) {
-			keyBeforeUpdate = actualBookValueBeforeUpdate.remove("id").toString();
-		}
-		// Checking if the book is created with the sent data
-		assertEquals(200, codeBeforeUpdate);
-		assertEquals(testCaseMapBeforeUpdate.toString(), actualBookValueBeforeUpdate.toString());
-
-		// Updating the Book
-		LinkedHashMap<String, Object> testCaseMapForUpdate = DoPutTestData.testCases.get("validBookForCountryUpdate");
+		LinkedHashMap<String, Object> actualBookValueBeforeUpdate = DoPutServiceTestCaseUtilities
+				.proccessInputStringBeforeUpdateInTestCase(
+				testCaseMapBeforeUpdate);
+		String keyBeforeUpdate = DoPutServiceTestCaseUtilities.assertCreatedBookInDoPutTestCase(testCaseMapBeforeUpdate,
+				actualBookValueBeforeUpdate);
+		String testDataForUpdate = "validBookForCountryUpdate";
+		String testDataAfterUpdate = "validBookAfterCountryUpdate";
+		String inputStringForUpdate = DoPutServiceTestCaseUtilities.updateBookInDoPutTestCase(testDataForUpdate);
 		LinkedHashMap<String, Object> testCaseMapAfterUpdate = DoPutTestData.testCases
-				.get("validBookAfterCountryUpdate");
-		String inputStringForrUpdate = BooksControllerUtilities.mapToJsonString(testCaseMapForUpdate);
+				.get(testDataAfterUpdate);
 		String inputStringAfterUpdate = BooksControllerUtilities.mapToJsonString(testCaseMapAfterUpdate);
 		System.out.println("inputStringAfterUpdate => " + inputStringAfterUpdate);
-
-		// Updating the book by passing the bookID received from creating the book.
-		LinkedHashMap<String, Object> actualBookValueAfterUpdate = BooksControllerUtilities.updateBook(inputStringForrUpdate,
-				keyBeforeUpdate);
-		int code = Integer.parseInt(actualBookValueAfterUpdate.remove("STATUS_CODE").toString());
-		String keyAfterUpdate = null;
-		if (actualBookValueAfterUpdate.containsKey("id")) {
-			keyAfterUpdate = actualBookValueAfterUpdate.remove("id").toString();
-		}
-		assertEquals(200, code);
-		assertEquals(testCaseMapAfterUpdate.toString(), actualBookValueAfterUpdate.toString());
-
-		// Asserting if we updated the same book by checking the returned key
-		assertEquals(keyBeforeUpdate, keyAfterUpdate);
-
+		DoPutServiceTestCaseUtilities.assertInDoPutTestCase(keyBeforeUpdate, testCaseMapAfterUpdate,
+				inputStringForUpdate);
 	}
 
 	/**
 	 * Updating Single Entities - coverImage
 	 */
-
 	@Test
-	public void updateBook_coverImage_Test() throws EntityNotFoundException {
+	public void updateBookCoverImageTest() throws EntityNotFoundException {
 		System.out.println();
-		System.out.println("updateBook_coverImage_Test()");
-
+		System.out.println("updateBookCoverImageTest()");
 		// Creating a book with wrong details which are to be updated
 		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestData.testCases
 				.get("validBookBeforeCoverImageUpdate");
-		String inputStringBeforeUpdate = BooksControllerUtilities.mapToJsonString(testCaseMapBeforeUpdate);
-		System.out.println("inputStringBeforeUpdate => " + inputStringBeforeUpdate);
-		LinkedHashMap<String, Object> actualBookValueBeforeUpdate = BooksControllerUtilities
-				.createNewBook(inputStringBeforeUpdate);
-		int codeBeforeUpdate = Integer.parseInt(actualBookValueBeforeUpdate.remove("STATUS_CODE").toString());
-		String keyBeforeUpdate = null;
-		if (actualBookValueBeforeUpdate.containsKey("id")) {
-			keyBeforeUpdate = actualBookValueBeforeUpdate.remove("id").toString();
-		}
-		// Checking if the book is created with the sent data
-		assertEquals(200, codeBeforeUpdate);
-		assertEquals(testCaseMapBeforeUpdate.toString(), actualBookValueBeforeUpdate.toString());
-
-		// Updating the Book
-		LinkedHashMap<String, Object> testCaseMapForUpdate = DoPutTestData.testCases
-				.get("validBookForCoverImageUpdate");
+		LinkedHashMap<String, Object> actualBookValueBeforeUpdate = DoPutServiceTestCaseUtilities
+				.proccessInputStringBeforeUpdateInTestCase(
+				testCaseMapBeforeUpdate);
+		String keyBeforeUpdate = DoPutServiceTestCaseUtilities.assertCreatedBookInDoPutTestCase(testCaseMapBeforeUpdate,
+				actualBookValueBeforeUpdate);
+		String testDataForUpdate = "validBookForCoverImageUpdate";
+		String testDataAfterUpdate = "validBookAfterCoverImageUpdate";
+		String inputStringForUpdate = DoPutServiceTestCaseUtilities.updateBookInDoPutTestCase(testDataForUpdate);
 		LinkedHashMap<String, Object> testCaseMapAfterUpdate = DoPutTestData.testCases
-				.get("validBookAfterCoverImageUpdate");
-		String inputStringForrUpdate = BooksControllerUtilities.mapToJsonString(testCaseMapForUpdate);
+				.get(testDataAfterUpdate);
 		String inputStringAfterUpdate = BooksControllerUtilities.mapToJsonString(testCaseMapAfterUpdate);
 		System.out.println("inputStringAfterUpdate => " + inputStringAfterUpdate);
-
-		// Updating the book by passing the bookID received from creating the book.
-		LinkedHashMap<String, Object> actualBookValueAfterUpdate = BooksControllerUtilities.updateBook(inputStringForrUpdate,
-				keyBeforeUpdate);
-		int code = Integer.parseInt(actualBookValueAfterUpdate.remove("STATUS_CODE").toString());
-		String keyAfterUpdate = null;
-		if (actualBookValueAfterUpdate.containsKey("id")) {
-			keyAfterUpdate = actualBookValueAfterUpdate.remove("id").toString();
-		}
-		assertEquals(200, code);
-		assertEquals(testCaseMapAfterUpdate.toString(), actualBookValueAfterUpdate.toString());
-
-		// Asserting if we updated the same book by checking the returned key
-		assertEquals(keyBeforeUpdate, keyAfterUpdate);
-
+		DoPutServiceTestCaseUtilities.assertInDoPutTestCase(keyBeforeUpdate, testCaseMapAfterUpdate,
+				inputStringForUpdate);
 	}
 
 
 	/**
 	 * Updating Single Entities - rating
 	 */
-
 	@Test
-	public void updateBook_rating_Test() throws EntityNotFoundException {
+	public void updateBookRatingTest() throws EntityNotFoundException {
 		System.out.println();
-		System.out.println("updateBook_rating_Test()");
-
+		System.out.println("updateBookRatingTest()");
 		// Creating a book with wrong details which are to be updated
 		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestData.testCases
 				.get("validBookBeforeRatingUpdate");
-		String inputStringBeforeUpdate = BooksControllerUtilities.mapToJsonString(testCaseMapBeforeUpdate);
-		System.out.println("inputStringBeforeUpdate => " + inputStringBeforeUpdate);
-		LinkedHashMap<String, Object> actualBookValueBeforeUpdate = BooksControllerUtilities
-				.createNewBook(inputStringBeforeUpdate);
-		int codeBeforeUpdate = Integer.parseInt(actualBookValueBeforeUpdate.remove("STATUS_CODE").toString());
-		String keyBeforeUpdate = null;
-		if (actualBookValueBeforeUpdate.containsKey("id")) {
-			keyBeforeUpdate = actualBookValueBeforeUpdate.remove("id").toString();
-		}
-		// Checking if the book is created with the sent data
-		assertEquals(200, codeBeforeUpdate);
-		assertEquals(testCaseMapBeforeUpdate.toString(), actualBookValueBeforeUpdate.toString());
-
-		// Updating the Book
-		LinkedHashMap<String, Object> testCaseMapForUpdate = DoPutTestData.testCases.get("validBookForRatingUpdate");
+		LinkedHashMap<String, Object> actualBookValueBeforeUpdate = DoPutServiceTestCaseUtilities
+				.proccessInputStringBeforeUpdateInTestCase(
+				testCaseMapBeforeUpdate);
+		String keyBeforeUpdate = DoPutServiceTestCaseUtilities.assertCreatedBookInDoPutTestCase(testCaseMapBeforeUpdate,
+				actualBookValueBeforeUpdate);
+		String testDataForUpdate = "validBookForRatingUpdate";
+		String testDataAfterUpdate = "validBookAfterRatingUpdate";
+		String inputStringForUpdate = DoPutServiceTestCaseUtilities.updateBookInDoPutTestCase(testDataForUpdate);
 		LinkedHashMap<String, Object> testCaseMapAfterUpdate = DoPutTestData.testCases
-				.get("validBookAfterRatingUpdate");
-		String inputStringForrUpdate = BooksControllerUtilities.mapToJsonString(testCaseMapForUpdate);
+				.get(testDataAfterUpdate);
 		String inputStringAfterUpdate = BooksControllerUtilities.mapToJsonString(testCaseMapAfterUpdate);
 		System.out.println("inputStringAfterUpdate => " + inputStringAfterUpdate);
 
-		// Updating the book by passing the bookID received from creating the book.
-		LinkedHashMap<String, Object> actualBookValueAfterUpdate = BooksControllerUtilities.updateBook(inputStringForrUpdate,
-				keyBeforeUpdate);
-		int code = Integer.parseInt(actualBookValueAfterUpdate.remove("STATUS_CODE").toString());
-		String keyAfterUpdate = null;
-		if (actualBookValueAfterUpdate.containsKey("id")) {
-			keyAfterUpdate = actualBookValueAfterUpdate.remove("id").toString();
-		}
-		assertEquals(200, code);
-		assertEquals(testCaseMapAfterUpdate.toString(), actualBookValueAfterUpdate.toString());
-
-		// Asserting if we updated the same book by checking the returned key
-		assertEquals(keyBeforeUpdate, keyAfterUpdate);
-
+		DoPutServiceTestCaseUtilities.assertInDoPutTestCase(keyBeforeUpdate, testCaseMapAfterUpdate,
+				inputStringForUpdate);
 	}
 
 	/**
 	 * Update with Invalid Key
 	 **/
-
 	@SuppressWarnings("unused")
 	@Test
-	public void updateBook_invalidKey_Test() throws EntityNotFoundException {
+	public void updateBookInvalidKeyTest() throws EntityNotFoundException {
 		System.out.println();
-		System.out.println("updateBook_invalidKey_Test()");
-
+		System.out.println("updateBookInvalidKeyTest()");
 		// Creating a book with wrong details which are to be updated
 		LinkedHashMap<String, Object> testCaseMapBeforeUpdate = DoPutTestData.testCases.get("validBookBeforeUpdate");
-		String inputStringBeforeUpdate = BooksControllerUtilities.mapToJsonString(testCaseMapBeforeUpdate);
-		System.out.println("inputStringBeforeUpdate => " + inputStringBeforeUpdate);
-		LinkedHashMap<String, Object> actualBookValueBeforeUpdate = BooksControllerUtilities
-				.createNewBook(inputStringBeforeUpdate);
-		int codeBeforeUpdate = Integer.parseInt(actualBookValueBeforeUpdate.remove("STATUS_CODE").toString());
-		String keyBeforeUpdate = null;
-		if (actualBookValueBeforeUpdate.containsKey("id")) {
-			keyBeforeUpdate = actualBookValueBeforeUpdate.remove("id").toString();
-		}
-		// Checking if the book is created with the sent data
-		assertEquals(200, codeBeforeUpdate);
-		assertEquals(testCaseMapBeforeUpdate.toString(), actualBookValueBeforeUpdate.toString());
-
+		LinkedHashMap<String, Object> actualBookValueBeforeUpdate = DoPutServiceTestCaseUtilities
+				.proccessInputStringBeforeUpdateInTestCase(
+				testCaseMapBeforeUpdate);
+		String keyBeforeUpdate = DoPutServiceTestCaseUtilities.assertCreatedBookInDoPutTestCase(testCaseMapBeforeUpdate,
+				actualBookValueBeforeUpdate);
 		// Updating the book with valid and correct details
 		LinkedHashMap<String, Object> validBookMapAfterUpdate = DoPutTestData.testCases.get("validBookAfterUpdate");
 		String inputStringStringForUpdate = BooksControllerUtilities.mapToJsonString(validBookMapAfterUpdate);

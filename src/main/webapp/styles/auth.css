@@ -71,6 +71,7 @@ body {
     text-align: center;
     font-size: 1.5rem;
     font-family: apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    text-shadow: 2px 2px #464242;
 }
 
 form {
@@ -138,7 +139,11 @@ a:active {
     padding: 2px 12px 2px 12px;
     align-content: space-around;
     background-color: #111;
-    color: wheat;
+    color: white;
+    border-radius: 10px;
+    border: #000;
+    box-shadow: 3px 3px 0px 0px rgba(61, 59, 59, 0.993);
+
 }
 
 
@@ -147,9 +152,20 @@ a:active {
 #form-reset:hover {
     margin: 5px;
     align-content: space-around;
-    background-color: wheat;
+    background-color: antiquewhite;
     color: black;
 }
+
+
+#login:active,
+#signup:active,
+#form-reset:active {
+    transform: translate(0.1rem, 0.1rem);
+    box-shadow: 0 0.1rem rgba(10, 10, 10, 0.993);
+    filter: brightness(115%);
+}
+
+
 
 label {
     font-family: apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
