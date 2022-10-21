@@ -1,6 +1,9 @@
 package com.fullcreative.bms.taskqueues;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -8,6 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.fullcreative.bms.utilities.BooksControllerUtilities;
+import com.fullcreative.bms.utilities.TaskQueuesUtilities;
+import com.google.gson.Gson;
 
 /**
  * Servlet implementation class DeleteSelectedBooksTaskHandler. This is a worker
@@ -18,17 +23,20 @@ import com.fullcreative.bms.utilities.BooksControllerUtilities;
 public class DeleteSelectedBooksTaskHandler extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
+	@SuppressWarnings("unchecked")
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("Received the request in TaskHandler");
+		System.err.println("Received the request in DeleteSelectedBooksTaskHandler");
 		try {
-			System.out.println("Work will be started in 10 seconds");
-			Thread.sleep(10000);
-			System.out.println("Worker is processing the Request to Delete all the books");
-			BooksControllerUtilities.deleteAllBooks();
-			System.out.println("Work is Done");
-		} catch (InterruptedException e) {
+			String jsonString = BooksControllerUtilities.payloadFromRequest(request);
+			Gson gson = new Gson();
+			LinkedHashMap<String, ArrayList<String>> map = gson.fromJson(jsonString, LinkedHashMap.class);
+			ArrayList<String> booksToBeDeleted = map.get("books");
+			System.err.println("Worker is processing the Request to Delete selected books");
+			TaskQueuesUtilities.deleteSelectedBooks(booksToBeDeleted);
+			System.err.println("Work is Done DeleteSelectedBooksTaskHandler");
+		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println("Caught in worker method");
+			System.err.println("Caught in worker method");
 		}
 
 	}

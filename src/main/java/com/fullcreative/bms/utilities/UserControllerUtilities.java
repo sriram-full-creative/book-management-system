@@ -2,16 +2,13 @@ package com.fullcreative.bms.utilities;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -19,7 +16,6 @@ import java.util.UUID;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.Part;
 
 import com.fullcreative.bms.models.Login;
 import com.fullcreative.bms.models.User;
@@ -39,25 +35,9 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Query.SortDirection;
-import com.google.cloud.storage.Acl;
-import com.google.cloud.storage.Blob;
-import com.google.cloud.storage.BlobId;
-import com.google.cloud.storage.BlobInfo;
-import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.StorageOptions;
 
 public class UserControllerUtilities {
 
-	// Create Payloads String
-	public static String payloadAsStringFromRequest(HttpServletRequest request) throws IOException {
-
-		/*
-		 * StringBuffer sb = new StringBuffer(); String line = null; BufferedReader
-		 * reader = request.getReader(); while ((line = reader.readLine()) != null) {
-		 * sb.append(line); } return sb.toString();
-		 */
-		return request.getParameter("json");
-	}
 	
 	public static String payloadAsStringFromRequestSignup(HttpServletRequest request) throws IOException {
 
@@ -94,16 +74,6 @@ public class UserControllerUtilities {
 		}
 	}
 
-	public static String convertMapToJsonString(Map<String, Object> map) {
-		Gson gson = new Gson();
-		System.out.println(map);
-		String gsonString = gson.toJson(map, Map.class);
-		System.out.println(gsonString);
-		User user = gson.fromJson(gsonString, User.class);
-		String jsonString = gson.toJson(user);
-		System.out.println(jsonString);
-		return jsonString;
-	}
 
 	// Create Entity From User Pojo
 	public static Entity entityFromUser(String userKey, User requestUserData)

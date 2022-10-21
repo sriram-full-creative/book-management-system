@@ -55,36 +55,41 @@
         </div>
     </nav>
 
-    <div class="sort-container">
-        <label for="sort-books">Sort by: </label>
-        <select name="sort-books" id="sort-books">
-            <option value="time-descending">Recently Updated</option>
-            <option value="time-ascending">First Updated</option>
+    <div class="sort-container-block">
+        <div class="sort-container">
+            <label for="sort-books">Sort by: </label>
+            <select name="sort-books" id="sort-books">
+                <option value="time-descending">Recently Updated</option>
+                <option value="time-ascending">First Updated</option>
 
-            <option value="author-descending">Author (High to Low)</option>
-            <option value="author-ascending">Author (Low to High)</option>
+                <option value="author-descending">Author (High to Low)</option>
+                <option value="author-ascending">Author (Low to High)</option>
 
-            <option value="publication-descending">Publication (High to Low)</option>
-            <option value="publication-ascending">Publication (Low to High)</option>
+                <option value="publication-descending">Publication (High to Low)</option>
+                <option value="publication-ascending">Publication (Low to High)</option>
 
-            <option value="title-descending">Title (High to Low)</option>
-            <option value="title-ascending">Title (Low to High)</option>
+                <option value="title-descending">Title (High to Low)</option>
+                <option value="title-ascending">Title (Low to High)</option>
 
-            <option value="pages-descending">Pages (High to Low)</option>
-            <option value="pages-ascending">Pages (Low to High)</option>
+                <option value="pages-descending">Pages (High to Low)</option>
+                <option value="pages-ascending">Pages (Low to High)</option>
 
-            <option value="release-year-descending">Release Year (High to Low)</option>
-            <option value="release-year-ascending">Release Year (Low to High)</option>
+                <option value="release-year-descending">Release Year (High to Low)</option>
+                <option value="release-year-ascending">Release Year (Low to High)</option>
 
-            <option value="rating-descending">Rating (High to Low)</option>
-            <option value="rating-ascending">Rating (Low to High)</option>
-        </select>
+                <option value="rating-descending">Rating (High to Low)</option>
+                <option value="rating-ascending">Rating (Low to High)</option>
+            </select>
+        </div>
+        <div id="delete-selected-field" class="delete-selected">
+            <button id="delete-selected-button" disabled>Delete Selected</button>
+        </div>
     </div>
-
     <div class="books-container" id="books-container">
         <template data-book-template>
             <article class="book">
                 <div class="cover-image-container" data-cover-image-container>
+                    <input type="checkbox" class="book-card-check-box">
                     <img src="" class="cover-image" width="300px" height="380px">
                     <button class="cover-image-button"></button>
                 </div>

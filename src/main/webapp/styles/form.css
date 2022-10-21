@@ -123,12 +123,11 @@
 
 
 .heading {
-    letter-spacing: 1px;
     text-transform: uppercase;
-    color: wheat;
+    color: antiquewhite !important;
     text-align: center;
     font-size: 1.5rem;
-    font-family: apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    font-family: "inter";
 }
 
 form {
@@ -179,28 +178,44 @@ form {
 
 #update-book-submit,
 #update-book-reset,
-#add-book-submit,
-#add-book-reset,
 #cover-image-submit,
-#cover-image-reset {
+#cover-image-reset,
+#add-book-submit,
+#add-book-reset {
     margin: 5px;
     padding: 2px 12px 2px 12px;
     align-content: space-around;
     background-color: #111;
-    color: wheat;
+    color: white;
+    border-radius: 10px;
+    border: #000;
+    box-shadow: 3px 3px 0px 0px rgba(61, 59, 59, 0.993);
 }
 
 #update-book-submit:hover,
 #update-book-reset:hover,
-#add-book-submit:hover,
-#add-book-reset:hover,
 #cover-image-submit:hover,
-#cover-image-reset:hover {
+#cover-image-reset:hover,
+#add-book-submit:hover,
+#add-book-reset:hover {
     margin: 5px;
     align-content: space-around;
-    background-color: wheat;
+    background-color: antiquewhite;
     color: black;
 }
+
+#update-book-submit:active,
+#update-book-reset:active,
+#cover-image-submit:active,
+#cover-image-reset:active,
+#add-book-submit:active,
+#add-book-reset:active {
+    transform: translate(0.1rem, 0.1rem);
+    box-shadow: 0 0.1rem rgba(10, 10, 10, 0.993);
+    filter: brightness(115%);
+}
+
+
 
 label {
     letter-spacing: .1rem;
@@ -255,6 +270,7 @@ input {
     height: 100%;
 }
 
+
 #book-title:hover,
 #book-title:hover,
 #author-name:hover,
@@ -263,9 +279,7 @@ input {
 #pages:hover,
 #release-year:hover,
 #country:hover,
-#rating:hover,
-#submit:hover,
-#reset:hover {
+#rating:hover {
     background-color: antiquewhite;
     color: #111;
 }
@@ -290,13 +304,24 @@ input {
         height: 100%;
         display: grid;
         font-weight: bold;
-        border-radius: .3rem;
         text-transform: uppercase;
         cursor: pointer;
         font-size: 0.8rem;
         height: 100%;
+        border-radius: 10px;
+        border: #000;
+        color: rgb(0, 0, 0);
+        box-shadow: 2px 2px 0px 0px rgba(71, 66, 66, 0.6);
+
     }
 
+    button {
+        border-radius: 10px;
+        border: #000;
+        color: rgb(0, 0, 0);
+        box-shadow: 3px 3px 0px 0px rgba(10, 10, 10, 0.993);
+        background-color: rgb(221, 51, 51);
+    }
 
     #add-book-form-container,
     #update-book-form-container {

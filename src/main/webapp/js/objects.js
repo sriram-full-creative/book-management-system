@@ -1,6 +1,7 @@
 var allCachedBooks = new Map();
 var books = [];
 
+var selectedBooks = new Set();
 
 var resultsFromServer = {
     books: "",

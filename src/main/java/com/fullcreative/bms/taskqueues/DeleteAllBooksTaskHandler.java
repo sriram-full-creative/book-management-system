@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.fullcreative.bms.utilities.BooksControllerUtilities;
+import com.fullcreative.bms.utilities.TaskQueuesUtilities;
 
 /**
  * Servlet implementation class DeleteAllBooksTaskHandler. This is a worker for
@@ -19,16 +19,14 @@ public class DeleteAllBooksTaskHandler extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("Received the request in TaskHandler");
+		System.err.println("Received the request in DeleteAllBooksTaskHandler");
 		try {
-			System.out.println("Work will be started in 10 seconds");
-			Thread.sleep(10000);
-			System.out.println("Worker is processing the Request to Delete all the books");
-			BooksControllerUtilities.deleteAllBooks();
-			System.out.println("Work is Done");
-		} catch (InterruptedException e) {
+			System.err.println("Worker is processing the Request to Delete all the books");
+			TaskQueuesUtilities.deleteAllBooksInBatches();
+			System.err.println("Work is Done in DeleteAllBooksTaskHandler");
+		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println("Caught in worker method");
+			System.err.println("Caught in worker method");
 		}
 
 	}

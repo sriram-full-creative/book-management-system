@@ -30,6 +30,7 @@ const toggleButton = document.getElementsByClassName("toggle-menu-button")[0];
  */
 const sortByContainer = document.querySelector(".sort-container");
 const sortByOptions = document.querySelector("#sort-books");
+const deleteSelectedButton = document.querySelector("#delete-selected-button");
 
 /**
  * Elements in the books container area.
@@ -56,10 +57,12 @@ function toggleViewAllBooks() {
     currentProperty = "";
     currentDirection = "";
     apiUrl = "";
+    uncheckAllCheckboxes();
     setTimeout(() => {
         getBooks(defaultApiUrl);
     }, 2000);
 }
+
 
 /** 
  * EVENT LISTENERS for all the elements.
@@ -75,6 +78,7 @@ viewAllBooksTrigger.addEventListener("click", toggleViewAllBooks);
 addBookTrigger.addEventListener("click", toggleAddBookForm);
 
 deleteAllBooksTrigger.addEventListener("click", deleteAllBooks);
+deleteSelectedButton.addEventListener("click", () => { deleteSelectedBooks(selectedBooks) });
 
 booksContainer.addEventListener('click', processBooksOperation);
 

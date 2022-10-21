@@ -30,7 +30,8 @@ String.prototype.toCamelCase = function () {
  */
 function searchBooks() {
     shouldLoad = false;
-    const value = event.target.value.toLowerCase()
+    uncheckAllCheckboxes();
+    const value = event.target.value.toLowerCase();
     Array.from(allCachedBooks.values()).forEach(book => {
         const hiddenElement = document.getElementById(book.id);
         let authors = book.author.toString();
@@ -85,7 +86,7 @@ function processPutRequestOptions(bookObj) {
 }
 
 /**
- * Description - Proccesses the Image field in the rendered book element.
+ * Description - Helper Function to Process Image Update Request Options.
  * 
  * @param {object} ImagefileInput
  * @returns {object} imageUpdateRequestOptions
@@ -104,6 +105,27 @@ function processImageUpdateRequestOptions(ImagefileInput) {
         redirect: 'follow'
     };
     return imageUpdateRequestOptions;
+}
+
+/**
+ * Description - Helper Function to Process Delete Selected Books Request Options.
+ * @param {object} selectedBooks
+ * @returns {object} deleteSelectedBooksRequestOptions
+ */
+function processDeleteSelectedBooksRequestOptions(selectedBooks) {
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    const rawJsonBody = JSON.stringify({
+        books: Array.from(selectedBooks)
+    })
+    console.log(rawJsonBody);
+    const deleteSelectedBooksRequestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: rawJsonBody,
+        redirect: 'follow'
+    };
+    return deleteSelectedBooksRequestOptions;
 }
 
 /**
@@ -209,6 +231,7 @@ function toggleViewAllBooksFromIntro() {
     viewAllBooksTrigger.style.visibility = "visible";
     addBookTrigger.style.visibility = "visible";
     aboutTrigger.style.visibility = "visible";
+    deleteSelectedButton.style.visibility = "visible";
     welcomeMessage.style.display = "none";
     getBooks(apiUrl);
 }
@@ -238,6 +261,7 @@ function toggleAddBookForm() {
     clearFormDetails(modalForm);
     booksContainer.appendChild(modalForm);
     sortByContainer.style.visibility = "hidden";
+    deleteSelectedButton.style.visibility = "hidden";
 }
 
 /**
@@ -245,6 +269,7 @@ function toggleAddBookForm() {
  */
 function toggleUpdateBookForm(bookId) {
     shouldLoad = false;
+    deleteSelectedBooks.disabled = true;
     const detailsForUpdate = document.getElementById(bookId);
     const updateBookFormContainer = updateBookFormTemplate.content.cloneNode(true).children[0];
     const modalForm = updateBookFormContainer.querySelector("#book-form");
@@ -254,6 +279,7 @@ function toggleUpdateBookForm(bookId) {
     modalForm.classList.add("update-book-form");
     booksContainer.appendChild(modalForm);
     sortByContainer.style.visibility = "hidden";
+    deleteSelectedButton.style.visibility = "hidden";
     currentBookId = bookId;
     console.log(currentBookId);
 }
@@ -263,6 +289,7 @@ function toggleUpdateBookForm(bookId) {
  */
 function toggleUpdateCoverImageForm(bookId) {
     shouldLoad = false;
+    deleteSelectedBooks.disabled = true;
     console.log(document.getElementById(bookId));
     const updateCoverImageFormContainer = updateCoverImageFormTemplate.content.cloneNode(true).children[0];
     const modalForm = updateCoverImageFormContainer.querySelector("#book-form");
@@ -272,6 +299,7 @@ function toggleUpdateCoverImageForm(bookId) {
     booksContainer.appendChild(modalForm);
     console.log(modalForm);
     sortByContainer.style.visibility = "hidden";
+    deleteSelectedButton.style.visibility = "hidden";
     currentBookId = bookId;
     console.log(currentBookId);
 }
@@ -280,6 +308,7 @@ function toggleUpdateCoverImageForm(bookId) {
  * Description - Closes the form and renders the page with cached books if no operation like update or add is performed. If any one of them is performed page will be rendered to a normal state with updated list of books.
  */
 function closeFormModal() {
+    uncheckAllCheckboxes();
     const modalForm = document.querySelector("#book-form");
     modalForm.style.display = "none";
     modalForm.classList.remove("add-book-form");
@@ -287,6 +316,7 @@ function closeFormModal() {
     document.documentElement.style.overflow = 'scroll';
     document.body.scroll = 'yes';
     sortByContainer.style.visibility = "visible";
+    deleteSelectedButton.style.visibility = "visible";
     currentBookId = "";
     if (isbookAdded || isbookUpdated || isCoverImageUpdated) {
         sortByOptions.selectedIndex = "0";
@@ -560,6 +590,7 @@ function updateCoverImage(ImagefileInput, bookForm) {
  */
 function deleteBook(bookId) {
     runSpinner();
+    uncheckAllCheckboxes();
     console.log(deleteRequestUrlContructor(BASE_URL.url, ENDPOINTS.books, bookId));
     fetch(deleteRequestUrlContructor(BASE_URL.url, ENDPOINTS.books, bookId), {
         method: "DELETE",
@@ -580,6 +611,13 @@ function deleteBook(bookId) {
             getBooks(apiUrl);
         });
 }
+function disableDeleteSelectedButton() {
+    deleteSelectedButton.disabled = true;
+}
+
+function enableDeleteSelectedButton() {
+    deleteSelectedButton.disabled = false;
+}
 
 
 /**
@@ -592,6 +630,17 @@ function processBooksOperation() {
         toggleUpdateBookForm(event.target.dataset.updateBookButtonId);
     } else if (event.target.classList == 'delete-book-button') {
         deleteBook(event.target.dataset.deleteBookButtonId);
+    } else if (event.target.classList.contains('book-card-check-box')) {
+        if (event.target.checked) {
+            selectedBooks.add(event.target.dataset.checkBoxId);
+        } else if (!event.target.checked) {
+            selectedBooks.delete(event.target.dataset.checkBoxId);
+        }
+        if (selectedBooks.size != 0) {
+            enableDeleteSelectedButton();
+        } else {
+            disableDeleteSelectedButton();
+        }
     }
 }
 
@@ -819,6 +868,7 @@ function bookFormValidator(jsonObject) {
  */
 function sortBooks() {
     spinner.removeAttribute('hidden');
+    uncheckAllCheckboxes();
     const selectedOption = sortByOptions.value;
     apiUrl = processSortOption(selectedOption);
     allCachedBooks.clear();
@@ -827,12 +877,25 @@ function sortBooks() {
     getBooks(apiUrl);
 }
 
+/**
+ * Description - Unchecks all the checkboxes
+ */
+function uncheckAllCheckboxes() {
+    const checkBoxes = document.querySelectorAll(".book-card-check-box");
+    checkBoxes.forEach((checkBox) => {
+        checkBox.checked = false;
+    });
+    deleteSelectedButton.disabled = true;
+    selectedBooks.clear();
+}
+
 
 /**
  * Description - Deletes all the books that is present at the moment when the function is called by sending a request to the server which will be handled by task queues.
  */
 function deleteAllBooks() {
     console.log("delete all books triggered");
+    uncheckAllCheckboxes()
     var requestOptions = {
         method: 'POST',
         redirect: 'follow'
@@ -845,10 +908,29 @@ function deleteAllBooks() {
 }
 
 /**
+ * Description - Deletes all the books that is present at the moment when the function is called by sending a request to the server which will be handled by task queues.
+ */
+function deleteSelectedBooks(selectedBooks) {
+    console.log("delete selected books triggered");
+    uncheckAllCheckboxes();
+    const deleteSelectedBooksRequestOptions = processDeleteSelectedBooksRequestOptions(selectedBooks);
+    const deleteSelectedBooksUrl = `${BASE_URL.url}${ENDPOINTS.taskQueue}?${QUERY_PARAMETERS.deleteBooks.deleteSelected}`;
+    fetch(deleteSelectedBooksUrl, deleteSelectedBooksRequestOptions)
+        .then(response => response.json())
+        .then(result => {
+            console.log(result);
+
+            selectedBooks.clear();
+        })
+        .catch(error => console.log('error', error));
+}
+
+/**
  * Description - Redirects the user to the login page once the server invalidates the session when this function is called.
  */
 function logout() {
     console.log('logout');
+    uncheckAllCheckboxes();
     window.location.href = ENDPOINTS.logout;
 }
 
@@ -876,6 +958,7 @@ function addBooks(books) {
         const rating = bookCard.getElementsByClassName("rating")[0];
         const updateButton = bookCard.getElementsByClassName("update-book-button")[0];
         const deleteButton = bookCard.getElementsByClassName("delete-book-button")[0];
+        const checkBox = bookCard.getElementsByClassName("book-card-check-box")[0];
         bookCard.id = book.id;
         if (book.coverImage.length > 0) {
             processImageArea(book.coverImage, img);
@@ -885,6 +968,7 @@ function addBooks(books) {
                 class: "img-not-found"
             });
         }
+        checkBox.dataset.checkBoxId = book.id;
         updateImageButton.textContent = "Update Cover Image";
         updateImageButton.dataset.updateCoverImageButtonId = book.id;
         bookName.textContent = "Title: " + book.title;
@@ -902,49 +986,3 @@ function addBooks(books) {
         booksContainer.appendChild(bookCard);
     });
 }
-
-
-// function addCachedBooks(books) {
-//     shouldLoad = true;
-//     stopSpinner();
-//     books.forEach(book => {
-//         allBooks.set(book.id, book);
-//         const bookCard = bookCardTemplate.content.cloneNode(true).children[0];
-//         const img = bookCard.getElementsByClassName("cover-image")[0];
-//         const updateImageButton = bookCard.getElementsByClassName("cover-image-button")[0];
-//         const bookName = bookCard.getElementsByClassName("book-title")[0];
-//         const authorName = bookCard.getElementsByClassName("author-name")[0];
-//         const publication = bookCard.getElementsByClassName("publication-name")[0];
-//         const language = bookCard.getElementsByClassName("language")[0];
-//         const releaseYear = bookCard.getElementsByClassName("release-year")[0];
-//         const pages = bookCard.getElementsByClassName("pages")[0];
-//         const country = bookCard.getElementsByClassName("country")[0];
-//         const rating = bookCard.getElementsByClassName("rating")[0];
-//         const updateButton = bookCard.getElementsByClassName("update-book-button")[0];
-//         const deleteButton = bookCard.getElementsByClassName("delete-book-button")[0];
-//         bookCard.id = book.id;
-//         if (book.coverImage.length > 0) {
-//             processImageArea(book.coverImage, img);
-//         } else if (book.coverImage.length === 0) {
-//             setAttribute(img, {
-//                 src: imgNotFoundSrc,
-//                 class: "img-not-found"
-//             });
-//         }
-//         updateImageButton.textContent = "Update Cover Image";
-//         updateImageButton.dataset.updateCoverImageButtonId = book.id;
-//         bookName.textContent = "Title: " + book.title;
-//         authorName.textContent = book.author.length === 1 ? "Author: " + book.author : "Authors: " + book.author;
-//         publication.textContent = book.publication.length === 1 ? "Publisher: " + book.publication : "Publishers: " + book.publication;
-//         language.textContent = "Language: " + book.language;
-//         releaseYear.textContent = "Release Year: " + book.releaseYear;
-//         pages.textContent = "Pages: " + book.pages;
-//         country.textContent = "Country: " + book.country;
-//         rating.textContent = "Rating: " + book.rating;
-//         updateButton.textContent = "Update";
-//         updateButton.dataset.updateBookButtonId = book.id;
-//         deleteButton.textContent = "Delete Book";
-//         deleteButton.dataset.deleteBookButtonId = book.id;
-//         booksContainer.appendChild(bookCard);
-//     });
-// }

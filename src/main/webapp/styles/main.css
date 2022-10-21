@@ -78,6 +78,14 @@ body {
     border-bottom: 1.5px solid rgba(238, 216, 216, 0.438);
 }
 
+.book-card-check-box {
+    margin: 20px;
+    height: 25px;
+    width: 25px;
+    position: absolute;
+}
+
+
 .cover-image {
     width: 300px;
     height: 380px;
