@@ -912,17 +912,18 @@ function deleteAllBooks() {
  */
 function deleteSelectedBooks(selectedBooks) {
     console.log("delete selected books triggered");
-    uncheckAllCheckboxes();
     const deleteSelectedBooksRequestOptions = processDeleteSelectedBooksRequestOptions(selectedBooks);
     const deleteSelectedBooksUrl = `${BASE_URL.url}${ENDPOINTS.taskQueue}?${QUERY_PARAMETERS.deleteBooks.deleteSelected}`;
     fetch(deleteSelectedBooksUrl, deleteSelectedBooksRequestOptions)
         .then(response => response.json())
         .then(result => {
             console.log(result);
-
-            selectedBooks.clear();
+            uncheckAllCheckboxes();
         })
-        .catch(error => console.log('error', error));
+        .catch(error => {
+            console.log('error', error);
+            uncheckAllCheckboxes();
+        });
 }
 
 /**

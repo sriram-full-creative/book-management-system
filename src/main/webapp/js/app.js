@@ -57,10 +57,10 @@ function toggleViewAllBooks() {
     currentProperty = "";
     currentDirection = "";
     apiUrl = "";
-    uncheckAllCheckboxes();
     setTimeout(() => {
         getBooks(defaultApiUrl);
     }, 2000);
+    uncheckAllCheckboxes();
 }
 
 
