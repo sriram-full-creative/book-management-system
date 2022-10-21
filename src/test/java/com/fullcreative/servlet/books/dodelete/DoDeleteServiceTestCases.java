@@ -27,48 +27,27 @@ public class DoDeleteServiceTestCases {
 	}
 
 	/**
-	 * Tests for DELETE Methods
-	 * 
-	 * @throws EntityNotFoundException
-	 */
-
-	private LinkedHashMap<String, Object> createBookInTestEnv(LinkedHashMap<String, Object> ValidTestCaseMap)
-			throws EntityNotFoundException {
-		String inputString = BooksControllerUtilities.mapToJsonString(ValidTestCaseMap);
-		LinkedHashMap<String, Object> createdBook = BooksControllerUtilities.createNewBook(inputString);
-		return createdBook;
-	}
-
-	private LinkedHashMap<String, Object> stripBookInTestEnv(LinkedHashMap<String, Object> createdBook) {
-		LinkedHashMap<String, Object> strippedMap = new LinkedHashMap<>();
-		int code = Integer.parseInt(createdBook.remove("STATUS_CODE").toString());
-		strippedMap.put("STATUS_CODE", code);
-		if (createdBook.containsKey("id")) {
-			String key = createdBook.remove("id").toString();
-			strippedMap.put("id", key);
-		}
-		return strippedMap;
-	}
-
-	/**
 	 * Deleting a book with Valid BookID
 	 **/
 	@Test
-	public void deleteBook_validBook_Test() throws EntityNotFoundException {
+	public void deleteBookValidBookTest() throws EntityNotFoundException {
 		System.out.println();
-		System.out.println("deleteBook_validBook_Test()");
+		System.out.println("deleteBookValidBookTest()");
 
 		// Creating a book with valid details
 		LinkedHashMap<String, Object> validBookMapBeforeDelete = DoDeleteTestData.testCases.get("validBook");
 		// Creating a book using test utility method
-		LinkedHashMap<String, Object> createdBookBeforeDelete = createBookInTestEnv(validBookMapBeforeDelete);
-		LinkedHashMap<String, Object> strippedMapBeforeDelete = stripBookInTestEnv(createdBookBeforeDelete);
+		LinkedHashMap<String, Object> createdBookBeforeDelete = DoDeleteServiceTestCaseUtilities
+				.createBookInDoDeleteTestCase(validBookMapBeforeDelete);
+		LinkedHashMap<String, Object> strippedMapBeforeDelete = DoDeleteServiceTestCaseUtilities
+				.stripBookInDoDeleteTestCase(createdBookBeforeDelete);
 		String bookIDBeforeDelete = strippedMapBeforeDelete.get("id").toString();
 		int codeBeforeDelete = Integer.parseInt(strippedMapBeforeDelete.get("STATUS_CODE").toString());
 
 		String createdBookStringBeforeDelete = BooksControllerUtilities.mapToJsonString(createdBookBeforeDelete);
 
-		LinkedHashMap<String, Object> actualBookMapBeforeDelete = BooksControllerUtilities.getOneBook(bookIDBeforeDelete);
+		LinkedHashMap<String, Object> actualBookMapBeforeDelete = BooksControllerUtilities
+				.getOneBook(bookIDBeforeDelete);
 		actualBookMapBeforeDelete.remove("id");
 		String actualBookStringBeforeDelete = BooksControllerUtilities.mapToJsonString(actualBookMapBeforeDelete);
 
@@ -83,7 +62,8 @@ public class DoDeleteServiceTestCases {
 				.deleteBookWithoutImage(strippedMapBeforeDelete.get("id").toString());
 		System.out.println(actualResponseMapAfterDelete);
 		System.out.println(expectedResponseMapAfterDelete);
-		LinkedHashMap<String, Object> strippedMapAfterDelete = stripBookInTestEnv(actualResponseMapAfterDelete);
+		LinkedHashMap<String, Object> strippedMapAfterDelete = DoDeleteServiceTestCaseUtilities
+				.stripBookInDoDeleteTestCase(actualResponseMapAfterDelete);
 		int codeAfterDelete = Integer.parseInt(strippedMapAfterDelete.get("STATUS_CODE").toString());
 
 		assertEquals(expectedResponseMapAfterDelete, actualResponseMapAfterDelete);
@@ -94,21 +74,24 @@ public class DoDeleteServiceTestCases {
 	 * Deleting a book with Invalid BookID
 	 **/
 	@Test
-	public void deleteBook_invalidBookID_Test() throws EntityNotFoundException {
+	public void deleteBookInvalidBookIDTest() throws EntityNotFoundException {
 		System.out.println();
-		System.out.println("deleteBook_invalidBookID_Test()");
+		System.out.println("deleteBookInvalidBookIDTest()");
 
 		// Creating a book with valid details
 		LinkedHashMap<String, Object> validBookMapBeforeDelete = DoDeleteTestData.testCases.get("validBook");
 		// Creating a book using test utility method
-		LinkedHashMap<String, Object> createdBookBeforeDelete = createBookInTestEnv(validBookMapBeforeDelete);
-		LinkedHashMap<String, Object> strippedMapBeforeDelete = stripBookInTestEnv(createdBookBeforeDelete);
+		LinkedHashMap<String, Object> createdBookBeforeDelete = DoDeleteServiceTestCaseUtilities
+				.createBookInDoDeleteTestCase(validBookMapBeforeDelete);
+		LinkedHashMap<String, Object> strippedMapBeforeDelete = DoDeleteServiceTestCaseUtilities
+				.stripBookInDoDeleteTestCase(createdBookBeforeDelete);
 		String bookIDBeforeDelete = strippedMapBeforeDelete.get("id").toString();
 		int codeBeforeDelete = Integer.parseInt(strippedMapBeforeDelete.get("STATUS_CODE").toString());
 
 		String createdBookStringBeforeDelete = BooksControllerUtilities.mapToJsonString(createdBookBeforeDelete);
 
-		LinkedHashMap<String, Object> actualBookMapBeforeDelete = BooksControllerUtilities.getOneBook(bookIDBeforeDelete);
+		LinkedHashMap<String, Object> actualBookMapBeforeDelete = BooksControllerUtilities
+				.getOneBook(bookIDBeforeDelete);
 		actualBookMapBeforeDelete.remove("id");
 		String actualBookStringBeforeDelete = BooksControllerUtilities.mapToJsonString(actualBookMapBeforeDelete);
 
@@ -124,7 +107,8 @@ public class DoDeleteServiceTestCases {
 				.deleteBookWithoutImage(wrongBookId);
 		System.out.println(actualResponseMapAfterDelete);
 		System.out.println(expectedResponseMapAfterDelete);
-		LinkedHashMap<String, Object> strippedMapAfterDelete = stripBookInTestEnv(actualResponseMapAfterDelete);
+		LinkedHashMap<String, Object> strippedMapAfterDelete = DoDeleteServiceTestCaseUtilities
+				.stripBookInDoDeleteTestCase(actualResponseMapAfterDelete);
 		int codeAfterDelete = Integer.parseInt(strippedMapAfterDelete.get("STATUS_CODE").toString());
 
 		assertNotEquals(bookIDBeforeDelete, wrongBookId);

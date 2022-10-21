@@ -31,9 +31,9 @@ public class DoPostServiceTestCases {
 	 */
 	@SuppressWarnings("unused")
 	@Test
-	public void createNewBook_validBook_Test() throws EntityNotFoundException {
+	public void createNewBookValidBookTest() throws EntityNotFoundException {
 		System.out.println();
-		System.out.println("createNewBook_validBook_Test()");
+		System.out.println("createNewBookValidBookTest()");
 		LinkedHashMap<String, Object> testCaseMap = DoPostTestData.testCases.get("validBook");
 		String inputString = BooksControllerUtilities.mapToJsonString(testCaseMap);
 		System.out.println(inputString);
@@ -49,198 +49,133 @@ public class DoPostServiceTestCases {
 	/**
 	 * Creating a entity - authorNameNull
 	 */
-
 	@Test
-	public void createNewBook_authorNameNull_Test() throws EntityNotFoundException {
+	public void createNewBookAuthorNameNullTest() throws EntityNotFoundException {
 		System.out.println();
-		System.out.println("createNewBook_authorNameNull_Test()");
+		System.out.println("createNewBookAuthorNameNullTest()");
 		LinkedHashMap<String, Object> testCaseMap = DoPostTestData.testCases.get("authorNameNull");
 		LinkedHashMap<String, Object> errorMessage = DoPostTestData.errorMessages.get("authorNameNull");
-		String inputString = BooksControllerUtilities.mapToJsonString(testCaseMap);
-		System.out.println(inputString);
-		LinkedHashMap<String, Object> actualBookValue = BooksControllerUtilities.createNewBook(inputString);
-		int code = Integer.parseInt(actualBookValue.remove("STATUS_CODE").toString());
-		assertEquals(400, code);
-		assertEquals(errorMessage.toString(), actualBookValue.toString());
+		DoPostServiceTestCaseUtilities.assertInDoPostTestCase(testCaseMap, errorMessage);
 	}
 
 	/**
 	 * Creating a entity - bookTitleNull
 	 */
-
 	@Test
-	public void createNewBook_bookTitleNull_Test() throws EntityNotFoundException {
+	public void createNewBookBookTitleNullTest() throws EntityNotFoundException {
 		System.out.println();
-		System.out.println("createNewBook_bookTitleNull_Test()");
+		System.out.println("createNewBookBookTitleNullTest()");
 		LinkedHashMap<String, Object> testCaseMap = DoPostTestData.testCases.get("bookTitleNull");
 		LinkedHashMap<String, Object> errorMessage = DoPostTestData.errorMessages.get("bookTitleNull");
-		String inputString = BooksControllerUtilities.mapToJsonString(testCaseMap);
-		System.out.println(inputString);
-		LinkedHashMap<String, Object> actualBookValue = BooksControllerUtilities.createNewBook(inputString);
-		int code = Integer.parseInt(actualBookValue.remove("STATUS_CODE").toString());
-		assertEquals(400, code);
-		assertEquals(errorMessage.toString(), actualBookValue.toString());
+		DoPostServiceTestCaseUtilities.assertInDoPostTestCase(testCaseMap, errorMessage);
 	}
 
 	/**
 	 * Creating a entity - countryNull
 	 */
-
 	@Test
-	public void createNewBook_countryNull_Test() throws EntityNotFoundException {
+	public void createNewBookCountryNullTest() throws EntityNotFoundException {
 		System.out.println();
-		System.out.println("createNewBook_countryNull_Test()");
+		System.out.println("createNewBookCountryNullTest()");
 		LinkedHashMap<String, Object> testCaseMap = DoPostTestData.testCases.get("countryNull");
 		LinkedHashMap<String, Object> errorMessage = DoPostTestData.errorMessages.get("countryNull");
-		String inputString = BooksControllerUtilities.mapToJsonString(testCaseMap);
-		System.out.println(inputString);
-		LinkedHashMap<String, Object> actualBookValue = BooksControllerUtilities.createNewBook(inputString);
-		int code = Integer.parseInt(actualBookValue.remove("STATUS_CODE").toString());
-		assertEquals(400, code);
-		assertEquals(errorMessage.toString(), actualBookValue.toString());
+		DoPostServiceTestCaseUtilities.assertInDoPostTestCase(testCaseMap, errorMessage);
 	}
 
 	/**
 	 * Creating a entity - countryNameWithNumerics
 	 */
-
 	@Test
-	public void createNewBook_countryNameWithNumerics_Test() throws EntityNotFoundException {
+	public void createNewBookCountryNameWithNumericsTest() throws EntityNotFoundException {
 		System.out.println();
-		System.out.println("createNewBook_countryNameWithNumerics_Test()");
+		System.out.println("createNewBookCountryNameWithNumericsTest()");
 		LinkedHashMap<String, Object> testCaseMap = DoPostTestData.testCases.get("countryNameWithNumerics");
 		LinkedHashMap<String, Object> errorMessage = DoPostTestData.errorMessages.get("countryNameWithNumerics");
-		String inputString = BooksControllerUtilities.mapToJsonString(testCaseMap);
-		System.out.println(inputString);
-		LinkedHashMap<String, Object> actualBookValue = BooksControllerUtilities.createNewBook(inputString);
-		int code = Integer.parseInt(actualBookValue.remove("STATUS_CODE").toString());
-		assertEquals(400, code);
-		assertEquals(errorMessage.toString(), actualBookValue.toString());
+		DoPostServiceTestCaseUtilities.assertInDoPostTestCase(testCaseMap, errorMessage);
 	}
 
 	/**
 	 * Creating a entity - languageNull
 	 */
-
 	@Test
-	public void createNewBook_languageNull_Test() throws EntityNotFoundException {
+	public void createNewBookLanguageNullTest() throws EntityNotFoundException {
 		System.out.println();
-		System.out.println("createNewBook_languageNull_Test()");
+		System.out.println("createNewBookLanguageNullTest()");
 		LinkedHashMap<String, Object> testCaseMap = DoPostTestData.testCases.get("languageNull");
 		LinkedHashMap<String, Object> errorMessage = DoPostTestData.errorMessages.get("languageNull");
-		String inputString = BooksControllerUtilities.mapToJsonString(testCaseMap);
-		System.out.println(inputString);
-		LinkedHashMap<String, Object> actualBookValue = BooksControllerUtilities.createNewBook(inputString);
-		int code = Integer.parseInt(actualBookValue.remove("STATUS_CODE").toString());
-		assertEquals(400, code);
-		assertEquals(errorMessage.toString(), actualBookValue.toString());
+		DoPostServiceTestCaseUtilities.assertInDoPostTestCase(testCaseMap, errorMessage);
 	}
 
 	/**
 	 * Creating a entity - languageNameWithNumerics
 	 */
-
 	@Test
-	public void createNewBook_languageNameWithNumerics_Test() throws EntityNotFoundException {
+	public void createNewBookLanguageNameWithNumericsTest() throws EntityNotFoundException {
 		System.out.println();
-		System.out.println("createNewBook_languageNameWithNumerics_Test()");
+		System.out.println("createNewBookLanguageNameWithNumericsTest()");
 		LinkedHashMap<String, Object> testCaseMap = DoPostTestData.testCases.get("languageNameWithNumerics");
 		LinkedHashMap<String, Object> errorMessage = DoPostTestData.errorMessages.get("languageNameWithNumerics");
-		String inputString = BooksControllerUtilities.mapToJsonString(testCaseMap);
-		System.out.println(inputString);
-		LinkedHashMap<String, Object> actualBookValue = BooksControllerUtilities.createNewBook(inputString);
-		int code = Integer.parseInt(actualBookValue.remove("STATUS_CODE").toString());
-		assertEquals(400, code);
-		assertEquals(errorMessage.toString(), actualBookValue.toString());
+		DoPostServiceTestCaseUtilities.assertInDoPostTestCase(testCaseMap, errorMessage);
 	}
 
 	/**
 	 * Creating a entity - negativePages
 	 */
-
 	@Test
-	public void createNewBook_negativePages_Test() throws EntityNotFoundException {
+	public void createNewBookNegativePagesTest() throws EntityNotFoundException {
 		System.out.println();
-		System.out.println("createNewBook_negativePages_Test()");
+		System.out.println("createNewBookNegativePagesTest()");
 		LinkedHashMap<String, Object> testCaseMap = DoPostTestData.testCases.get("negativePages");
 		LinkedHashMap<String, Object> errorMessage = DoPostTestData.errorMessages.get("negativePages");
-		String inputString = BooksControllerUtilities.mapToJsonString(testCaseMap);
-		System.out.println(inputString);
-		LinkedHashMap<String, Object> actualBookValue = BooksControllerUtilities.createNewBook(inputString);
-		int code = Integer.parseInt(actualBookValue.remove("STATUS_CODE").toString());
-		assertEquals(400, code);
-		assertEquals(errorMessage.toString(), actualBookValue.toString());
+		DoPostServiceTestCaseUtilities.assertInDoPostTestCase(testCaseMap, errorMessage);
 	}
 
 	/**
 	 * Creating a entity - minPageCount
 	 */
-
 	@Test
-	public void createNewBook_minPageCount_Test() throws EntityNotFoundException {
+	public void createNewBookMinPageCountTest() throws EntityNotFoundException {
 		System.out.println();
-		System.out.println("createNewBook_minPageCount_Test()");
+		System.out.println("createNewBookMinPageCountTest()");
 		LinkedHashMap<String, Object> testCaseMap = DoPostTestData.testCases.get("minPageCount");
 		LinkedHashMap<String, Object> errorMessage = DoPostTestData.errorMessages.get("minPageCount");
-		String inputString = BooksControllerUtilities.mapToJsonString(testCaseMap);
-		System.out.println(inputString);
-		LinkedHashMap<String, Object> actualBookValue = BooksControllerUtilities.createNewBook(inputString);
-		int code = Integer.parseInt(actualBookValue.remove("STATUS_CODE").toString());
-		assertEquals(400, code);
-		assertEquals(errorMessage.toString(), actualBookValue.toString());
+		DoPostServiceTestCaseUtilities.assertInDoPostTestCase(testCaseMap, errorMessage);
 	}
 
 	/**
 	 * Creating a entity - negativeYear
 	 */
-
 	@Test
-	public void createNewBook_negativeYear_Test() throws EntityNotFoundException {
+	public void createNewBookNegativeYearTest() throws EntityNotFoundException {
 		System.out.println();
-		System.out.println("createNewBook_negativeYear_Test()");
+		System.out.println("createNewBookNegativeYearTest()");
 		LinkedHashMap<String, Object> testCaseMap = DoPostTestData.testCases.get("negativeYear");
 		LinkedHashMap<String, Object> errorMessage = DoPostTestData.errorMessages.get("negativeYear");
-		String inputString = BooksControllerUtilities.mapToJsonString(testCaseMap);
-		System.out.println(inputString);
-		LinkedHashMap<String, Object> actualBookValue = BooksControllerUtilities.createNewBook(inputString);
-		int code = Integer.parseInt(actualBookValue.remove("STATUS_CODE").toString());
-		assertEquals(400, code);
-		assertEquals(errorMessage.toString(), actualBookValue.toString());
+		DoPostServiceTestCaseUtilities.assertInDoPostTestCase(testCaseMap, errorMessage);
 	}
 
 	/**
 	 * Creating a entity - futureYearValue
 	 */
-
 	@Test
-	public void createNewBook_futureYearValue_Test() throws EntityNotFoundException {
+	public void createNewBookFutureYearValueTest() throws EntityNotFoundException {
 		System.out.println();
-		System.out.println("createNewBook_futureYearValue_Test()");
+		System.out.println("createNewBookFutureYearValueTest()");
 		LinkedHashMap<String, Object> testCaseMap = DoPostTestData.testCases.get("futureYearValue");
 		LinkedHashMap<String, Object> errorMessage = DoPostTestData.errorMessages.get("futureYearValue");
-		String inputString = BooksControllerUtilities.mapToJsonString(testCaseMap);
-		System.out.println(inputString);
-		LinkedHashMap<String, Object> actualBookValue = BooksControllerUtilities.createNewBook(inputString);
-		int code = Integer.parseInt(actualBookValue.remove("STATUS_CODE").toString());
-		assertEquals(400, code);
-		assertEquals(errorMessage.toString(), actualBookValue.toString());
+		DoPostServiceTestCaseUtilities.assertInDoPostTestCase(testCaseMap, errorMessage);
 	}
 
 	/**
 	 * Creating a entity - ratingsOutOfRange
 	 */
-
 	@Test
-	public void createNewBook_ratingsOutOfRange_Test() throws EntityNotFoundException {
+	public void createNewBookRatingsOutOfRangeTest() throws EntityNotFoundException {
 		System.out.println();
-		System.out.println("createNewBook_ratingsOutOfRange_Test()");
+		System.out.println("createNewBookRatingsOutOfRangeTest()");
 		LinkedHashMap<String, Object> testCaseMap = DoPostTestData.testCases.get("ratingsOutOfRange");
 		LinkedHashMap<String, Object> errorMessage = DoPostTestData.errorMessages.get("ratingsOutOfRange");
-		String inputString = BooksControllerUtilities.mapToJsonString(testCaseMap);
-		System.out.println(inputString);
-		LinkedHashMap<String, Object> actualBookValue = BooksControllerUtilities.createNewBook(inputString);
-		int code = Integer.parseInt(actualBookValue.remove("STATUS_CODE").toString());
-		assertEquals(400, code);
-		assertEquals(errorMessage.toString(), actualBookValue.toString());
+		DoPostServiceTestCaseUtilities.assertInDoPostTestCase(testCaseMap, errorMessage);
 	}
+
 }

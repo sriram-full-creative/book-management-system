@@ -65,7 +65,7 @@ public class TaskQueuesUtilities {
 				String bookID = book.getKey().getName();
 				System.out.println("Book Count = " + (++bookCount) + " -> " + bookID);
 				datastore.delete(book.getKey());
-				BooksControllerUtilities.deleteImageInCloudStorage(bookID);
+				GoogleCloudStorageUtilities.deleteImageInCloudStorage(bookID);
 			}
 			if (bookEntities.size() == 0) {
 				deletedAll = true;

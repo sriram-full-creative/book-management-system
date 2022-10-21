@@ -45,13 +45,20 @@
     touch-action: manipulation;
     width: 100%;
     border-radius: 10px;
-
+    box-shadow: 3px 3px 0px 0px rgb(10 10 10 / 99%);
 }
 
 .welcome-view-books-button:hover {
     color: black;
     background-color: white;
     transition: 100ms;
+}
+
+.welcome-view-books:active,
+.welcome-view-books-button:active {
+    text-decoration: none;
+    transform: translate(0.1rem, 0.1rem);
+    box-shadow: 0 0.1rem rgba(10, 10, 10, 0.993);
 }
 
 @-moz-keyframes blink {

@@ -38,7 +38,6 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 
 public class UserControllerUtilities {
 
-	
 	public static String payloadAsStringFromRequestSignup(HttpServletRequest request) throws IOException {
 
 		StringBuffer sb = new StringBuffer();
@@ -111,6 +110,7 @@ public class UserControllerUtilities {
 	}
 
 	// Check For Existing Primary Email
+	@SuppressWarnings("deprecation")
 	private static boolean isEmailExists(String email) {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		Query query = new Query("User").setFilter(new FilterPredicate("email", FilterOperator.EQUAL, email));
@@ -341,8 +341,6 @@ public class UserControllerUtilities {
 
 	// Fetch all users
 	public static List<Map<String, Object>> getAllUsers() {
-
-		Map<String, Object> usersMap = new HashMap<String, Object>();
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		Query query = new Query("User").addSort("username", SortDirection.ASCENDING);
 		List<Entity> userEntities = datastore.prepare(query).asList(FetchOptions.Builder.withDefaults());

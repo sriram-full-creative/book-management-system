@@ -98,7 +98,6 @@ body {
     border-color: rgba(238, 216, 216, 0.438);
     border-left: none;
     border-right: none;
-
     background-color: rgb(41, 40, 40);
     box-sizing: border-box;
     color: antiquewhite;
@@ -113,6 +112,7 @@ body {
     user-select: none;
     touch-action: manipulation;
     width: 100%;
+
 }
 
 .book-details-list li {

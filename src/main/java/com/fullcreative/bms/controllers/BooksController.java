@@ -33,8 +33,9 @@ public class BooksController extends HttpServlet {
 			if (BooksControllerUtilities.isValidEndPoint(request.getRequestURI())) {
 				if (BooksControllerUtilities.hasBookID(request.getRequestURI())) {
 					String bookID = BooksControllerUtilities.getBookIDFromUri(request);
-					responseMap = BooksControllerUtilities.getOneBook(bookID);
-					BooksControllerUtilities.sendPrettyJsonResponse(response, responseMap);
+					responseMap = BooksControllerUtilities.processGetOneBookRequest(bookID);
+					System.out.println(responseMap);
+					BooksControllerUtilities.sendJsonResponse(response, responseMap);
 				} else {
 					String jsonData = BooksControllerUtilities.processGetAllRequest(queryParameters);
 					BooksControllerUtilities.sendJsonResponse(response, jsonData);
