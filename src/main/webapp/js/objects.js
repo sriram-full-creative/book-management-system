@@ -30,11 +30,11 @@ const BASE_URL = {
 const ENDPOINTS = {
     books: "/books",
     images: "/images",
-    signup: "/users/signup",
-    login: "/users/login",
-    logout: "/users/logout",
+    signup: "/signup",
+    login: "/login",
+    logout: "/logout",
     taskQueue: "/taskqueues/enqueue",
-    main: "/books/all"
+    main: "/home"
 }
 
 const QUERY_PARAMETERS = {
@@ -55,6 +55,23 @@ const QUERY_PARAMETERS = {
         deleteAll: "delete=all",
         deleteSelected: "delete=selected"
     }
+}
+
+const RESPONSES = {
+    userExists: {
+        ERROR_MESSAGE: "User exists already, please login instead"
+    },
+    userNotExists: {
+        ERROR_MESSAGE: "User not exists"
+    },
+    incorrectPassword: {
+        ERROR_MESSAGE: "Password you entered is incorrect"
+    },
+    invalidPassword: {
+        ERROR_MESSAGE: "Please enter a valid password"
+    },
+    signUpSuccess: "Signed Up Successful",
+    loginSucess: "Logged In Successful"
 }
 
 

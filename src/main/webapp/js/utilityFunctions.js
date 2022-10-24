@@ -202,6 +202,20 @@ function clearBookContainer() {
     booksContainer.innerHTML = '';
 }
 
+
+/**
+ * Description - Clears the SignUpForm's result container whenever something is typed.
+ */
+function clearSignupResultContainer() {
+    signUpResultContainer.innerHTML = "";
+    signUpResultContainer.classList = "";
+}
+
+function clearLoginResultContainer() {
+    loginResultContainer.innerHTML = "";
+    loginResultContainer.classList = "";
+}
+
 /**
  * Description - Runs the Loading Spinner.
  */
@@ -800,6 +814,68 @@ function processSortOption(selectedOption) {
 
 
 /**
+ * Description - Validates the form details in the signup page.
+ * @param {object} signupFormData
+ * @returns {object} errorObj
+ */
+function signUpFormValidator(signupFormData) {
+    const username = signupFormData.username;
+    const usernameRegex = /^[a-zA-Z\_]+$/g;
+    const password = signupFormData.password;
+    const errorObj = {};
+
+    if (password.length < 8) {
+        errorObj["minLenght"] = "Password must be at least 8 characters";
+    }
+    if (password.search(/[a-z]/) < 0) {
+        errorObj["missingLowerCase"] = "Password must contain at least one lowercase letter";
+    }
+    if (password.search(/[A-Z]/) < 0) {
+        errorObj["missingUpperCase"] = "Password must contain at least one uppercase letter";
+
+    }
+    if (password.search(/[0-9]/) < 0) {
+        errorObj["missingNumber"] = "Password must contain at least one number";
+    }
+    if (password.search(/[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/) < 0) {
+        errorObj["missingSpecialCharacter"] = "Password must contain at least special character";
+    }
+
+    if (!usernameRegex.test(username)) {
+        errorObj["usernameError"] = "Username should contain only alphabets and underscores";
+    }
+
+    return errorObj;
+}
+
+// /**
+//  *  Description - Validates the form details in the login page.
+//  * @param {object} loginFormData
+//  * @returns {object} errorObj
+//  */
+// function loginFormValidator(loginFormData) {
+//     const password = loginFormData.password;
+//     const errorObj = {};
+//     if (password.length < 8) {
+//         errorObj["minLenght"] = "Password must be at least 8 characters";
+//     }
+//     if (password.search(/[a-z]/) < 0) {
+//         errorObj["missingLowerCase"] = "Password must contain at least one lowercase letter";
+//     }
+//     if (password.search(/[A-Z]/) < 0) {
+//         errorObj["missingUpperCase"] = "Password must contain at least one uppercase letter";
+
+//     }
+//     if (password.search(/[0-9]/) < 0) {
+//         errorObj["missingNumber"] = "Password must contain at least one number";
+//     }
+//     if (password.search(/[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/) < 0) {
+//         errorObj["missingSpecialCharacter"] = "Password must contain at least special character";
+//     }
+//     return errorObj;
+// }
+
+/**
  * Description - Validates the form details when the form data object is passed as a parameter.
  * 
  * @param {object} jsonObject
@@ -861,6 +937,8 @@ function bookFormValidator(jsonObject) {
 
     return errorMessages;
 };
+
+
 
 
 /**

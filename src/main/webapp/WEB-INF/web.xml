@@ -14,7 +14,7 @@
  
  <servlet-mapping>
 	 <servlet-name>main</servlet-name>
- 	<url-pattern>/books/all</url-pattern>
+ 	<url-pattern>/home</url-pattern>
  </servlet-mapping>
  
 <filter>
@@ -29,6 +29,8 @@
  	<url-pattern>/images</url-pattern>
  	<url-pattern>/images/*</url-pattern>
  	<url-pattern>/users</url-pattern>
+ 	<url-pattern>/users/*</url-pattern>
+ 	<url-pattern>/home</url-pattern>
  </filter-mapping>
 
   

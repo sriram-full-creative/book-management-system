@@ -16,7 +16,7 @@ import com.fullcreative.bms.utilities.UserControllerUtilities;
 import com.google.gson.Gson;
 
 
-@WebServlet("/users/login")
+@WebServlet("/login")
 public class LoginController extends HttpServlet {
 	private static final long serialVersionUID = -8779402624862072307L;
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)

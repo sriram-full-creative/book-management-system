@@ -140,6 +140,7 @@ form {
     font-size: 1.1rem;
     width: 550px;
     max-height: fit-content;
+    z-index: 999;
 }
 
 

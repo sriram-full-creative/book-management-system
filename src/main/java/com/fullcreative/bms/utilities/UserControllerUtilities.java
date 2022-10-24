@@ -143,7 +143,7 @@ public class UserControllerUtilities {
 			errorMap.put("ERROR_MESSAGE", "Please enter a valid email");
 		if (!isEmailExists(credentialData.getEmail()))
 			errorMap.put("ERROR_MESSAGE", "User not exists");
-		if (!PasswordValidator(credentialData.getPassword()))
+		else if (!PasswordValidator(credentialData.getPassword()))
 			errorMap.put("ERROR_MESSAGE", "Please enter a valid password");
 
 		if (errorMap.size() != 0) {
