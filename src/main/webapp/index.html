@@ -7,29 +7,32 @@
     <title>Book Manager</title>
     <link rel="icon" href="./images/book-manager-logo.svg" type="image/svg">
     <link rel="stylesheet" href="./styles/auth.css">
-    <script src="./js/objects.js"></script>
-    <script src="./js/utilityFunctions.js"></script>
+    <script src="./js/objects.js" defer></script>
+    <script src="./js/utilityFunctions.js" defer></script>
     <script src="./js/login.js" defer></script>
 </head>
 
 <body>
+    <div class="brand-container">
+        <h1 class="brand-title">Book Manager</h1>
+        <img src="./images/book-manager-logo.svg" alt="">
+    </div>
+
     <div id="login-container" class="login-container">
         <form action="" method="" id="login-form" class="login-form">
             <h2 class="heading">Login</h2>
             <div class="book-details">
                 <div class="input-field">
-                    <label for="email">Email:</label>
-                    <input id="email" name="email" type="email" placeholder="eg. john_doe@gmail.com" required>
+                    <input id="email" name="email" type="email" placeholder="eg. john_doe@gmail.com"
+                        oninput=clearLoginResultContainer() required>
                 </div>
                 <div class="input-field">
-                    <label for="password">Password:</label>
                     <input id="password" name="password" type="password" placeholder="**********" minlength="8"
-                        required>
+                        oninput=clearLoginResultContainer() required>
                 </div>
             </div>
             <div id="input-field" class="form-buttons">
                 <button id="login" type="submit">continue</button>
-                <button id="form-reset" type="reset">Clear Details</button>
             </div>
             <p class="alternate-option">Don't Have an Account? &nbsp;<a href="./signup.html">Signup</a></p>
             <div class="text-base text-center text-gray-400" id="result-container">

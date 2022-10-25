@@ -15,6 +15,7 @@ public class AuthServices {
 		Map<String, Object> responseMap = UserControllerUtilities.createUser(userData);
 		if (responseMap.containsKey("ERROR_MESSAGE")) {
 			successfulMap.put("ERROR_MESSAGE", responseMap.get("ERROR_MESSAGE"));
+			System.out.println(successfulMap);
 			successfulMap.put("STATUS_CODE", 400);
 			return successfulMap;
 		}

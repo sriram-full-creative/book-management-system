@@ -15,7 +15,7 @@ import com.google.gson.Gson;
 
 import java.util.*;
 
-@WebServlet("/users/signup")
+@WebServlet("/signup")
 public class SignupController extends HttpServlet {
 	private static final long serialVersionUID = -3277605647246155468L;
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)

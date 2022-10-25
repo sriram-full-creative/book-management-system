@@ -11,8 +11,6 @@ async function processImageArea(url, img) {
         if (response.status === 200) {
             setAttribute(img, {
                 src: imageObjectURL,
-                width: "300px",
-                height: "400px",
                 class: "cover-image"
             });
         } else if (response.status === 404) {

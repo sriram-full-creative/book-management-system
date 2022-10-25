@@ -44,7 +44,7 @@
                             <div>
                                 <img src="./../images/book-manager-logo.svg" alt="logo" width="50px">
                                 <p>Voilaa! This is a Pocket library. Hope you find it helpful.</p>
-                                <p>© Sriram S</p>
+                                <p class="copyright-info">© Sriram S</p>
                             </div>
                             <br>
                         </div>
@@ -88,26 +88,33 @@
     <div class="books-container" id="books-container">
         <template data-book-template>
             <article class="book">
-                <div class="cover-image-container" data-cover-image-container>
-                    <input type="checkbox" class="book-card-check-box">
-                    <img src="" class="cover-image" width="300px" height="380px">
-                    <button class="cover-image-button"></button>
-                </div>
-                <div class="book-details-container" data-book-details-container>
-                    <ul class="book-details-list">
-                        <li class="book-title"></li>
-                        <li class="author-name"></li>
-                        <li class="publication-name"></li>
-                        <li class="language"></li>
-                        <li class="release-year"></li>
-                        <li class="pages"></li>
-                        <li class="country"></li>
-                        <li class="rating"></li>
-                    </ul>
+                <div class="data-container">
+                    <div class="cover-image-container" data-cover-image-container>
+                        <input type="checkbox" class="book-card-check-box">
+                        <img src="" class="cover-image" width="190px" height="270px">
+                    </div>
+                    <div class="book-details-container" data-book-details-container>
+                        <ul class="book-details-list">
+                            <li class="book-title"></li>
+                            <li class="author-name"></li>
+                            <li class="publication-name"></li>
+                            <li class="language"></li>
+                            <li class="release-year"></li>
+                            <li class="pages"></li>
+                            <li class="country"></li>
+                            <li class="rating"></li>
+                        </ul>
+                    </div>
                 </div>
                 <div class="button-container" data-button-container>
-                    <button class="update-book-button"><a href="#update-book"></a></button>
-                    <button class="delete-book-button"></button>
+                    <div class="update-buttons-container">
+                        <button class="cover-image-button"><a href="#update-cover-image"></a></button>
+                        <button class="update-book-button"><a href="#update-book"></a></button>
+                    </div>
+                    <div class="delete-button-container">
+                        <button class="delete-book-button"></button>
+                    </div>
+
                 </div>
             </article>
         </template>
@@ -119,7 +126,8 @@
                 <span style="color: #DB3E41">l</span>
                 <span style="color: #1BABA5">o</span>.
             </h1>
-            <button class="welcome-view-books-button"><a href="#books">Click Me!!</a></button>
+            <button class="welcome-view-books-button"><a class="welcome-view-books-link" href="#books">Click
+                    Me!!</a></button>
         </div>
 
         <template data-add-book-form-template>

@@ -14,11 +14,12 @@ body {
 }
 
 .books-container {
+    padding-top: 50px;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(390px, 1fr));
+    gap: 40px;
     justify-items: center;
-    justify-content: space-evenly;
+    justify-content: space-around;
 }
 
 #spinner:not([hidden]) {
@@ -58,96 +59,127 @@ body {
     }
 }
 
-
 .book {
-    display: grid;
-    margin-top: 50px;
-    padding: 0px;
-    border-radius: 15px 15px 15px 15px;
-    max-height: max-content;
-    width: min-content;
+    display: flex;
+    flex-direction: column;
     background-color: rgb(41, 40, 40);
-    box-shadow: 5px 3px 0px 0px rgba(15, 15, 15, 0.993);
+    box-shadow: 5px 5px 0px 0px rgba(15, 15, 15, 0.993);
     color: gainsboro;
+    border-radius: 15px;
+
+}
+
+.data-container {
+    display: flex;
+    border-bottom: 2px solid #1d1c1c;
+
 }
 
 .book-details-container {
-    height: 300px;
-    max-height: fit-content;
-    border-top: 1.5px solid rgba(238, 216, 216, 0.438);
-    border-bottom: 1.5px solid rgba(238, 216, 216, 0.438);
+    border-left: 1px solid #1d1c1c;
+    height: 270px;
+    width: 200px;
 }
 
+
 .book-card-check-box {
-    margin: 20px;
-    height: 25px;
-    width: 25px;
+    margin: 15px;
+    height: 20px;
+    width: 20px;
     position: absolute;
 }
 
 
-.cover-image {
-    width: 300px;
-    height: 380px;
-    border-radius: 15px 15px 0px 0px;
-    border-bottom: 0.5px solid rgba(238, 216, 216, 0.438);
+.book img {
+    border-radius: 15px 0px 0px 0px;
+    border-right: 1px solid #1d1c1c;
 }
 
-.book div button {
-    align-items: center;
-    border-color: rgba(238, 216, 216, 0.438);
-    border-left: none;
-    border-right: none;
-    background-color: rgb(41, 40, 40);
-    box-sizing: border-box;
-    color: antiquewhite;
-    cursor: pointer;
+
+
+.update-buttons-container {
     display: flex;
+    flex-direction: row;
+    height: 35px;
+}
+
+.cover-image-button {
+    width: 190px;
+    border-radius: 5px 0px 0px 5px;
+    border-right: 1px solid #1d1c1c !important;
+}
+
+.update-book-button {
+    width: 200px;
+    border-radius: 0px 5px 5px 0px;
+    border-left: 1px solid #1d1c1c !important;
+}
+
+.delete-button-container {
+    border-top: 2px solid #1d1c1c;
+    height: 35px;
+    width: 390px;
+    border-radius: 0px 0px 15px 15px;
+}
+
+.delete-book-button {
+    width: 100%;
+    height: 35px;
+    border-radius: none;
+    border-radius: 5px 5px 15px 15px;
+}
+
+
+.update-book-button,
+.cover-image-button,
+.delete-book-button {
+    align-items: center;
     font-family: apple-system, "Montserrat", BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-    font-size: 15px;
+    font-size: 12px;
+    color: white;
+    background-color: rgb(41, 40, 40);
+    box-shadow: none;
+    padding: none;
+    margin: none;
+    border: none;
     justify-content: center;
-    max-width: 100%;
-    padding: 14px 22px;
-    transition: all .2s;
+    transition: all 0.1s;
     user-select: none;
     touch-action: manipulation;
-    width: 100%;
-
+    cursor: pointer;
 }
+
+.update-book-button:hover,
+.cover-image-button:hover {
+    font-weight: 600;
+    color: rgb(0, 0, 0);
+    background-color: rgba(133, 130, 130, 0.774);
+    filter: brightness(200%);
+}
+
+.delete-book-button:hover {
+    font-weight: 600;
+    color: black;
+    background-color: rgba(219, 30, 30, 0.733);
+    filter: brightness(115%);
+}
+
 
 .book-details-list li {
     font-family: 'inter';
     margin-bottom: 5px;
-    font-size: 14px
+    font-size: 12.5px
 }
 
 .book-details-list li::marker {
     content: "➽  ";
-    color: orange;
+    color: rgb(255, 167, 2);
 }
 
-.button-container :last-child {
-    border-radius: 0px 0px 15px 15px;
-    border-bottom: none;
-}
 
-.book>div>button:active,
-.book>div>button:hover {
+.book button:active,
+.book button:hover {
     outline: 0;
-}
-
-.book>div>button:hover {
-    background-color: wheat;
-    color: #111;
-    font-weight: bold;
-}
-
-@media(max-width: 600px) {
-    .book>button {
-        font-size: 15px;
-        min-width: max-content;
-        padding: 14px 16px;
-    }
 }
 
 .hide {
