@@ -18,7 +18,6 @@ public class AuthFilter implements Filter {
 		private ServletContext context;
 
 		public AuthFilter() {
-
 		}
 
 		public void destroy() {
@@ -34,6 +33,8 @@ public class AuthFilter implements Filter {
 				this.context.log("Unauthorized access request");
 				res.sendRedirect("/");
 			} else {
+				res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+				res.setDateHeader("Expires", 0);
 				chain.doFilter(request, response);
 			}
 

@@ -23,8 +23,8 @@ var isCoverImageUpdated = false;
 
 
 const BASE_URL = {
-    //url: "http://localhost:10000"
-    url: "https://book-management-system-362310.uc.r.appspot.com"
+    url: "http://localhost:10000"
+    //url: "https://book-management-system-362310.uc.r.appspot.com"
 }
 
 const ENDPOINTS = {
