@@ -27,6 +27,7 @@ function loginHandler(loginForm) {
     fetch(loginApiUrl, requestOptions)
         .then(response => response.json())
         .then(result => {
+			stopSpinner();
             console.log(result);
             if (result["ERROR_MESSAGE"] == RESPONSES.userNotExists["ERROR_MESSAGE"]) {
                 errorResultContainer(loginForm, "User does not exists. Please Signup");
@@ -37,11 +38,13 @@ function loginHandler(loginForm) {
             }
         })
         .catch(error => {
+			stopSpinner();
             errorResultContainer(loginForm, error);
         });
 }
 
 loginForm.addEventListener("submit", (e) => {
     e.preventDefault();
+	runSpinner();
     loginHandler(e.target);
 });

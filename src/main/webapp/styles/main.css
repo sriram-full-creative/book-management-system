@@ -34,6 +34,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 999;
 }
 
 #spinner::after {
@@ -46,7 +47,8 @@ body {
     border-top: 3px solid #fd2706;
     border-radius: 100%;
     will-change: transform;
-    animation: spin 1.5s infinite ease-in-out
+    animation: spin 1.5s infinite ease-in-out;
+    z-index: 999;
 }
 
 @keyframes spin {

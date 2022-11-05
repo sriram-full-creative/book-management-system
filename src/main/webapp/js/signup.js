@@ -27,6 +27,7 @@ function signupHandler(signUpForm) {
         fetch(signUpApiUrl, requestOptions)
             .then(response => response.json())
             .then(result => {
+				stopSpinner();
                 console.log(result);
                 if (result["ERROR_MESSAGE"] == RESPONSES.userExists["ERROR_MESSAGE"]) {
                     errorResultContainer(signUpForm, RESPONSES.userExists["ERROR_MESSAGE"]);
@@ -35,6 +36,7 @@ function signupHandler(signUpForm) {
                 }
             })
             .catch(error => {
+				stopSpinner();
                 errorResultContainer(signUpForm, error);
             });
     } else {
@@ -45,5 +47,6 @@ function signupHandler(signUpForm) {
 
 signupForm.addEventListener("submit", (e) => {
     e.preventDefault();
+	runSpinner();
     signupHandler(e.target);
 });
